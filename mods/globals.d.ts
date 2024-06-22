@@ -23316,7 +23316,7 @@ declare namespace PokeRogue {
   export declare function getEnumValues(enumType: any): integer[];
   export declare function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T>;
   export declare const sessionIdKey = "pokerogue_sessionId";
-  export declare const isLocal: boolean;
+  export declare const isLocal = true;
   export declare const localServerUrl: string;
   export declare const serverUrl: string;
   export declare const apiUrl: string;
