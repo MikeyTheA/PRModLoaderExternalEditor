@@ -1,0 +1,28 @@
+{
+  "name": "prmodloaderexternaleditor",
+  "version": "1.0.0",
+  "description": "external editing websocket for pokeroguemodloader",
+  "main": "main.ts",
+  "scripts": {
+    "start": "npx tsc main.ts --outDir output && node output/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MikeyTheA/PRModLoaderExternalEditor.git"
+  },
+  "author": "MikeyTheA",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/MikeyTheA/PRModLoaderExternalEditor/issues"
+  },
+  "homepage": "https://github.com/MikeyTheA/PRModLoaderExternalEditor#readme",
+  "devDependencies": {
+    "@types/node": "^20.14.6",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@types/ws": "^8.5.10",
+    "fs": "^0.0.1-security",
+    "ws": "^8.17.1"
+  }
+}

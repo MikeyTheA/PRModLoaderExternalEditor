@@ -1,0 +1,4 @@
+mods/*
+!mods/override.d.ts
+!mods/globals.d.ts
+node_modules
