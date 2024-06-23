@@ -23355,12 +23355,11 @@ declare namespace PokeRogue {
   export declare function getEnumValues(enumType: any): integer[];
   export declare function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T>;
   export declare const sessionIdKey = "pokerogue_sessionId";
-  export declare let isLocal: boolean;
-  export declare const localServerUrl: any;
-  export declare const serverUrl: any;
-  export declare let apiUrl: any;
+  export declare const isLocal: boolean;
+  export declare const localServerUrl: string;
+  export declare const serverUrl: string;
+  export declare let apiUrl: string;
   export declare let isLocalServerConnected: boolean;
-  export declare function setApiUrl(url: string): void;
   export declare function setCookie(cName: string, cValue: string): void;
   export declare function getCookie(cName: string): string;
   /**
@@ -23430,6 +23429,7 @@ declare namespace PokeRogue {
    * @returns The converted string with words capitalized and separated by underscores.
    */
   export declare function reverseValueToKeySetting(input: any): any;
+  export declare function setApi(url: string): void;
   
 }
 
