@@ -20584,6 +20584,7 @@ declare namespace PokeRogue.system {
 }
 
 declare namespace PokeRogue {
+  //import BattleScene from "#app/battle-scene.js";
   export declare enum EventType {
       SHINY = 0
   }
@@ -20603,6 +20604,19 @@ declare namespace PokeRogue {
       activeEventHasBanner(): boolean;
       getShinyMultiplier(): number;
       getEventBannerFilename(): string;
+  }
+  export declare class TimedEventDisplay extends Phaser.GameObjects.Container {
+      public event;
+      public eventTimerText;
+      public banner;
+      public bannerShadow;
+      public eventTimer;
+      constructor(scene: PokeRogue.BattleScene, x: number, y: number, event: TimedEvent);
+      setup(): void;
+      show(): void;
+      clear(): void;
+      public timeToGo;
+      updateCountdown(): void;
   }
   export {};
   
@@ -21065,7 +21079,7 @@ declare namespace PokeRogue.ui {
       public levelUpStatsValuesContent;
       public nameBox;
       public nameText;
-      bg: Phaser.GameObjects.Image;
+      bg: Phaser.GameObjects.Sprite;
       commandWindow: Phaser.GameObjects.NineSlice;
       movesWindowContainer: Phaser.GameObjects.Container;
       nameBoxContainer: Phaser.GameObjects.Container;
@@ -21448,6 +21462,7 @@ declare namespace PokeRogue.ui {
   //import { Button } from "#enums/buttons";
   export class FightUiHandler extends PokeRogue.ui.UiHandler {
       public movesContainer;
+      public moveInfoContainer;
       public typeIcon;
       public ppLabel;
       public ppText;
@@ -21573,7 +21588,7 @@ declare namespace PokeRogue.ui {
   //import MessageUiHandler from "./message-ui-handler";
   //import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
   //import { Button } from "#enums/buttons";
-  export declare enum MenuOptions {
+  declare enum MenuOptions {
       GAME_SETTINGS = 0,
       ACHIEVEMENTS = 1,
       STATS = 2,
@@ -21588,6 +21603,7 @@ declare namespace PokeRogue.ui {
   export class MenuUiHandler extends PokeRogue.ui.MessageUiHandler {
       public menuContainer;
       public menuMessageBoxContainer;
+      public menuOverlay;
       public menuBg;
       protected optionSelectText: Phaser.GameObjects.Text;
       public cursorObj;
@@ -21604,6 +21620,7 @@ declare namespace PokeRogue.ui {
       clear(): void;
       eraseCursor(): void;
   }
+  export {};
   
 }
 
@@ -23075,17 +23092,13 @@ declare namespace PokeRogue.ui {
   //import { Mode } from "./ui";
   export class TitleUiHandler extends PokeRogue.ui.settings.OptionSelectUiHandler {
       public titleContainer;
-      public dailyRunScoreboard;
       public playerCountLabel;
       public splashMessage;
       public splashMessageText;
-      public eventTimerText;
+      public eventDisplay;
       public titleStatsTimer;
-      public eventTimer;
       constructor(scene: PokeRogue.BattleScene, mode?: Mode);
       setup(): void;
-      timeToGo(date: Date): string;
-      updateCountdown(): void;
       updateTitleStats(): void;
       show(args: any[]): boolean;
       clear(): void;
