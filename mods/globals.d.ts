@@ -3380,6 +3380,14 @@ declare namespace PokeRogue.data {
       lapse(pokemon: PokeRogue.field.Pokemon, lapseType: BattlerTagLapseType): boolean;
   }
   /**
+   * Battler tag for effects that ground the source, allowing Ground-type moves to hit them. Encompasses two tag types:
+   * @item IGNORE_FLYING: Persistent grounding effects (i.e. from Smack Down and Thousand Waves)
+   * @item ROOSTED: One-turn grounding effects (i.e. from Roost)
+   */
+  export declare class GroundedTag extends BattlerTag {
+      constructor(tagType: PokeRogue.enums.BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: PokeRogue.enums.Moves);
+  }
+  /**
    * Provides the Ice Face ability's effects.
    */
   export declare class IceFaceTag extends BattlerTag {
@@ -9284,7 +9292,7 @@ declare namespace PokeRogue.enums {
       SALT_CURED = "SALT_CURED",
       CURSED = "CURSED",
       CHARGED = "CHARGED",
-      GROUNDED = "GROUNDED",
+      ROOSTED = "ROOSTED",
       MAGNET_RISEN = "MAGNET_RISEN",
       MINIMIZED = "MINIMIZED",
       DESTINY_BOND = "DESTINY_BOND",
