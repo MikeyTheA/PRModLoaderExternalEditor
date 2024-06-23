@@ -2661,6 +2661,10 @@ declare namespace PokeRogue.data {
       lapse(arena: PokeRogue.Arena): boolean;
       getMoveName(): string;
   }
+  /**
+   * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mist_(move) Mist}.
+   * Prevents Pokémon on the opposing side from lowering the stats of the Pokémon in the Mist.
+   */
   export declare class MistTag extends ArenaTag {
       constructor(turnCount: integer, sourceId: integer, side: ArenaTagSide);
       onAdd(arena: PokeRogue.Arena, quiet?: boolean): void;
@@ -2696,26 +2700,60 @@ declare namespace PokeRogue.data {
        */
       apply(arena: PokeRogue.Arena, args: any[]): boolean;
   }
+  /**
+   * Abstract class to implement weakened moves of a specific type.
+   */
   export declare class WeakenMoveTypeTag extends ArenaTag {
       public weakenedType;
+      /**
+       * Creates a new instance of the WeakenMoveTypeTag class.
+       *
+       * @param tagType - The type of the arena tag.
+       * @param turnCount - The number of turns the tag is active.
+       * @param type - The type being weakened from this tag.
+       * @param sourceMove - The move that created the tag.
+       * @param sourceId - The ID of the source of the tag.
+       */
       constructor(tagType: PokeRogue.enums.ArenaTagType, turnCount: integer, type: PokeRogue.Type, sourceMove: PokeRogue.enums.Moves, sourceId: integer);
       apply(arena: PokeRogue.Arena, args: any[]): boolean;
   }
+  /**
+   * Abstract class to implement arena traps.
+   */
   export declare class ArenaTrapTag extends ArenaTag {
       layers: integer;
       maxLayers: integer;
+      /**
+       * Creates a new instance of the ArenaTrapTag class.
+       *
+       * @param tagType - The type of the arena tag.
+       * @param sourceMove - The move that created the tag.
+       * @param sourceId - The ID of the source of the tag.
+       * @param side - The side (player or enemy) the tag affects.
+       * @param maxLayers - The maximum amount of layers this tag can have.
+       */
       constructor(tagType: PokeRogue.enums.ArenaTagType, sourceMove: PokeRogue.enums.Moves, sourceId: integer, side: ArenaTagSide, maxLayers: integer);
       onOverlap(arena: PokeRogue.Arena): void;
       apply(arena: PokeRogue.Arena, args: any[]): boolean;
       activateTrap(pokemon: PokeRogue.Pokemon): boolean;
       getMatchupScoreMultiplier(pokemon: PokeRogue.Pokemon): number;
   }
+  /**
+   * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Trick_Room_(move) Trick Room}.
+   * Reverses the Speed stats for all Pokémon on the field as long as this arena tag is up,
+   * also reversing the turn order for all Pokémon on the field as well.
+   */
   export declare class TrickRoomTag extends ArenaTag {
       constructor(turnCount: integer, sourceId: integer);
       apply(arena: PokeRogue.Arena, args: any[]): boolean;
       onAdd(arena: PokeRogue.Arena): void;
       onRemove(arena: PokeRogue.Arena): void;
   }
+  /**
+   * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Gravity_(move) Gravity}.
+   * Grounds all Pokémon on the field, including Flying-types and those with
+   * {@linkcode Abilities.LEVITATE} for the duration of the arena tag, usually 5 turns.
+   */
   export declare class GravityTag extends ArenaTag {
       constructor(turnCount: integer);
       onAdd(arena: PokeRogue.Arena): void;
@@ -2917,7 +2955,7 @@ declare namespace PokeRogue.data {
       RAND = 7
   }
   export declare function getBattleStatName(stat: BattleStat): string;
-  export declare function getBattleStatLevelChangeDescription(levels: integer, up: boolean): never;
+  export declare function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean): never;
   
 }
 
@@ -9163,7 +9201,8 @@ declare namespace PokeRogue.enums {
       WIDE_GUARD = "WIDE_GUARD",
       MAT_BLOCK = "MAT_BLOCK",
       CRAFTY_SHIELD = "CRAFTY_SHIELD",
-      TAILWIND = "TAILWIND"
+      TAILWIND = "TAILWIND",
+      HAPPY_HOUR = "HAPPY_HOUR"
   }
   
 }
@@ -23316,11 +23355,12 @@ declare namespace PokeRogue {
   export declare function getEnumValues(enumType: any): integer[];
   export declare function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T>;
   export declare const sessionIdKey = "pokerogue_sessionId";
-  export declare const isLocal = true;
-  export declare const localServerUrl: string;
-  export declare const serverUrl: string;
-  export declare const apiUrl: string;
+  export declare let isLocal: boolean;
+  export declare const localServerUrl: any;
+  export declare const serverUrl: any;
+  export declare let apiUrl: any;
   export declare let isLocalServerConnected: boolean;
+  export declare function setApiUrl(url: string): void;
   export declare function setCookie(cName: string, cValue: string): void;
   export declare function getCookie(cName: string): string;
   /**
