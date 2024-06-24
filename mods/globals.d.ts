@@ -14378,6 +14378,13 @@ declare namespace PokeRogue.field {
       abstract isBoss(): boolean;
       getMoveset(ignoreOverride?: boolean): PokemonMove[];
       getLearnableLevelMoves(): Moves[];
+      /**
+       * Gets the types of a pokemon
+       * @param includeTeraType boolean to include tera-formed type, default false
+       * @param forDefend boolean if the pokemon is defending from an attack
+       * @param ignoreOverride boolean if true, ignore ability changing effects
+       * @returns array of {@linkcode Type}
+       */
       getTypes(includeTeraType?: boolean, forDefend?: boolean, ignoreOverride?: boolean): Type[];
       isOfType(type: PokeRogue.data.Type, includeTeraType?: boolean, forDefend?: boolean, ignoreOverride?: boolean): boolean;
       /**
@@ -14441,12 +14448,16 @@ declare namespace PokeRogue.field {
        * in effect, and both passive and non-passive. This is one of the two primary ways to check
        * whether a pokemon has a particular ability.
        * @param {AbAttr} attrType The ability attribute to check for
-       * @param {boolean} canApply If false, it doesn't check whether the abiltiy is currently active
+       * @param {boolean} canApply If false, it doesn't check whether the ability is currently active
        * @param {boolean} ignoreOverride If true, it ignores ability changing effects
        * @returns {boolean} Whether an ability with that attribute is present and active
        */
       hasAbilityWithAttr(attrType: PokeRogue.Constructor<AbAttr>, canApply?: boolean, ignoreOverride?: boolean): boolean;
       getWeight(): number;
+      /**
+       * Gets the tera-formed type of the pokemon, or UNKNOWN if not present
+       * @returns the {@linkcode Type}
+       */
       getTeraType(): Type;
       isTerastallized(): boolean;
       isGrounded(): boolean;
