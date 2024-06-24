@@ -18479,6 +18479,11 @@ declare namespace PokeRogue.modifier {
       match(modifier: Modifier): boolean;
       clone(): DoubleBattleChanceBoosterModifier;
       getArgs(): any[];
+      /**
+       * Modifies the chance of a double battle occurring
+       * @param args A single element array containing the double battle chance as a NumberHolder
+       * @returns {boolean} Returns true if the modifier was applied
+       */
       apply(args: any[]): boolean;
   }
   export declare class TempBattleStatBoosterModifier extends LapsingPersistentModifier {
