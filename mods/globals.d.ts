@@ -125,6 +125,7 @@ declare namespace PokeRogue {
       fusionPaletteSwaps: boolean;
       enableTouchControls: boolean;
       enableVibration: boolean;
+      showBgmBar: boolean;
       /**
        * Determines the selected battle style.
        * - 0 = 'Switch'
@@ -15393,6 +15394,12 @@ declare namespace PokeRogue.locales.de {
 
 declare namespace PokeRogue.locales.de {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.de {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const biome: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -15422,6 +15429,7 @@ declare namespace PokeRogue.locales.de {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -15665,6 +15673,12 @@ declare namespace PokeRogue.locales.en {
 declare namespace PokeRogue.locales.en {
   //import { BerryTranslationEntries } from "#app/interfaces/locales";
   export declare const berry: PokeRogue.interfaces.BerryTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.en {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -15699,6 +15713,7 @@ declare namespace PokeRogue.locales.en {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -15942,6 +15957,12 @@ declare namespace PokeRogue.locales.es {
 declare namespace PokeRogue.locales.es {
   //import { BerryTranslationEntries } from "#app/interfaces/locales";
   export declare const berry: PokeRogue.interfaces.BerryTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.es {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -15976,6 +15997,7 @@ declare namespace PokeRogue.locales.es {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16219,6 +16241,12 @@ declare namespace PokeRogue.locales.fr {
 declare namespace PokeRogue.locales.fr {
   //import { BerryTranslationEntries } from "#app/interfaces/locales";
   export declare const berry: PokeRogue.interfaces.BerryTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.fr {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16253,6 +16281,7 @@ declare namespace PokeRogue.locales.fr {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16496,6 +16525,12 @@ declare namespace PokeRogue.locales.it {
 
 declare namespace PokeRogue.locales.it {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.it {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const biome: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -16525,6 +16560,7 @@ declare namespace PokeRogue.locales.it {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16776,6 +16812,12 @@ declare namespace PokeRogue.locales.ko {
 
 declare namespace PokeRogue.locales.ko {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ko {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const biome: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -16805,6 +16847,7 @@ declare namespace PokeRogue.locales.ko {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17056,6 +17099,12 @@ declare namespace PokeRogue.locales.pt_BR {
 
 declare namespace PokeRogue.locales.pt_BR {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.pt_BR {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const biome: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -17085,6 +17134,7 @@ declare namespace PokeRogue.locales.pt_BR {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17328,6 +17378,12 @@ declare namespace PokeRogue.locales.zh_CN {
 declare namespace PokeRogue.locales.zh_CN {
   //import { BerryTranslationEntries } from "#app/interfaces/locales";
   export declare const berry: PokeRogue.interfaces.BerryTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_CN {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17362,6 +17418,7 @@ declare namespace PokeRogue.locales.zh_CN {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17610,6 +17667,12 @@ declare namespace PokeRogue.locales.zh_TW {
 
 declare namespace PokeRogue.locales.zh_TW {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_TW {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const biome: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -17639,6 +17702,7 @@ declare namespace PokeRogue.locales.zh_TW {
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
       biome: import("../../interfaces/locales").SimpleTranslationEntries;
       challenges: import("../../interfaces/locales").TranslationEntries;
       commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -20534,6 +20598,7 @@ declare namespace PokeRogue.system.settings {
       BGM_Volume: string;
       SE_Volume: string;
       Music_Preference: string;
+      Show_BGM_Bar: string;
   };
   /**
    * All Settings not related to controls
@@ -20906,12 +20971,6 @@ declare namespace PokeRogue.ui {
       public readonly onFieldEffectChangedEvent;
       constructor(scene: Phaser.Scene);
       public onNewArena;
-      /**
-       * Formats a string to title case
-       * @param unformattedText Text to be formatted
-       * @returns the formatted string
-       */
-      public formatText;
       /** Clears out the current string stored in all arena effect texts */
       public clearText;
       /** Parses through all set Arena Effects and puts them into the proper {@linkcode Phaser.GameObjects.Text} object */
@@ -21136,6 +21195,27 @@ declare namespace PokeRogue.ui {
       getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string;
       showNameText(name: string): void;
       hideNameText(): void;
+  }
+  
+}
+
+declare namespace PokeRogue.ui {
+  //import BattleScene from "../battle-scene";
+  export class BgmBar extends Phaser.GameObjects.Container {
+      public defaultWidth;
+      public defaultHeight;
+      public bg;
+      public musicText;
+      public noteText;
+      public tween;
+      public autoHideTimer;
+      public queue;
+      shown: boolean;
+      constructor(scene: PokeRogue.BattleScene);
+      setup(): void;
+      setBgmToBgmBar(bgmName: string): void;
+      toggleBgmBar(visible: boolean): void;
+      getRealBgmName(bgmName: string): string;
   }
   
 }
@@ -21629,6 +21709,7 @@ declare namespace PokeRogue.ui {
   //import MessageUiHandler from "./message-ui-handler";
   //import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
   //import { Button } from "#enums/buttons";
+  //import BgmBar from "#app/ui/bgm-bar";
   declare enum MenuOptions {
       GAME_SETTINGS = 0,
       ACHIEVEMENTS = 1,
@@ -21652,6 +21733,7 @@ declare namespace PokeRogue.ui {
       protected menuOptions: MenuOptions[];
       protected manageDataConfig: PokeRogue.ui.OptionSelectConfig;
       protected communityConfig: PokeRogue.ui.OptionSelectConfig;
+      bgmBar: PokeRogue.ui.BgmBar;
       constructor(scene: PokeRogue.BattleScene, mode?: Mode);
       setup(): void;
       show(args: any[]): boolean;
@@ -23198,6 +23280,7 @@ declare namespace PokeRogue.ui {
   //import AchvBar from "./achv-bar";
   //import SavingIconHandler from "./saving-icon-handler";
   //import { Button } from "#enums/buttons";
+  //import BgmBar from "#app/ui/bgm-bar";
   export declare enum Mode {
       MESSAGE = 0,
       TITLE = 1,
@@ -23242,6 +23325,7 @@ declare namespace PokeRogue.ui {
       handlers: PokeRogue.ui.UiHandler[];
       public overlay;
       achvBar: PokeRogue.ui.AchvBar;
+      bgmBar: PokeRogue.ui.BgmBar;
       savingIcon: PokeRogue.ui.SavingIconHandler;
       public tooltipContainer;
       public tooltipBg;
@@ -23441,6 +23525,12 @@ declare namespace PokeRogue {
       constructor(value: integer);
   }
   export declare function fixedInt(value: integer): integer;
+  /**
+   * Formats a string to title case
+   * @param unformattedText Text to be formatted
+   * @returns the formatted string
+   */
+  export declare function formatText(unformattedText: string): string;
   export declare function rgbToHsv(r: integer, g: integer, b: integer): number[];
   /**
    * Compare color difference in RGB
