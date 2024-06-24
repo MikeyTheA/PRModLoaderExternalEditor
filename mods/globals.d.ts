@@ -3314,7 +3314,7 @@ declare namespace PokeRogue.data {
       */
       loadTag(source: BattlerTag | any): void;
   }
-  export declare class HideSpriteTag extends BattlerTag {
+  export declare class SemiInvulnerableTag extends BattlerTag {
       constructor(tagType: PokeRogue.enums.BattlerTagType, turnCount: integer, sourceMove: PokeRogue.enums.Moves);
       onAdd(pokemon: PokeRogue.field.Pokemon): void;
       onRemove(pokemon: PokeRogue.field.Pokemon): void;
