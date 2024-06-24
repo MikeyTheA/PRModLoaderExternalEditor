@@ -2585,6 +2585,28 @@ declare namespace PokeRogue.data {
        */
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
   }
+  /**
+   * If a Pokémon with this Ability selects a damaging move, it has a 30% chance of going first in its priority bracket. If the Ability activates, this is announced at the start of the turn (after move selection).
+   *
+   * @extends AbAttr
+   */
+  export declare class BypassSpeedChanceAbAttr extends AbAttr {
+      chance: integer;
+      /**
+       * @param {integer} chance probability of ability being active.
+       */
+      constructor(chance: integer);
+      /**
+       * bypass move order in their priority bracket when pokemon choose damaging move
+       * @param {Pokemon} pokemon {@linkcode Pokemon}  the Pokemon applying this ability
+       * @param {boolean} passive N/A
+       * @param {Utils.BooleanHolder} cancelled N/A
+       * @param {any[]} args [0] {@linkcode Utils.BooleanHolder} set to true when the ability activated
+       * @returns {boolean} - whether the ability was activated.
+       */
+      apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
+      getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
+  }
   export declare function applyAbAttrs(attrType: PokeRogue.Constructor<AbAttr>, pokemon: PokeRogue.field.Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
   export declare function applyPostBattleInitAbAttrs(attrType: PokeRogue.Constructor<PostBattleInitAbAttr>, pokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
   export declare function applyPreDefendAbAttrs(attrType: PokeRogue.Constructor<PreDefendAbAttr>, pokemon: PokeRogue.field.Pokemon, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
