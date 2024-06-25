@@ -2,8 +2,10 @@ import * as fs from 'fs';
 import { WebSocketServer } from 'ws';
 import * as ts from 'typescript';
 
-const compile = (source: string) => {
+const compile = (source: string, mod: string, file: string) => {
     let result = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } });
+    fs.mkdirSync(`mods/${mod}/build`, { recursive: true });
+    fs.writeFileSync(`mods/${mod}/build/${file}.js`, result.outputText)
     return result;
 };
 
@@ -50,7 +52,7 @@ const wss = new WebSocketServer({
 wss.on('connection', (ws) => {
     ws.on('error', console.error);
 
-    ws.on('close', () => {});
+    ws.on('close', () => { });
 
     ws.on('message', (data) => {
         const infoString = data.toString(); // from buf
@@ -89,7 +91,7 @@ wss.on('connection', (ws) => {
             } else if (modFile.endsWith('.ts')) {
                 try {
                     const fileContents = fs.readFileSync(`mods/${modName}/${modFile}`);
-                    const compiled = compile(fileContents.toString()).outputText;
+                    const compiled = compile(fileContents.toString(), modName, modFile.slice(0, -3)).outputText;
                     const scriptdata: ScriptData = {
                         name: modFile.slice(0, -3),
                         code: compiled,
@@ -143,17 +145,17 @@ fs.watch('mods/', { recursive: true }, (eventType, filename) => {
                     } else {
                         try {
                             const fileContents = fs.readFileSync(`mods\\${filename}`);
-                            const compiled = compile(fileContents.toString()).outputText;
+                            const compiled = compile(fileContents.toString(), modName as string, file.slice(0, -3)).outputText;
                             const scriptdata: ScriptData = {
                                 name: file.slice(0, -3),
                                 code: compiled,
                             };
-                            broadcastChanges(
+                            /*broadcastChanges(
                                 JSON.stringify({
                                     type: 'addscript',
                                     data: { mod: modName, script: scriptdata },
                                 })
-                            );
+                            );*/
                         } catch (e) {
                             console.log(`Failed compiling ${file}!\n${e}`);
                         }
@@ -185,7 +187,7 @@ fs.watch('mods/', { recursive: true }, (eventType, filename) => {
             } else if (file.endsWith('.ts')) {
                 try {
                     const fileContents = fs.readFileSync(`mods/${filename}`);
-                    const compiled = compile(fileContents.toString()).outputText;
+                    const compiled = compile(fileContents.toString(), modName as string, file.slice(0, -3)).outputText;
                     const scriptdata: ScriptData = {
                         name: file.slice(0, -3),
                         code: compiled,
