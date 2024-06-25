@@ -8296,9 +8296,10 @@ declare namespace PokeRogue.data {
          * Initializes the trainer configuration for an evil team leader. Temporarily hardcoding evil leader teams though.
          * @param {Species | Species[]} signatureSpecies - The signature species for the evil team leader.
          * @param {Type[]} specialtyTypes - The specialty types for the evil team Leader.
+         * @param boolean whether or not this is the rematch fight
          * @returns {TrainerConfig} - The updated TrainerConfig instance.
          * **/
-      initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], ...specialtyTypes: PokeRogue.data.Type[]): TrainerConfig;
+      initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch?: boolean, ...specialtyTypes: PokeRogue.data.Type[]): TrainerConfig;
       /**
        * Initializes the trainer configuration for a Gym Leader.
        * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
