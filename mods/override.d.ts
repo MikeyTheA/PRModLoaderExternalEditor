@@ -15,7 +15,7 @@ declare const globalData: {
 
 declare const data: {
     constructor(prefix?: String);
-    getData(key: String, init: any, persistent?: Boolean): any;
+    getData(key: String, init: any, persistent?: Boolean = false): any;
     setData(key: String, value: any, persistent?: Boolean): void;
     getAccess(key: String, init: any, persistent?: Boolean): (value?: any) => any;
     addListener(key: String, init: any, listener: Function, persistent?: Boolean, identifier?: String): void;
