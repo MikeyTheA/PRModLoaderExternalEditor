@@ -1375,14 +1375,14 @@ declare namespace PokeRogue.data {
   }
   export declare class ReceivedMoveDamageMultiplierAbAttr extends PreDefendAbAttr {
       protected condition: PokemonDefendCondition;
-      public powerMultiplier;
-      constructor(condition: PokemonDefendCondition, powerMultiplier: number);
+      public damageMultiplier;
+      constructor(condition: PokemonDefendCondition, damageMultiplier: number);
       applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
   }
   export declare class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-      constructor(moveType: PokeRogue.data.Type, powerMultiplier: number);
+      constructor(moveType: PokeRogue.data.Type, damageMultiplier: number);
   }
-  export declare class PreDefendMovePowerToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+  export declare class PreDefendMoveDamageToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
       constructor(condition: PokemonDefendCondition);
       applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
   }
