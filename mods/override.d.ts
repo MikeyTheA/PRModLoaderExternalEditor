@@ -1,4 +1,4 @@
-declare const log: (message: String) => void;
+declare const log: (message: any) => void;
 declare const error: (message: String) => void;
 declare const ImGui: any;
 declare const hook: (phase: String, func: Function) => void;
