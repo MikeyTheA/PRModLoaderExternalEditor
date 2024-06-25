@@ -18332,6 +18332,7 @@ declare namespace PokeRogue.modifier {
       LUCKY_EGG: () => PokemonExpBoosterModifierType;
       GOLDEN_EGG: () => PokemonExpBoosterModifierType;
       SOOTHE_BELL: () => PokemonFriendshipBoosterModifierType;
+      EVIOLITE: () => PokemonHeldItemModifierType;
       SOUL_DEW: () => PokemonHeldItemModifierType;
       NUGGET: () => MoneyRewardModifierType;
       BIG_NUGGET: () => MoneyRewardModifierType;
@@ -18565,6 +18566,44 @@ declare namespace PokeRogue.modifier {
       getTransferrable(_withinParty: boolean): boolean;
       getScoreMultiplier(): number;
       getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
+  }
+  /**
+   * Modifier used for held items, specifically Eviolite, that apply
+   * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
+   * @extends PokemonHeldItemModifier
+   * @see {@linkcode apply}
+   */
+  export declare class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
+      /** The stats that the held item boosts */
+      public stats;
+      /** The multiplier used to increase the relevant stat(s) */
+      public multiplier;
+      constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stats: PokeRogue.data.Stat[], multiplier: number, stackCount?: integer);
+      clone(): EvolutionStatBoosterModifier;
+      getArgs(): any[];
+      matchType(modifier: Modifier): boolean;
+      /**
+       * Checks if the incoming stat is listed in {@linkcode stats}
+       * @param args [0] {@linkcode Pokemon} N/A
+       *             [1] {@linkcode Stat} being checked at the time
+       *             [2] {@linkcode Utils.NumberHolder} N/A
+       * @returns true if the stat could be boosted, false otherwise
+       */
+      shouldApply(args: any[]): boolean;
+      /**
+       * Boosts the incoming stat value by a {@linkcode multiplier} if the holder
+       * can evolve. Note that, if the holder is a fusion, they will receive
+       * only half of the boost if either of the fused members are fully
+       * evolved. However, if they are both unevolved, the full boost
+       * will apply.
+       * @param args [0] {@linkcode Pokemon} that holds the held item
+       *             [1] {@linkcode Stat} N/A
+       *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+       * @returns true if the stat boost applies successfully, false otherwise
+       * @see shouldApply
+       */
+      apply(args: any[]): boolean;
+      getMaxHeldItemCount(_pokemon: PokeRogue.field.Pokemon): integer;
   }
   /**
    * Applies Specific Type item boosts (e.g., Magnet)
