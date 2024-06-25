@@ -8440,6 +8440,7 @@ declare namespace PokeRogue.data {
   export declare const variantData: any;
   export declare const variantColorCache: {};
   export declare function getVariantTint(variant: Variant): integer;
+  export declare function getVariantIcon(variant: Variant): integer;
   
 }
 
@@ -13872,6 +13873,15 @@ declare namespace PokeRogue.enums {
   export declare enum UiTheme {
       DEFAULT = 0,
       LEGACY = 1
+  }
+  
+}
+
+declare namespace PokeRogue.enums {
+  export declare enum VariantTier {
+      STANDARD = 0,
+      RARE = 1,
+      EPIC = 2
   }
   
 }
@@ -22891,6 +22901,7 @@ declare namespace PokeRogue.ui {
       public pokemonCaughtCountText;
       public pokemonHatchedIcon;
       public pokemonHatchedCountText;
+      public pokemonShinyIcon;
       public genOptionsText;
       public instructionsContainer;
       public shinyIconElement;
