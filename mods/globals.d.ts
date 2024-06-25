@@ -481,8 +481,8 @@ declare namespace PokeRogue {
   /**
    * Youngster/Lass on 5
    * Rival on 8, 55, 95, 145, 195
-   * Evil team grunts on 35, 62, 64, 65, 112, 114 (Not currently spawning)
-   * Evil leader on 115, 165 (Not currently spawning)
+   * Evil team grunts on 35, 62, 64, 66, 112, 114
+   * Evil leader on 115, 165
    * E4 on 182, 184, 186, 188
    * Champion on 190
    */
