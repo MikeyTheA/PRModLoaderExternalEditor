@@ -1,8 +1,19 @@
+declare type WindowFlags = {
+    open?: boolean;
+    persistentOpen?: boolean;
+    hidden?: boolean;
+    noClose?: boolean;
+    initialWidth?: number;
+    initialHeight?: number;
+    scriptId?: number;
+};
+
 declare const log: (message: any) => void;
-declare const error: (message: String) => void;
-declare const hook: (phase: String, func: Function) => void;
-declare const addWindow: (name: String, show: Function, flags: any) => void;
+declare const error: (message: any) => void;
+declare const hook: (phase: String, func: (phase: any) => any) => void;
+declare const addWindow: (name: String, show: Function, flags: WindowFlags) => void;
 declare const getBattleScene: () => PokeRogue.BattleScene;
+declare const getWindowOpenAccess: (windowName: string) => (value?: boolean) => boolean | false
 
 declare const globalData: {
     constructor(prefix?: String);
