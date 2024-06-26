@@ -15313,6 +15313,9 @@ declare namespace PokeRogue.interfaces {
       ModifierType: {
           [key: string]: ModifierTypeTranslationEntry;
       };
+      SpeciesBoosterItem: {
+          [key: string]: ModifierTypeTranslationEntry;
+      };
       AttackTypeBoosterItem: SimpleTranslationEntries;
       TempBattleStatBoosterItem: SimpleTranslationEntries;
       TempBattleStatBoosterStatName: SimpleTranslationEntries;
@@ -18034,6 +18037,7 @@ declare namespace PokeRogue.modifier {
   //import { Nature } from "#app/data/nature";
   //import { BerryType } from "#enums/berry-type";
   //import { Moves } from "#enums/moves";
+  //import { Species } from "#enums/species";
   type Modifier = Modifiers.Modifier;
   export declare enum ModifierPoolType {
       PLAYER = 0,
@@ -18161,6 +18165,17 @@ declare namespace PokeRogue.modifier {
       getDescription(scene: PokeRogue.BattleScene): string;
       getPregenArgs(): any[];
   }
+  export type SpeciesStatBoosterItem = keyof typeof SpeciesStatBoosterModifierTypeGenerator.items;
+  /**
+   * Modifier type for {@linkcode Modifiers.SpeciesStatBoosterModifier}
+   * @extends PokemonHeldItemModifierType
+   * @implements GeneratedPersistentModifierType
+   */
+  export declare class SpeciesStatBoosterModifierType extends PokemonHeldItemModifierType implements GeneratedPersistentModifierType {
+      public key;
+      constructor(key: SpeciesStatBoosterItem);
+      getPregenArgs(): any[];
+  }
   export declare class PokemonLevelIncrementModifierType extends PokemonModifierType {
       constructor(localeKey: string, iconImage: string);
       getDescription(scene: PokeRogue.BattleScene): string;
@@ -18244,6 +18259,38 @@ declare namespace PokeRogue.modifier {
   declare class AttackTypeBoosterModifierTypeGenerator extends ModifierTypeGenerator {
       constructor();
   }
+  /**
+   * Modifier type generator for {@linkcode SpeciesStatBoosterModifierType}, which
+   * encapsulates the logic for weighting the most useful held item from
+   * the current list of {@linkcode items}.
+   * @extends ModifierTypeGenerator
+   */
+  declare class SpeciesStatBoosterModifierTypeGenerator extends ModifierTypeGenerator {
+      /** Object comprised of the currently available species-based stat boosting held items */
+      static items: {
+          LIGHT_BALL: {
+              stats: PokeRogue.data.Stat[];
+              multiplier: number;
+              species: PokeRogue.enums.Species[];
+          };
+          THICK_CLUB: {
+              stats: PokeRogue.data.Stat[];
+              multiplier: number;
+              species: PokeRogue.enums.Species[];
+          };
+          METAL_POWDER: {
+              stats: PokeRogue.data.Stat[];
+              multiplier: number;
+              species: PokeRogue.enums.Species[];
+          };
+          QUICK_POWDER: {
+              stats: PokeRogue.data.Stat[];
+              multiplier: number;
+              species: PokeRogue.enums.Species[];
+          };
+      };
+      constructor();
+  }
   declare class TmModifierTypeGenerator extends ModifierTypeGenerator {
       constructor(tier: PokeRogue.modifier.ModifierTier);
   }
@@ -18323,6 +18370,7 @@ declare namespace PokeRogue.modifier {
       LURE: () => DoubleBattleChanceBoosterModifierType;
       SUPER_LURE: () => DoubleBattleChanceBoosterModifierType;
       MAX_LURE: () => DoubleBattleChanceBoosterModifierType;
+      SPECIES_STAT_BOOSTER: () => SpeciesStatBoosterModifierTypeGenerator;
       TEMP_STAT_BOOSTER: () => ModifierTypeGenerator;
       DIRE_HIT: () => TempBattleStatBoosterModifierType;
       BASE_STAT_BOOSTER: () => ModifierTypeGenerator;
@@ -18425,6 +18473,7 @@ declare namespace PokeRogue.modifier {
   //import { FormChangeItem } from "../data/pokemon-forms";
   //import { Nature } from "#app/data/nature";
   //import { ModifierType } from "./modifier-type";
+  //import { Species } from "#enums/species";
   export type ModifierPredicate = (modifier: Modifier) => boolean;
   export declare const modifierSortFunc: (a: Modifier, b: Modifier) => number;
   export declare class ModifierBar extends Phaser.GameObjects.Container {
@@ -18579,18 +18628,18 @@ declare namespace PokeRogue.modifier {
       getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
   }
   /**
-   * Modifier used for held items, specifically Eviolite, that apply
-   * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
+   * Modifier used for held items that apply {@linkcode Stat} boost(s)
+   * using a multiplier.
    * @extends PokemonHeldItemModifier
    * @see {@linkcode apply}
    */
-  export declare class EvolutionStatBoosterModifier extends PokemonHeldItemModifier {
+  export declare class StatBoosterModifier extends PokemonHeldItemModifier {
       /** The stats that the held item boosts */
-      public stats;
+      protected stats: PokeRogue.data.Stat[];
       /** The multiplier used to increase the relevant stat(s) */
-      public multiplier;
+      protected multiplier: number;
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stats: PokeRogue.data.Stat[], multiplier: number, stackCount?: integer);
-      clone(): EvolutionStatBoosterModifier;
+      clone(): StatBoosterModifier;
       getArgs(): any[];
       matchType(modifier: Modifier): boolean;
       /**
@@ -18601,6 +18650,27 @@ declare namespace PokeRogue.modifier {
        * @returns true if the stat could be boosted, false otherwise
        */
       shouldApply(args: any[]): boolean;
+      /**
+       * Boosts the incoming stat by a {@linkcode multiplier} if the stat is listed
+       * in {@linkcode stats}.
+       * @param args [0] {@linkcode Pokemon} N/A
+       *             [1] {@linkcode Stat} N/A
+       *             [2] {@linkcode Utils.NumberHolder} that holds the resulting value of the stat
+       * @returns true if the stat boost applies successfully, false otherwise
+       * @see shouldApply
+       */
+      apply(args: any[]): boolean;
+      getMaxHeldItemCount(_pokemon: PokeRogue.field.Pokemon): number;
+  }
+  /**
+   * Modifier used for held items, specifically Eviolite, that apply
+   * {@linkcode Stat} boost(s) using a multiplier if the holder can evolve.
+   * @extends StatBoosterModifier
+   * @see {@linkcode apply}
+   */
+  export declare class EvolutionStatBoosterModifier extends StatBoosterModifier {
+      clone(): EvolutionStatBoosterModifier;
+      matchType(modifier: Modifier): boolean;
       /**
        * Boosts the incoming stat value by a {@linkcode multiplier} if the holder
        * can evolve. Note that, if the holder is a fusion, they will receive
@@ -18614,7 +18684,36 @@ declare namespace PokeRogue.modifier {
        * @see shouldApply
        */
       apply(args: any[]): boolean;
-      getMaxHeldItemCount(_pokemon: PokeRogue.field.Pokemon): integer;
+  }
+  /**
+   * Modifier used for held items that apply {@linkcode Stat} boost(s) using a
+   * multiplier if the holder is of a specific {@linkcode Species}.
+   * @extends StatBoosterModifier
+   * @see {@linkcode apply}
+   */
+  export declare class SpeciesStatBoosterModifier extends StatBoosterModifier {
+      /** The species that the held item's stat boost(s) apply to */
+      public species;
+      constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stats: PokeRogue.data.Stat[], multiplier: number, species: PokeRogue.enums.Species[], stackCount?: integer);
+      clone(): SpeciesStatBoosterModifier;
+      getArgs(): any[];
+      matchType(modifier: Modifier): boolean;
+      /**
+       * Checks if the incoming stat is listed in {@linkcode stats} and if the holder's {@linkcode Species}
+       * (or its fused species) is listed in {@linkcode species}.
+       * @param args [0] {@linkcode Pokemon} that holds the held item
+       *             [1] {@linkcode Stat} being checked at the time
+       *             [2] {@linkcode Utils.NumberHolder} N/A
+       * @returns true if the stat could be boosted, false otherwise
+       */
+      shouldApply(args: any[]): boolean;
+      /**
+       * Checks if either parameter is included in the corresponding lists
+       * @param speciesId {@linkcode Species} being checked
+       * @param stat {@linkcode Stat} being checked
+       * @returns true if both parameters are in {@linkcode species} and {@linkcode stats} respectively, false otherwise
+       */
+      contains(speciesId: PokeRogue.enums.Species, stat: PokeRogue.data.Stat): boolean;
   }
   /**
    * Applies Specific Type item boosts (e.g., Magnet)
@@ -19088,7 +19187,7 @@ declare namespace PokeRogue {
   //import { PokeballCounts } from "./battle-scene";
   //import { Gender } from "./data/gender";
   //import { StatusEffect } from "./data/status-effect";
-  //import { modifierTypes } from "./modifier/modifier-type";
+  //import { SpeciesStatBoosterItem, modifierTypes } from "./modifier/modifier-type";
   //import { VariantTier } from "./enums/variant-tiers";
   //import { EggTier } from "#enums/egg-type";
   //import { Abilities } from "#enums/abilities";
@@ -19183,11 +19282,12 @@ declare namespace PokeRogue {
    * - Nature is for MINT
    * - Type is for TERA_SHARD or ATTACK_TYPE_BOOSTER (type boosting items i.e Silk Scarf)
    * - BerryType is for BERRY
+   * - SpeciesStatBoosterItem is for SPECIES_STAT_BOOSTER
    */
   interface ModifierOverride {
       name: keyof typeof modifierTypes & string;
       count?: integer;
-      type?: TempBattleStat | Stat | Nature | Type | BerryType;
+      type?: TempBattleStat | Stat | Nature | Type | BerryType | SpeciesStatBoosterItem;
   }
   export declare const STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride>;
   export declare const OPP_MODIFIER_OVERRIDE: Array<ModifierOverride>;
