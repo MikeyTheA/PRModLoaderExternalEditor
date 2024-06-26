@@ -1663,6 +1663,34 @@ declare namespace PokeRogue.data {
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
   }
   /**
+   * Class for abilities that convert single-strike moves to two-strike moves (i.e. Parental Bond).
+   * @param damageMultiplier the damage multiplier for the second strike, relative to the first.
+   */
+  export declare class AddSecondStrikeAbAttr extends PreAttackAbAttr {
+      public damageMultiplier;
+      constructor(damageMultiplier: number);
+      /**
+       * Determines whether this attribute can apply to a given move.
+       * @param {Move} move the move to which this attribute may apply
+       * @param numTargets the number of {@linkcode Pokemon} targeted by this move
+       * @returns true if the attribute can apply to the move, false otherwise
+       */
+      canApplyPreAttack(move: PokeRogue.data.Move, numTargets: integer): boolean;
+      /**
+       * If conditions are met, this doubles the move's hit count (via args[1])
+       * or multiplies the damage of secondary strikes (via args[2])
+       * @param {Pokemon} pokemon the Pokemon using the move
+       * @param passive n/a
+       * @param defender n/a
+       * @param {Move} move the move used by the ability source
+       * @param args\[0\] the number of Pokemon this move is targeting
+       * @param {Utils.IntegerHolder} args\[1\] the number of strikes with this move
+       * @param {Utils.NumberHolder} args\[2\] the damage multiplier for the current strike
+       * @returns
+       */
+      applyPreAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, args: any[]): boolean;
+  }
+  /**
    * Class for abilities that boost the damage of moves
    * For abilities that boost the base power of moves, see VariableMovePowerAbAttr
    * @param damageMultiplier the amount to multiply the damage by
@@ -4971,7 +4999,9 @@ declare namespace PokeRogue.data {
       trigger: MoveEffectTrigger;
       /** Should this effect only apply on the first hit? */
       firstHitOnly: boolean;
-      constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly?: boolean);
+      /** Should this effect only apply on the last hit? */
+      lastHitOnly: boolean;
+      constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly?: boolean, lastHitOnly?: boolean);
       /**
        * Determines whether the {@linkcode Move}'s effects are valid to {@linkcode apply}
        * @virtual
@@ -5947,7 +5977,7 @@ declare namespace PokeRogue.data {
       turnCountMin: integer;
       turnCountMax: integer;
       public failOnOverlap;
-      constructor(tagType: PokeRogue.enums.BattlerTagType, selfTarget?: boolean, failOnOverlap?: boolean, turnCountMin?: integer, turnCountMax?: integer);
+      constructor(tagType: PokeRogue.enums.BattlerTagType, selfTarget?: boolean, failOnOverlap?: boolean, turnCountMin?: integer, turnCountMax?: integer, lastHitOnly?: boolean);
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       getCondition(): MoveConditionFunc;
       getTagTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer;
@@ -14581,6 +14611,11 @@ declare namespace PokeRogue.field {
       pushMoveHistory(turnMove: TurnMove): void;
       getLastXMoves(turnCount?: integer): TurnMove[];
       getMoveQueue(): QueuedMove[];
+      /**
+       * If this Pokemon is using a multi-hit move, stop the move
+       * after the next hit resolves.
+       */
+      stopMultiHit(): void;
       changeForm(formChange: PokeRogue.data.SpeciesFormChange): Promise<void>;
       cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound;
       faintCry(callback: Function): void;
