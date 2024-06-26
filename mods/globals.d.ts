@@ -20377,6 +20377,7 @@ declare namespace PokeRogue.system {
       fusionGender: PokeRogue.data.Gender;
       fusionLuck: integer;
       boss: boolean;
+      bossSegments?: integer;
       summonData: PokeRogue.field.PokemonSummonData;
       constructor(source: PokeRogue.field.Pokemon | any, forHistory?: boolean);
       toPokemon(scene: PokeRogue.BattleScene, battleType?: BattleType, partyMemberIndex?: integer, double?: boolean): Pokemon;
