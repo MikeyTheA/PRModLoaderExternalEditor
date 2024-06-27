@@ -14612,10 +14612,10 @@ declare namespace PokeRogue.field {
       getLastXMoves(turnCount?: integer): TurnMove[];
       getMoveQueue(): QueuedMove[];
       /**
-       * If this Pokemon is using a multi-hit move, stop the move
-       * after the next hit resolves.
+       * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
+       * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
        */
-      stopMultiHit(): void;
+      stopMultiHit(target?: Pokemon): void;
       changeForm(formChange: PokeRogue.data.SpeciesFormChange): Promise<void>;
       cry(soundConfig?: Phaser.Types.Sound.SoundConfig, sceneOverride?: BattleScene): AnySound;
       faintCry(callback: Function): void;
@@ -19621,6 +19621,8 @@ declare namespace PokeRogue {
       getUserPokemon(): Pokemon;
       getTargets(): Pokemon[];
       getTarget(): Pokemon;
+      removeTarget(target: PokeRogue.field.Pokemon): void;
+      stopMultiHit(target?: Pokemon): void;
       getNewHitPhase(): MoveEffectPhase;
   }
   export declare class MoveEndPhase extends PokemonPhase {
