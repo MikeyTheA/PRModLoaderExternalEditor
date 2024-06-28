@@ -14690,9 +14690,17 @@ declare namespace PokeRogue.field {
       aiType: AiType;
       bossSegments: integer;
       bossSegmentIndex: integer;
+      /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
       readonly isPopulatedFromDataSource: boolean;
       constructor(scene: PokeRogue.BattleScene, species: PokeRogue.data.PokemonSpecies, level: integer, trainerSlot: PokeRogue.data.TrainerSlot, boss: boolean, dataSource: PokeRogue.system.PokemonData);
       initBattleInfo(): void;
+      /**
+       * Sets the pokemons boss status. If true initializes the boss segments either from the arguments
+       * or through the the Scene.getEncounterBossSegments function
+       *
+       * @param boss if the pokemon is a boss
+       * @param bossSegments amount of boss segments (health-bar segments)
+       */
       setBoss(boss?: boolean, bossSegments?: integer): void;
       generateAndPopulateMoveset(formIndex?: integer): void;
       getNextMove(): QueuedMove;
