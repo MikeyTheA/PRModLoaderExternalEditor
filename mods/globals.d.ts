@@ -14690,6 +14690,7 @@ declare namespace PokeRogue.field {
       aiType: AiType;
       bossSegments: integer;
       bossSegmentIndex: integer;
+      readonly isPopulatedFromDataSource: boolean;
       constructor(scene: PokeRogue.BattleScene, species: PokeRogue.data.PokemonSpecies, level: integer, trainerSlot: PokeRogue.data.TrainerSlot, boss: boolean, dataSource: PokeRogue.system.PokemonData);
       initBattleInfo(): void;
       setBoss(boss?: boolean, bossSegments?: integer): void;
