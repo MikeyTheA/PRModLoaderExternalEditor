@@ -5001,7 +5001,9 @@ declare namespace PokeRogue.data {
       firstHitOnly: boolean;
       /** Should this effect only apply on the last hit? */
       lastHitOnly: boolean;
-      constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly?: boolean, lastHitOnly?: boolean);
+      /** Should this effect only apply on the first target hit? */
+      firstTargetOnly: boolean;
+      constructor(selfTarget?: boolean, trigger?: MoveEffectTrigger, firstHitOnly?: boolean, lastHitOnly?: boolean, firstTargetOnly?: boolean);
       /**
        * Determines whether the {@linkcode Move}'s effects are valid to {@linkcode apply}
        * @virtual
@@ -5555,7 +5557,7 @@ declare namespace PokeRogue.data {
       levels: integer;
       public condition;
       public showMessage;
-      constructor(stats: PokeRogue.data.BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage?: boolean, firstHitOnly?: boolean, moveEffectTrigger?: MoveEffectTrigger);
+      constructor(stats: PokeRogue.data.BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage?: boolean, firstHitOnly?: boolean, moveEffectTrigger?: MoveEffectTrigger, firstTargetOnly?: boolean);
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean | Promise<boolean>;
       getLevels(_user: PokeRogue.field.Pokemon): integer;
       getTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer;
@@ -6381,6 +6383,7 @@ declare namespace PokeRogue.data {
       MASTER_BALL = 4,
       LUXURY_BALL = 5
   }
+  export declare const MAX_PER_TYPE_POKEBALLS: integer;
   export declare function getPokeballAtlasKey(type: PokeballType): string;
   export declare function getPokeballName(type: PokeballType): string;
   export declare function getPokeballCatchMultiplier(type: PokeballType): number;
