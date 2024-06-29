@@ -171,6 +171,10 @@ fs.watch('mods/', { recursive: true }, (eventType, filename) => {
                 return;
             }
 
+            if (!fs.existsSync(`mods/${filename}`)) {
+                return;
+            }
+
             const fileContents = fs.readFileSync(`mods/${filename}`);
             if (file === 'mod.json') {
                 try {
