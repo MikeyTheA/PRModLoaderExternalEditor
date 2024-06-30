@@ -14616,7 +14616,7 @@ declare namespace PokeRogue.field {
       getMoveQueue(): QueuedMove[];
       /**
        * If this Pokemon is using a multi-hit move, cancels all subsequent strikes
-       * @param {Pokemon} target If specified, this only cancels subsequent strikes against this Pokemon
+       * @param {Pokemon} target If specified, this only cancels subsequent strikes against the given target
        */
       stopMultiHit(target?: Pokemon): void;
       changeForm(formChange: PokeRogue.data.SpeciesFormChange): Promise<void>;
