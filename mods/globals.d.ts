@@ -5422,21 +5422,23 @@ declare namespace PokeRogue.data {
       getTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): number;
   }
   /**
-   * Attribute that causes targets of the move to eat a berry. If chosenBerry is not overridden, a random berry will be picked from the target's inventory.
+   * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
    */
   export declare class EatBerryAttr extends MoveEffectAttr {
       protected chosenBerry: PokeRogue.modifier.BerryModifier;
       constructor();
       /**
-     * Causes the target to eat a berry.
-     * @param user {@linkcode Pokemon} Pokemon that used the move
-     * @param target {@linkcode Pokemon} Pokemon that will eat a berry
-     * @param move {@linkcode Move} The move being used
-     * @param args Unused
-     * @returns {boolean} true if the function succeeds
-     */
+       * Causes the target to eat a berry.
+       * @param user {@linkcode Pokemon} Pokemon that used the move
+       * @param target {@linkcode Pokemon} Pokemon that will eat a berry
+       * @param move {@linkcode Move} The move being used
+       * @param args Unused
+       * @returns {boolean} true if the function succeeds
+       */
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       getTargetHeldBerries(target: PokeRogue.field.Pokemon): BerryModifier[];
+      reduceBerryModifier(target: PokeRogue.field.Pokemon): void;
+      eatBerry(consumer: PokeRogue.field.Pokemon): void;
   }
   /**
    *  Attribute used for moves that steal a random berry from the target. The user then eats the stolen berry.
@@ -5445,13 +5447,13 @@ declare namespace PokeRogue.data {
   export declare class StealEatBerryAttr extends EatBerryAttr {
       constructor();
       /**
-     * User steals a random berry from the target and then eats it.
-     * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
-     * @param {Pokemon} target Pokemon that will have its berry stolen
-     * @param {Move} move Move being used
-     * @param {any[]} args Unused
-     * @returns {boolean} true if the function succeeds
-     */
+       * User steals a random berry from the target and then eats it.
+       * @param {Pokemon} user Pokemon that used the move and will eat the stolen berry
+       * @param {Pokemon} target Pokemon that will have its berry stolen
+       * @param {Move} move Move being used
+       * @param {any[]} args Unused
+       * @returns {boolean} true if the function succeeds
+       */
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
   /**
@@ -8036,10 +8038,10 @@ declare namespace PokeRogue.data {
       incrementTurn(): void;
       isPostTurn(): boolean;
   }
-  export declare function getStatusEffectObtainText(statusEffect: StatusEffect, sourceText?: string): string;
-  export declare function getStatusEffectActivationText(statusEffect: StatusEffect): string;
-  export declare function getStatusEffectOverlapText(statusEffect: StatusEffect): string;
-  export declare function getStatusEffectHealText(statusEffect: StatusEffect): string;
+  export declare function getStatusEffectObtainText(statusEffect: StatusEffect, pokemonNameWithAffix: string, sourceText?: string): string;
+  export declare function getStatusEffectActivationText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string;
+  export declare function getStatusEffectOverlapText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string;
+  export declare function getStatusEffectHealText(statusEffect: StatusEffect, pokemonNameWithAffix: string): string;
   export declare function getStatusEffectDescriptor(statusEffect: StatusEffect): string;
   export declare function getStatusEffectCatchRateMultiplier(statusEffect: StatusEffect): number;
   /**
@@ -15381,6 +15383,18 @@ declare namespace PokeRogue.interfaces {
   export interface BerryTranslationEntries {
       [key: string]: BerryTranslationEntry;
   }
+  export interface StatusEffectTranslationEntries {
+      [key: string]: StatusEffectTranslationEntry;
+  }
+  export interface StatusEffectTranslationEntry {
+      name: string;
+      obtain: string;
+      obtainSource: string;
+      activation: string;
+      overlap: string;
+      heal: string;
+      description: string;
+  }
   export interface AchievementTranslationEntry {
       name?: string;
       description?: string;
@@ -15523,6 +15537,7 @@ declare namespace PokeRogue.locales.de {
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -15668,6 +15683,12 @@ declare namespace PokeRogue.locales.de {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.de {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -15769,51 +15790,52 @@ declare namespace PokeRogue.locales.en {
 
 declare namespace PokeRogue.locales.en {
   export declare const enConfig: {
-      ability: import("../../interfaces/locales").AbilityTranslationEntries;
-      abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
-      battle: import("../../interfaces/locales").SimpleTranslationEntries;
-      battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      berry: import("../../interfaces/locales").BerryTranslationEntries;
-      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
-      biome: import("../../interfaces/locales").SimpleTranslationEntries;
-      challenges: import("../../interfaces/locales").TranslationEntries;
-      commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      common: import("../../interfaces/locales").SimpleTranslationEntries;
-      PGMachv: import("../../interfaces/locales").AchievementTranslationEntries;
-      PGFachv: import("../../interfaces/locales").AchievementTranslationEntries;
-      PGMdialogue: import("../../interfaces/locales").DialogueTranslationEntries;
-      PGFdialogue: import("../../interfaces/locales").DialogueTranslationEntries;
-      PGMbattleSpecDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
-      PGFbattleSpecDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
-      PGMmiscDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
-      PGFmiscDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
-      PGMdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
-      PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
-      egg: import("../../interfaces/locales").SimpleTranslationEntries;
-      fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
-      gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      growth: import("../../interfaces/locales").SimpleTranslationEntries;
-      menu: import("../../interfaces/locales").SimpleTranslationEntries;
-      menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
-      move: import("../../interfaces/locales").MoveTranslationEntries;
-      nature: import("../../interfaces/locales").SimpleTranslationEntries;
-      partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
-      pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
-      saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      settings: import("../../interfaces/locales").SimpleTranslationEntries;
-      splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
-      starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      titles: import("../../interfaces/locales").SimpleTranslationEntries;
-      trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
-      trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
-      tutorial: import("../../interfaces/locales").SimpleTranslationEntries;
-      voucher: import("../../interfaces/locales").SimpleTranslationEntries;
-      weather: import("../../interfaces/locales").SimpleTranslationEntries;
+      ability: import("../../interfaces/locales.js").AbilityTranslationEntries;
+      abilityTriggers: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battle: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battleMessageUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      berry: import("../../interfaces/locales.js").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      biome: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      challenges: import("../../interfaces/locales.js").TranslationEntries;
+      commandUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      common: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGMachv: import("../../interfaces/locales.js").AchievementTranslationEntries;
+      PGFachv: import("../../interfaces/locales.js").AchievementTranslationEntries;
+      PGMdialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      PGFdialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      PGMbattleSpecDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGFbattleSpecDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGMmiscDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGFmiscDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      PGFdoubleBattleDialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      egg: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      fightUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      gameMode: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      gameStatsUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      growth: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      menu: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      menuUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      modifierType: import("../../interfaces/locales.js").ModifierTypeTranslationEntries;
+      move: import("../../interfaces/locales.js").MoveTranslationEntries;
+      nature: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      partyUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokeball: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokemon: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokemonInfo: import("../../interfaces/locales.js").PokemonInfoTranslationEntries;
+      pokemonInfoContainer: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      saveSlotSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      settings: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      splashMessages: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      starterSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales.js").StatusEffectTranslationEntries;
+      titles: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      trainerClasses: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      trainerNames: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      tutorial: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      voucher: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      weather: import("../../interfaces/locales.js").SimpleTranslationEntries;
   };
   
 }
@@ -15952,6 +15974,12 @@ declare namespace PokeRogue.locales.en {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.en {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -16091,6 +16119,7 @@ declare namespace PokeRogue.locales.es {
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16236,6 +16265,12 @@ declare namespace PokeRogue.locales.es {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.es {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -16375,6 +16410,7 @@ declare namespace PokeRogue.locales.fr {
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16515,6 +16551,12 @@ declare namespace PokeRogue.locales.fr {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.fr {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -16654,6 +16696,7 @@ declare namespace PokeRogue.locales.it {
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16799,6 +16842,12 @@ declare namespace PokeRogue.locales.it {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.it {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -16941,6 +16990,7 @@ declare namespace PokeRogue.locales.ko {
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17093,6 +17143,12 @@ declare namespace PokeRogue.locales.ko {
 }
 
 declare namespace PokeRogue.locales.ko {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ko {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const titles: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const trainerClasses: PokeRogue.interfaces.SimpleTranslationEntries;
@@ -17226,6 +17282,7 @@ declare namespace PokeRogue.locales.pt_BR {
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17373,6 +17430,12 @@ declare namespace PokeRogue.locales.pt_BR {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.pt_BR {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -17512,6 +17575,7 @@ declare namespace PokeRogue.locales.zh_CN {
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17657,6 +17721,12 @@ declare namespace PokeRogue.locales.zh_CN {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_CN {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -17796,6 +17866,7 @@ declare namespace PokeRogue.locales.zh_TW {
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17941,6 +18012,12 @@ declare namespace PokeRogue.locales.zh_TW {
    * account interactions, descriptive text, etc.
    */
   export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_TW {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
   
 }
 
@@ -18096,7 +18173,6 @@ declare namespace PokeRogue.modifier {
   type NewModifierFunc = (type: ModifierType, args: any[]) => Modifier;
   export declare class ModifierType {
       id: string;
-      generatorId: string;
       localeKey: string;
       iconImage: string;
       group: string;
@@ -20469,7 +20545,6 @@ declare namespace PokeRogue.system {
   export class ModifierData {
       public player;
       public typeId;
-      public typeGeneratorId;
       public typePregenArgs;
       public args;
       public stackCount;
