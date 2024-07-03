@@ -1,5 +1,6 @@
 mods/*
 !mods/override.d.ts
 !mods/globals.d.ts
+!mods/phaser.d.ts
 node_modules
 output
