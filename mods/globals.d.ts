@@ -1759,12 +1759,24 @@ declare namespace PokeRogue.data {
    * Boosts the power of a specific type of move.
    * @extends FieldMovePowerBoostAbAttr
    */
-  export declare class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  export declare class PreAttackFieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
       /**
        * @param boostedType - The type of move that will receive the power boost.
        * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
        */
       constructor(boostedType: PokeRogue.data.Type, powerMultiplier?: number);
+  }
+  /**
+   * Boosts the power of a specific type of move for all Pokemon in the field.
+   * @extends PreAttackFieldMoveTypePowerBoostAbAttr
+   */
+  export declare class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {
+  }
+  /**
+   * Boosts the power of a specific type of move for the user and its allies.
+   * @extends PreAttackFieldMoveTypePowerBoostAbAttr
+   */
+  export declare class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {
   }
   /**
    * Boosts the power of moves in specified categories.
