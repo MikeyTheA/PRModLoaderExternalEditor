@@ -23835,7 +23835,6 @@ declare namespace PokeRogue {
   export declare const sessionIdKey = "pokerogue_sessionId";
   export declare const isLocal: boolean;
   export declare const localServerUrl: string;
-  export declare const serverUrl: string;
   export declare let apiUrl: string;
   export declare let isLocalServerConnected: boolean;
   export declare function setCookie(cName: string, cValue: string): void;
