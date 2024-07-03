@@ -6818,7 +6818,7 @@ declare namespace PokeRogue.data {
       getSpeciesForLevel(level: integer, allowEvolving?: boolean, forTrainer?: boolean, strength?: PartyMemberStrength): Species;
       getEvolutionLevels(): any[];
       getPrevolutionLevels(): any[];
-      getSimulatedEvolutionChain(currentLevel: integer, forTrainer?: boolean, isBoss?: boolean, player?: boolean): any[];
+      getSimulatedEvolutionChain(currentLevel: integer, forTrainer?: boolean, isBoss?: boolean, player?: boolean): [Species, integer][];
       getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter;
       isObtainable(): boolean;
       hasVariants(): any;
@@ -14458,6 +14458,10 @@ declare namespace PokeRogue.field {
       isFusion(): boolean;
       abstract isBoss(): boolean;
       getMoveset(ignoreOverride?: boolean): PokemonMove[];
+      /**
+       * All moves that could be relearned by this pokemon at this point. Used for memory mushrooms.
+       * @returns {Moves[]} The valid moves
+       */
       getLearnableLevelMoves(): Moves[];
       /**
        * Gets the types of a pokemon
@@ -14562,7 +14566,15 @@ declare namespace PokeRogue.field {
       getAttackTypeEffectiveness(moveType: PokeRogue.data.Type, source?: Pokemon, ignoreStrongWinds?: boolean): TypeDamageMultiplier;
       getMatchupScore(pokemon: Pokemon): number;
       getEvolution(): SpeciesFormEvolution;
-      getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean, simulateEvolutionChain?: boolean): LevelMoves;
+      /**
+       * Gets all level up moves in a given range for a particular pokemon.
+       * @param {integer} startingLevel Don't include moves below this level
+       * @param {boolean} includeEvolutionMoves Whether to include evolution moves
+       * @param {boolean} simulateEvolutionChain Whether to include moves from prior evolutions
+       * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
+       * @returns {LevelMoves} A list of moves and the levels they can be learned at
+       */
+      getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean, simulateEvolutionChain?: boolean, includeRelearnerMoves?: boolean): LevelMoves;
       setMove(moveIndex: integer, moveId: PokeRogue.enums.Moves): void;
       /**
        * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
