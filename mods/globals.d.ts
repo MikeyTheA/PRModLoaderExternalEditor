@@ -19187,12 +19187,34 @@ declare namespace PokeRogue.modifier {
       apply(args: any[]): boolean;
       getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
   }
+  /**
+   * Abstract class for held items that steal other Pokemon's items.
+   * @see {@linkcode TurnHeldItemTransferModifier}
+   * @see {@linkcode ContactHeldItemTransferChanceModifier}
+   */
   export declare abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stackCount?: integer);
+      /**
+       * Determines the targets to transfer items from when this applies.
+       * @param args\[0\] the {@linkcode Pokemon} holding this item
+       * @returns the opponents of the source {@linkcode Pokemon}
+       */
+      getTargets(args: any[]): Pokemon[];
+      /**
+       * Steals an item from a set of target Pokemon.
+       * This prioritizes high-tier held items when selecting the item to steal.
+       * @param args \[0\] The {@linkcode Pokemon} holding this item
+       * @returns true if an item was stolen; false otherwise.
+       */
       apply(args: any[]): boolean;
       abstract getTransferredItemCount(): integer;
       abstract getTransferMessage(pokemon: PokeRogue.field.Pokemon, targetPokemon: PokeRogue.field.Pokemon, item: ModifierTypes.ModifierType): string;
   }
+  /**
+   * Modifier for held items that steal items from the enemy at the end of
+   * each turn.
+   * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
+   */
   export declare class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stackCount?: integer);
       matchType(modifier: Modifier): boolean;
@@ -19202,9 +19224,22 @@ declare namespace PokeRogue.modifier {
       getTransferMessage(pokemon: PokeRogue.field.Pokemon, targetPokemon: PokeRogue.field.Pokemon, item: ModifierTypes.ModifierType): string;
       getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
   }
+  /**
+   * Modifier for held items that add a chance to steal items from the target of a
+   * successful attack.
+   * @see {@linkcode modifierTypes[GRIP_CLAW]}
+   * @see {@linkcode HeldItemTransferModifier}
+   */
   export declare class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
       public chance;
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, chancePercent: number, stackCount?: integer);
+      /**
+       * Determines the target to steal items from when this applies.
+       * @param args\[0\] The {@linkcode Pokemon} holding this item
+       * @param args\[1\] The {@linkcode Pokemon} the holder is targeting with an attack
+       * @returns The target (args[1]) stored in array format for use in {@linkcode HeldItemTransferModifier.apply}
+       */
+      getTargets(args: any[]): Pokemon[];
       matchType(modifier: Modifier): boolean;
       clone(): ContactHeldItemTransferChanceModifier;
       getArgs(): any[];
