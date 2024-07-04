@@ -1759,12 +1759,24 @@ declare namespace PokeRogue.data {
    * Boosts the power of a specific type of move.
    * @extends FieldMovePowerBoostAbAttr
    */
-  export declare class FieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
+  export declare class PreAttackFieldMoveTypePowerBoostAbAttr extends FieldMovePowerBoostAbAttr {
       /**
        * @param boostedType - The type of move that will receive the power boost.
        * @param powerMultiplier - The multiplier to apply to the move's power, defaults to 1.5 if not provided.
        */
       constructor(boostedType: PokeRogue.data.Type, powerMultiplier?: number);
+  }
+  /**
+   * Boosts the power of a specific type of move for all Pokemon in the field.
+   * @extends PreAttackFieldMoveTypePowerBoostAbAttr
+   */
+  export declare class FieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {
+  }
+  /**
+   * Boosts the power of a specific type of move for the user and its allies.
+   * @extends PreAttackFieldMoveTypePowerBoostAbAttr
+   */
+  export declare class UserFieldMoveTypePowerBoostAbAttr extends PreAttackFieldMoveTypePowerBoostAbAttr {
   }
   /**
    * Boosts the power of moves in specified categories.
@@ -6806,7 +6818,7 @@ declare namespace PokeRogue.data {
       getSpeciesForLevel(level: integer, allowEvolving?: boolean, forTrainer?: boolean, strength?: PartyMemberStrength): Species;
       getEvolutionLevels(): any[];
       getPrevolutionLevels(): any[];
-      getSimulatedEvolutionChain(currentLevel: integer, forTrainer?: boolean, isBoss?: boolean, player?: boolean): any[];
+      getSimulatedEvolutionChain(currentLevel: integer, forTrainer?: boolean, isBoss?: boolean, player?: boolean): [Species, integer][];
       getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter;
       isObtainable(): boolean;
       hasVariants(): any;
@@ -14446,6 +14458,10 @@ declare namespace PokeRogue.field {
       isFusion(): boolean;
       abstract isBoss(): boolean;
       getMoveset(ignoreOverride?: boolean): PokemonMove[];
+      /**
+       * All moves that could be relearned by this pokemon at this point. Used for memory mushrooms.
+       * @returns {Moves[]} The valid moves
+       */
       getLearnableLevelMoves(): Moves[];
       /**
        * Gets the types of a pokemon
@@ -14550,7 +14566,15 @@ declare namespace PokeRogue.field {
       getAttackTypeEffectiveness(moveType: PokeRogue.data.Type, source?: Pokemon, ignoreStrongWinds?: boolean): TypeDamageMultiplier;
       getMatchupScore(pokemon: Pokemon): number;
       getEvolution(): SpeciesFormEvolution;
-      getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean, simulateEvolutionChain?: boolean): LevelMoves;
+      /**
+       * Gets all level up moves in a given range for a particular pokemon.
+       * @param {integer} startingLevel Don't include moves below this level
+       * @param {boolean} includeEvolutionMoves Whether to include evolution moves
+       * @param {boolean} simulateEvolutionChain Whether to include moves from prior evolutions
+       * @param {boolean} includeRelearnerMoves Whether to include moves that would require a relearner. Note the move relearner inherently allows evolution moves
+       * @returns {LevelMoves} A list of moves and the levels they can be learned at
+       */
+      getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean, simulateEvolutionChain?: boolean, includeRelearnerMoves?: boolean): LevelMoves;
       setMove(moveIndex: integer, moveId: PokeRogue.enums.Moves): void;
       /**
        * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
@@ -19175,12 +19199,34 @@ declare namespace PokeRogue.modifier {
       apply(args: any[]): boolean;
       getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
   }
+  /**
+   * Abstract class for held items that steal other Pokemon's items.
+   * @see {@linkcode TurnHeldItemTransferModifier}
+   * @see {@linkcode ContactHeldItemTransferChanceModifier}
+   */
   export declare abstract class HeldItemTransferModifier extends PokemonHeldItemModifier {
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stackCount?: integer);
+      /**
+       * Determines the targets to transfer items from when this applies.
+       * @param args\[0\] the {@linkcode Pokemon} holding this item
+       * @returns the opponents of the source {@linkcode Pokemon}
+       */
+      getTargets(args: any[]): Pokemon[];
+      /**
+       * Steals an item from a set of target Pokemon.
+       * This prioritizes high-tier held items when selecting the item to steal.
+       * @param args \[0\] The {@linkcode Pokemon} holding this item
+       * @returns true if an item was stolen; false otherwise.
+       */
       apply(args: any[]): boolean;
       abstract getTransferredItemCount(): integer;
       abstract getTransferMessage(pokemon: PokeRogue.field.Pokemon, targetPokemon: PokeRogue.field.Pokemon, item: ModifierTypes.ModifierType): string;
   }
+  /**
+   * Modifier for held items that steal items from the enemy at the end of
+   * each turn.
+   * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
+   */
   export declare class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stackCount?: integer);
       matchType(modifier: Modifier): boolean;
@@ -19190,9 +19236,22 @@ declare namespace PokeRogue.modifier {
       getTransferMessage(pokemon: PokeRogue.field.Pokemon, targetPokemon: PokeRogue.field.Pokemon, item: ModifierTypes.ModifierType): string;
       getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
   }
+  /**
+   * Modifier for held items that add a chance to steal items from the target of a
+   * successful attack.
+   * @see {@linkcode modifierTypes[GRIP_CLAW]}
+   * @see {@linkcode HeldItemTransferModifier}
+   */
   export declare class ContactHeldItemTransferChanceModifier extends HeldItemTransferModifier {
       public chance;
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, chancePercent: number, stackCount?: integer);
+      /**
+       * Determines the target to steal items from when this applies.
+       * @param args\[0\] The {@linkcode Pokemon} holding this item
+       * @param args\[1\] The {@linkcode Pokemon} the holder is targeting with an attack
+       * @returns The target (args[1]) stored in array format for use in {@linkcode HeldItemTransferModifier.apply}
+       */
+      getTargets(args: any[]): Pokemon[];
       matchType(modifier: Modifier): boolean;
       clone(): ContactHeldItemTransferChanceModifier;
       getArgs(): any[];
@@ -23776,7 +23835,6 @@ declare namespace PokeRogue {
   export declare const sessionIdKey = "pokerogue_sessionId";
   export declare const isLocal: boolean;
   export declare const localServerUrl: string;
-  export declare const serverUrl: string;
   export declare let apiUrl: string;
   export declare let isLocalServerConnected: boolean;
   export declare function setCookie(cName: string, cValue: string): void;
