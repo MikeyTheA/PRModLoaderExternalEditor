@@ -29,6 +29,7 @@ declare const data: {
     setData(key: String, value: any, persistent?: Boolean): void;
     getAccess(key: String, init: any, persistent?: Boolean): (value?: any) => any;
     addListener(key: String, init: any, listener: Function, persistent?: Boolean, identifier?: String): void;
+    savePersistentData(): void;
 }
 
 declare const getInstalledMods: () => Array<{
@@ -36,6 +37,8 @@ declare const getInstalledMods: () => Array<{
     version: number,
     author: string
 }>
+
+declare const getGameCanvasSize: () => Array<number, number>
 
 declare namespace ImGui {
     export interface XY {
