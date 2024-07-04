@@ -15569,6 +15569,7 @@ declare namespace PokeRogue.locales.de {
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -15630,6 +15631,12 @@ declare namespace PokeRogue.locales.de {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.de {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -15860,6 +15867,7 @@ declare namespace PokeRogue.locales.en {
       tutorial: import("../../interfaces/locales.js").SimpleTranslationEntries;
       voucher: import("../../interfaces/locales.js").SimpleTranslationEntries;
       weather: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
   };
   
 }
@@ -15921,6 +15929,12 @@ declare namespace PokeRogue.locales.en {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.en {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16151,6 +16165,7 @@ declare namespace PokeRogue.locales.es {
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -16212,6 +16227,12 @@ declare namespace PokeRogue.locales.es {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.es {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16442,6 +16463,7 @@ declare namespace PokeRogue.locales.fr {
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -16498,6 +16520,12 @@ declare namespace PokeRogue.locales.fr {
 declare namespace PokeRogue.locales.fr {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.fr {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16728,6 +16756,7 @@ declare namespace PokeRogue.locales.it {
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -16789,6 +16818,12 @@ declare namespace PokeRogue.locales.it {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.it {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17022,6 +17057,7 @@ declare namespace PokeRogue.locales.ko {
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -17083,6 +17119,12 @@ declare namespace PokeRogue.locales.ko {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ko {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17316,6 +17358,7 @@ declare namespace PokeRogue.locales.pt_BR {
       tutorial: import("../../interfaces/locales").SimpleTranslationEntries;
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -17377,6 +17420,12 @@ declare namespace PokeRogue.locales.pt_BR {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.pt_BR {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17607,6 +17656,7 @@ declare namespace PokeRogue.locales.zh_CN {
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -17668,6 +17718,12 @@ declare namespace PokeRogue.locales.zh_CN {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_CN {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17898,6 +17954,7 @@ declare namespace PokeRogue.locales.zh_TW {
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -17959,6 +18016,12 @@ declare namespace PokeRogue.locales.zh_TW {
    * account interactions, descriptive text, etc.
    */
   export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_TW {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -22156,6 +22219,8 @@ declare namespace PokeRogue.ui {
       public rowCursor;
       public player;
       public rerollCost;
+      public transferButtonWidth;
+      public checkButtonWidth;
       options: ModifierOption[];
       shopOptionsRows: ModifierOption[][];
       public cursorObj;
@@ -23493,6 +23558,7 @@ declare namespace PokeRogue.ui {
   export declare function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): void;
   export declare function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText;
   export declare function addTextInputObject(scene: Phaser.Scene, x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText;
+  export declare function getTextStyleOptions(style: TextStyle, uiTheme: PokeRogue.enums.UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number];
   export declare function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme?: UiTheme): string;
   export declare function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme?: UiTheme): string;
   export declare function getModifierTierTextTint(tier: PokeRogue.modifier.ModifierTier): integer;
