@@ -14563,7 +14563,15 @@ declare namespace PokeRogue.field {
        * @returns The type damage multiplier, indicating the effectiveness of the move
        */
       getAttackMoveEffectiveness(source: Pokemon, pokemonMove: PokemonMove, ignoreAbility?: boolean): TypeDamageMultiplier;
-      getAttackTypeEffectiveness(moveType: PokeRogue.data.Type, source?: Pokemon, ignoreStrongWinds?: boolean): TypeDamageMultiplier;
+      /**
+       * Calculates the type effectiveness multiplier for an attack type
+       * @param moveType Type of the move
+       * @param source the Pokemon using the move
+       * @param ignoreStrongWinds whether or not this ignores strong winds (anticipation, forewarn, stealth rocks)
+       * @param simulated tag to only apply the strong winds effect message when the move is used
+       * @returns a multiplier for the type effectiveness
+       */
+      getAttackTypeEffectiveness(moveType: PokeRogue.data.Type, source?: Pokemon, ignoreStrongWinds?: boolean, simulated?: boolean): TypeDamageMultiplier;
       getMatchupScore(pokemon: Pokemon): number;
       getEvolution(): SpeciesFormEvolution;
       /**
