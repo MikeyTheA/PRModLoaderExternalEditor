@@ -23519,12 +23519,12 @@ declare namespace PokeRogue.ui {
 }
 
 declare namespace PokeRogue.ui {
+  //import { EggTier } from "#enums/egg-type";
+  //import { UiTheme } from "#enums/ui-theme";
+  import Phaser from "phaser";
   import BBCodeText from "phaser3-rex-plugins/plugins/gameobjects/tagtext/bbcodetext/BBCodeText";
   import InputText from "phaser3-rex-plugins/plugins/inputtext";
   //import { ModifierTier } from "../modifier/modifier-tier";
-  import Phaser from "phaser";
-  //import { EggTier } from "#enums/egg-type";
-  //import { UiTheme } from "#enums/ui-theme";
   export declare enum TextStyle {
       MESSAGE = 0,
       WINDOW = 1,
@@ -23552,7 +23552,8 @@ declare namespace PokeRogue.ui {
       MOVE_PP_FULL = 23,
       MOVE_PP_HALF_FULL = 24,
       MOVE_PP_NEAR_EMPTY = 25,
-      MOVE_PP_EMPTY = 26
+      MOVE_PP_EMPTY = 26,
+      SMALLER_WINDOW_ALT = 27
   }
   export declare function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text;
   export declare function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): void;
