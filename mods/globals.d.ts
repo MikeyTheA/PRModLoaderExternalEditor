@@ -22390,7 +22390,8 @@ declare namespace PokeRogue.ui {
       public optionsCursor;
       public optionsScrollCursor;
       public optionsScrollTotal;
-      public optionsContainer;
+      /** This is only public for test/ui/transfer-item.test.ts */
+      optionsContainer: Phaser.GameObjects.Container;
       public optionsBg;
       public optionsCursorObj;
       public options;
