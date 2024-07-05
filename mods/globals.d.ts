@@ -21616,10 +21616,6 @@ declare namespace PokeRogue.ui {
       public defaultHeight;
       public bg;
       public musicText;
-      public noteText;
-      public tween;
-      public autoHideTimer;
-      public queue;
       shown: boolean;
       constructor(scene: PokeRogue.BattleScene);
       setup(): void;
@@ -23562,7 +23558,8 @@ declare namespace PokeRogue.ui {
       MOVE_PP_HALF_FULL = 24,
       MOVE_PP_NEAR_EMPTY = 25,
       MOVE_PP_EMPTY = 26,
-      SMALLER_WINDOW_ALT = 27
+      SMALLER_WINDOW_ALT = 27,
+      BGM_BAR = 28
   }
   export declare function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text;
   export declare function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): void;
