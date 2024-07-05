@@ -22411,8 +22411,8 @@ declare namespace PokeRogue.ui {
       public showMovePp;
       public iconAnimHandler;
       public static FilterAll;
-      static FilterNonFainted: (pokemon: PokeRogue.field.PlayerPokemon) => string;
-      static FilterFainted: (pokemon: PokeRogue.field.PlayerPokemon) => string;
+      static FilterNonFainted: (pokemon: PokeRogue.field.PlayerPokemon) => any;
+      static FilterFainted: (pokemon: PokeRogue.field.PlayerPokemon) => any;
       /**
        * For consistency reasons, this looks like the above filters. However this is used only internally and is always enforced for switching.
        * @param pokemon The pokemon to check.
@@ -22420,8 +22420,8 @@ declare namespace PokeRogue.ui {
        */
       public FilterChallengeLegal;
       public static FilterAllMoves;
-      static FilterItemMaxStacks: (pokemon: PokeRogue.field.PlayerPokemon, modifier: PokeRogue.modifier.PokemonHeldItemModifier) => string;
-      static NoEffectMessage: string;
+      static FilterItemMaxStacks: (pokemon: PokeRogue.field.PlayerPokemon, modifier: PokeRogue.modifier.PokemonHeldItemModifier) => any;
+      static NoEffectMessage: never;
       public localizedOptions;
       constructor(scene: PokeRogue.BattleScene);
       setup(): void;
