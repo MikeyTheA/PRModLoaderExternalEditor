@@ -15578,7 +15578,6 @@ declare namespace PokeRogue.locales.de {
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -15691,12 +15690,6 @@ declare namespace PokeRogue.locales.de {
 declare namespace PokeRogue.locales.de {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.de {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -15884,7 +15877,6 @@ declare namespace PokeRogue.locales.en {
       partyUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales.js").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales.js").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales.js").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales.js").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales.js").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
@@ -15996,12 +15988,6 @@ declare namespace PokeRogue.locales.en {
 declare namespace PokeRogue.locales.en {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.en {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16188,7 +16174,6 @@ declare namespace PokeRogue.locales.es {
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16301,12 +16286,6 @@ declare namespace PokeRogue.locales.es {
 declare namespace PokeRogue.locales.es {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.es {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16493,7 +16472,6 @@ declare namespace PokeRogue.locales.fr {
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16601,12 +16579,6 @@ declare namespace PokeRogue.locales.fr {
 declare namespace PokeRogue.locales.fr {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.fr {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16793,7 +16765,6 @@ declare namespace PokeRogue.locales.it {
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16906,12 +16877,6 @@ declare namespace PokeRogue.locales.it {
 declare namespace PokeRogue.locales.it {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.it {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17101,7 +17066,6 @@ declare namespace PokeRogue.locales.ko {
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17217,12 +17181,6 @@ declare namespace PokeRogue.locales.ko {
 declare namespace PokeRogue.locales.ko {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.ko {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17410,7 +17368,6 @@ declare namespace PokeRogue.locales.pt_BR {
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17522,12 +17479,6 @@ declare namespace PokeRogue.locales.pt_BR {
 declare namespace PokeRogue.locales.pt_BR {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.pt_BR {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17714,7 +17665,6 @@ declare namespace PokeRogue.locales.zh_CN {
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17827,12 +17777,6 @@ declare namespace PokeRogue.locales.zh_CN {
 declare namespace PokeRogue.locales.zh_CN {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.zh_CN {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -18019,7 +17963,6 @@ declare namespace PokeRogue.locales.zh_TW {
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
-      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18132,12 +18075,6 @@ declare namespace PokeRogue.locales.zh_TW {
 declare namespace PokeRogue.locales.zh_TW {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
-  
-}
-
-declare namespace PokeRogue.locales.zh_TW {
-  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
-  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
