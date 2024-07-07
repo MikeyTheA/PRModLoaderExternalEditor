@@ -5718,7 +5718,22 @@ declare namespace PokeRogue.data {
   export declare class HpPowerAttr extends VariablePowerAttr {
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
+  /**
+   * Attribute used for moves whose base power scales with the opponent's HP
+   * Used for Crush Grip, Wring Out, and Hard Press
+   * maxBasePower 100 for Hard Press, 120 for others
+   */
   export declare class OpponentHighHpPowerAttr extends VariablePowerAttr {
+      maxBasePower: number;
+      constructor(maxBasePower: number);
+      /**
+       * Changes the base power of the move to be the target's HP ratio times the maxBasePower with a min value of 1
+       * @param user n/a
+       * @param target the Pokemon being attacked
+       * @param move n/a
+       * @param args holds the base power of the move at args[0]
+       * @returns true
+       */
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
   export declare class FirstAttackDoublePowerAttr extends VariablePowerAttr {
