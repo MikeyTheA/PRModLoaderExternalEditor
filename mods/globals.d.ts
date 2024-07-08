@@ -14263,6 +14263,10 @@ declare namespace PokeRogue.field {
       isMoveTerrainCancelled(user: PokeRogue.field.Pokemon, targets: PokeRogue.BattlerIndex[], move: PokeRogue.data.Move): boolean;
       getTerrainType(): TerrainType;
       getAttackTypeMultiplier(attackType: PokeRogue.data.Type, grounded: boolean): number;
+      /**
+       * Gets the denominator for the chance for a trainer spawn
+       * @returns n where 1/n is the chance of a trainer battle
+       */
       getTrainerChance(): integer;
       getTimeOfDay(): TimeOfDay;
       isOutside(): boolean;
@@ -15049,6 +15053,12 @@ declare namespace PokeRogue {
        */
       getStartingBiome(scene: PokeRogue.BattleScene): Biome;
       getWaveForDifficulty(waveIndex: integer, ignoreCurveChanges?: boolean): integer;
+      /**
+       * Determines whether or not to generate a trainer
+       * @param waveIndex the current floor the player is on (trainer sprites fail to generate on X1 floors)
+       * @param arena the arena that contains the scene and functions
+       * @returns true if a trainer should be generated, false otherwise
+       */
       isWaveTrainer(waveIndex: integer, arena: PokeRogue.field.Arena): boolean;
       isTrainerBoss(waveIndex: integer, biomeType: PokeRogue.enums.Biome, offsetGym: boolean): boolean;
       getOverrideSpecies(waveIndex: integer): PokemonSpecies;
