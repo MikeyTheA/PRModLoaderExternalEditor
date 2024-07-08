@@ -8136,6 +8136,7 @@ declare namespace PokeRogue.data {
       getAttackTypeMultiplier(attackType: PokeRogue.data.Type): number;
       isMoveTerrainCancelled(user: PokeRogue.field.Pokemon, targets: PokeRogue.BattlerIndex[], move: PokeRogue.data.Move): boolean;
   }
+  export declare function getTerrainName(terrainType: TerrainType): string;
   export declare function getTerrainColor(terrainType: TerrainType): [integer, integer, integer];
   
 }
@@ -15573,6 +15574,7 @@ declare namespace PokeRogue.locales.de {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -15585,6 +15587,7 @@ declare namespace PokeRogue.locales.de {
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -15666,6 +15669,12 @@ declare namespace PokeRogue.locales.de {
 declare namespace PokeRogue.locales.de {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.de {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -15772,6 +15781,7 @@ declare namespace PokeRogue.locales.de {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -15871,10 +15881,10 @@ declare namespace PokeRogue.locales.en {
       growth: import("../../interfaces/locales.js").SimpleTranslationEntries;
       menu: import("../../interfaces/locales.js").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales.js").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales.js").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales.js").MoveTranslationEntries;
       nature: import("../../interfaces/locales.js").SimpleTranslationEntries;
-      partyUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales.js").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales.js").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales.js").PokemonInfoTranslationEntries;
@@ -15884,12 +15894,14 @@ declare namespace PokeRogue.locales.en {
       splashMessages: import("../../interfaces/locales.js").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales.js").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales.js").SimpleTranslationEntries;
       titles: import("../../interfaces/locales.js").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales.js").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales.js").SimpleTranslationEntries;
       tutorial: import("../../interfaces/locales.js").SimpleTranslationEntries;
       voucher: import("../../interfaces/locales.js").SimpleTranslationEntries;
       weather: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      partyUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
   };
   
@@ -15964,6 +15976,12 @@ declare namespace PokeRogue.locales.en {
 declare namespace PokeRogue.locales.en {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.en {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16070,6 +16088,7 @@ declare namespace PokeRogue.locales.en {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16169,6 +16188,7 @@ declare namespace PokeRogue.locales.es {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16181,6 +16201,7 @@ declare namespace PokeRogue.locales.es {
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16262,6 +16283,12 @@ declare namespace PokeRogue.locales.es {
 declare namespace PokeRogue.locales.es {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.es {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16368,6 +16395,7 @@ declare namespace PokeRogue.locales.es {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16467,6 +16495,7 @@ declare namespace PokeRogue.locales.fr {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16479,6 +16508,7 @@ declare namespace PokeRogue.locales.fr {
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16555,6 +16585,12 @@ declare namespace PokeRogue.locales.fr {
 declare namespace PokeRogue.locales.fr {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.fr {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16661,6 +16697,7 @@ declare namespace PokeRogue.locales.fr {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16760,6 +16797,7 @@ declare namespace PokeRogue.locales.it {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16772,6 +16810,7 @@ declare namespace PokeRogue.locales.it {
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16853,6 +16892,12 @@ declare namespace PokeRogue.locales.it {
 declare namespace PokeRogue.locales.it {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.it {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16959,6 +17004,7 @@ declare namespace PokeRogue.locales.it {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17061,6 +17107,7 @@ declare namespace PokeRogue.locales.ko {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17073,6 +17120,7 @@ declare namespace PokeRogue.locales.ko {
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17154,6 +17202,12 @@ declare namespace PokeRogue.locales.ko {
 declare namespace PokeRogue.locales.ko {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ko {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17263,6 +17317,7 @@ declare namespace PokeRogue.locales.ko {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17362,16 +17417,17 @@ declare namespace PokeRogue.locales.pt_BR {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
-      partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
       pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
       saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       settings: import("../../interfaces/locales").SimpleTranslationEntries;
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17381,6 +17437,7 @@ declare namespace PokeRogue.locales.pt_BR {
       tutorial: import("../../interfaces/locales").SimpleTranslationEntries;
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
+      partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
@@ -17455,6 +17512,12 @@ declare namespace PokeRogue.locales.pt_BR {
 declare namespace PokeRogue.locales.pt_BR {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.pt_BR {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17561,6 +17624,7 @@ declare namespace PokeRogue.locales.pt_BR {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17660,6 +17724,7 @@ declare namespace PokeRogue.locales.zh_CN {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17672,6 +17737,7 @@ declare namespace PokeRogue.locales.zh_CN {
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17753,6 +17819,12 @@ declare namespace PokeRogue.locales.zh_CN {
 declare namespace PokeRogue.locales.zh_CN {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_CN {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17859,6 +17931,7 @@ declare namespace PokeRogue.locales.zh_CN {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17958,6 +18031,7 @@ declare namespace PokeRogue.locales.zh_TW {
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17970,6 +18044,7 @@ declare namespace PokeRogue.locales.zh_TW {
       splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
       starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
       titles: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
       trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18051,6 +18126,12 @@ declare namespace PokeRogue.locales.zh_TW {
 declare namespace PokeRogue.locales.zh_TW {
   //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
   export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_TW {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -18157,6 +18238,7 @@ declare namespace PokeRogue.locales.zh_TW {
    * The weather namespace holds text displayed when weather is active during a battle
    */
   export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
