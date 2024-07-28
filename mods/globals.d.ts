@@ -15202,6 +15202,12 @@ declare namespace PokeRogue.field {
       randSeedIntRange(min: integer, max: integer): integer;
       destroy(): void;
       getBattleInfo(): BattleInfo;
+      /**
+       * Checks whether or not the Pokemon's root form has the same ability
+       * @param abilityIndex the given ability index we are checking
+       * @returns true if the abilities are the same
+       */
+      hasSameAbilityInRootForm(abilityIndex: number): boolean;
   }
   export interface Pokemon {
       scene: PokeRogue.BattleScene;
