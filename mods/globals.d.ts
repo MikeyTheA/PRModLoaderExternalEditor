@@ -23309,6 +23309,7 @@ declare namespace PokeRogue.ui {
   //import { Mode } from "./ui";
   //import MessageUiHandler from "./message-ui-handler";
   //import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
+  //import { Button } from "#enums/buttons";
   //import BgmBar from "#app/ui/bgm-bar";
   declare enum MenuOptions {
       GAME_SETTINGS = 0,
@@ -23336,11 +23337,12 @@ declare namespace PokeRogue.ui {
       bgmBar: PokeRogue.ui.BgmBar;
       constructor(scene: PokeRogue.BattleScene, mode?: Mode);
       setup(): void;
-      manageDataOptions: any;
-      push({ label: i18next, t }: {
-          label: any;
-          t: any;
-      }): any;
+      show(args: any[]): boolean;
+      processInput(button: PokeRogue.enums.Button): boolean;
+      showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void;
+      setCursor(cursor: integer): boolean;
+      clear(): void;
+      eraseCursor(): void;
   }
   export {};
   
@@ -25124,17 +25126,17 @@ declare namespace PokeRogue {
   export declare function randSeedGauss(stdev: number, mean?: number): number;
   export declare function padInt(value: integer, length: integer, padWith?: string): string;
   /**
-  * Returns a random integer between min and min + range
-  * @param range The amount of possible numbers
-  * @param min The starting number
-  */
+   * Returns a random integer between min and min + range
+   * @param range The amount of possible numbers
+   * @param min The starting number
+   */
   export declare function randInt(range: integer, min?: integer): integer;
   export declare function randSeedInt(range: integer, min?: integer): integer;
   /**
-  * Returns a random integer between min and max (non-inclusive)
-  * @param min The lowest number
-  * @param max The highest number
-  */
+   * Returns a random integer between min and max (non-inclusive)
+   * @param min The lowest number
+   * @param max The highest number
+   */
   export declare function randIntRange(min: integer, max: integer): integer;
   export declare function randItem<T>(items: T[]): T;
   export declare function randSeedItem<T>(items: T[]): T;
@@ -25251,7 +25253,8 @@ declare namespace PokeRogue {
    * @param returnWithSpaces - Whether the returned string should have spaces between the words or not.
    * @returns The capitalized string.
    */
-  export declare function capitalizeString(str: string, sep: string, lowerFirstChar?: boolean, returnWithSpaces?: boolean): void;
+  export declare function capitalizeString(str: string, sep: string, lowerFirstChar?: boolean, returnWithSpaces?: boolean): string;
+  export declare function setApi(url: string): void;
   
 }
 
