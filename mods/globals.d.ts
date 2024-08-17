@@ -1,3 +1,9 @@
+declare namespace PokeRogue.@types {
+  //import BattleScene from "#app/battle-scene.js";
+  export type ConditionFn = (scene: PokeRogue.BattleScene, args?: any[]) => boolean;
+  
+}
+
 declare namespace PokeRogue {
   export interface UserInfo {
       username: string;
@@ -5,7 +11,7 @@ declare namespace PokeRogue {
       discordId: string;
       googleId: string;
   }
-  export declare let loggedInUser: UserInfo;
+  export declare let loggedInUser: UserInfo | null;
   export declare const clientSessionId: string;
   export declare function initLoggedInUser(): void;
   export declare function updateUserInfo(): Promise<[boolean, integer]>;
@@ -73,8 +79,8 @@ declare namespace PokeRogue {
       rexUI: UIPlugin;
       inputController: PokeRogue.InputsController;
       uiInputs: PokeRogue.UiInputs;
-      sessionPlayTime: integer;
-      lastSavePlayTime: integer;
+      sessionPlayTime: integer | null;
+      lastSavePlayTime: integer | null;
       masterVolume: number;
       bgmVolume: number;
       seVolume: number;
@@ -89,6 +95,7 @@ declare namespace PokeRogue {
       enableTutorials: boolean;
       enableMoveInfo: boolean;
       enableRetries: boolean;
+      hideIvs: boolean;
       /**
        * Determines the condition for a notification should be shown for Candy Upgrades
        * - 0 = 'Off'
@@ -172,7 +179,7 @@ declare namespace PokeRogue {
       score: integer;
       lockModifierTiers: boolean;
       trainer: Phaser.GameObjects.Sprite;
-      lastEnemyTrainer: PokeRogue.field.Trainer;
+      lastEnemyTrainer: PokeRogue.field.Trainer | null;
       currentBattle: PokeRogue.Battle;
       pokeballCounts: PokeballCounts;
       money: integer;
@@ -236,14 +243,14 @@ declare namespace PokeRogue {
       initStarterColors(): Promise<void>;
       hasExpSprite(key: string): boolean;
       getParty(): PlayerPokemon[];
-      getPlayerPokemon(): PlayerPokemon;
+      getPlayerPokemon(): PlayerPokemon | undefined;
       /**
        * Returns an array of PlayerPokemon of length 1 or 2 depending on if double battles or not
        * @returns array of {@linkcode PlayerPokemon}
        */
       getPlayerField(): PlayerPokemon[];
       getEnemyParty(): EnemyPokemon[];
-      getEnemyPokemon(): EnemyPokemon;
+      getEnemyPokemon(): EnemyPokemon | undefined;
       /**
        * Returns an array of EnemyPokemon of length 1 or 2 depending on if double battles or not
        * @returns array of {@linkcode EnemyPokemon}
@@ -251,20 +258,27 @@ declare namespace PokeRogue {
       getEnemyField(): EnemyPokemon[];
       getField(activeOnly?: boolean): Pokemon[];
       /**
+       * Used in doubles battles to redirect moves from one pokemon to another when one faints or is removed from the field
+       * @param removedPokemon {@linkcode Pokemon} the pokemon that is being removed from the field (flee, faint), moves to be redirected FROM
+       * @param allyPokemon {@linkcode Pokemon} the pokemon that will have the moves be redirected TO
+       */
+      redirectPokemonMoves(removedPokemon: PokeRogue.field.Pokemon, allyPokemon: PokeRogue.field.Pokemon): void;
+      /**
        * Returns the ModifierBar of this scene, which is declared public and therefore not accessible elsewhere
+       * @param isEnemy Whether to return the enemy's modifier bar
        * @returns {ModifierBar}
        */
-      getModifierBar(): ModifierBar;
+      getModifierBar(isEnemy?: boolean): ModifierBar;
       addInfoToggle(infoToggle: InfoToggle): void;
       getInfoToggles(activeOnly?: boolean): InfoToggle[];
-      getPokemonById(pokemonId: integer): Pokemon;
-      addPlayerPokemon(species: PokeRogue.data.PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PokeRogue.field.PlayerPokemon) => void): PlayerPokemon;
+      getPokemonById(pokemonId: integer): Pokemon | null;
+      addPlayerPokemon(species: PokeRogue.data.PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData, postProcess?: (playerPokemon: PokeRogue.field.PlayerPokemon) => void): PlayerPokemon;
       addEnemyPokemon(species: PokeRogue.data.PokemonSpecies, level: integer, trainerSlot: PokeRogue.data.TrainerSlot, boss?: boolean, dataSource?: PokemonData, postProcess?: (enemyPokemon: PokeRogue.field.EnemyPokemon) => void): EnemyPokemon;
       addPokemonIcon(pokemon: PokeRogue.field.Pokemon, x: number, y: number, originX?: number, originY?: number, ignoreOverride?: boolean): Phaser.GameObjects.Container;
       setSeed(seed: string): void;
       randBattleSeedInt(range: integer, min?: integer): integer;
       reset(clearScene?: boolean, clearData?: boolean, reloadI18n?: boolean): void;
-      newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle;
+      newBattle(waveIndex?: integer, battleType?: BattleType, trainerData?: TrainerData, double?: boolean): Battle | null;
       newArena(biome: PokeRogue.enums.Biome): Arena;
       updateFieldScale(): Promise<void>;
       setFieldScale(scale: number, instant?: boolean): Promise<void>;
@@ -312,8 +326,8 @@ declare namespace PokeRogue {
       playSoundWithoutBgm(soundName: string, pauseDuration?: integer): AnySound;
       getBgmLoopPoint(bgmName: string): number;
       toggleInvert(invert: boolean): void;
-      getCurrentPhase(): Phase;
-      getStandbyPhase(): Phase;
+      getCurrentPhase(): Phase | null;
+      getStandbyPhase(): Phase | null;
       /**
        * Adds a phase to the conditional queue and ensures it is executed only when the specified condition is met.
        *
@@ -355,7 +369,7 @@ declare namespace PokeRogue {
        */
       shiftPhase(): void;
       overridePhase(phase: PokeRogue.Phase): boolean;
-      findPhase(phaseFilter: (phase: PokeRogue.Phase) => boolean): Phase;
+      findPhase(phaseFilter: (phase: PokeRogue.Phase) => boolean): Phase | undefined;
       tryReplacePhase(phaseFilter: (phase: PokeRogue.Phase) => boolean, phase: PokeRogue.Phase): boolean;
       tryRemovePhase(phaseFilter: (phase: PokeRogue.Phase) => boolean): boolean;
       pushMovePhase(movePhase: PokeRogue.MovePhase, priorityOverride?: integer): void;
@@ -374,14 +388,14 @@ declare namespace PokeRogue {
        * @param promptDelay optional param for MessagePhase constructor
        * @param defer boolean for which queue to add it to, false -> add to PhaseQueuePrepend, true -> nextCommandPhaseQueue
        */
-      queueMessage(message: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer, defer?: boolean): void;
+      queueMessage(message: string, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null, defer?: boolean | null): void;
       /**
        * Moves everything from nextCommandPhaseQueue to phaseQueue (keeping order)
        */
       populatePhaseQueue(): void;
       addMoney(amount: integer): void;
       getWaveMoneyAmount(moneyMultiplier: number): integer;
-      addModifier(modifier: PokeRogue.modifier.Modifier, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean>;
+      addModifier(modifier: PokeRogue.modifier.Modifier | null, ignoreUpdate?: boolean, playSound?: boolean, virtual?: boolean, instant?: boolean): Promise<boolean>;
       addEnemyModifier(modifier: PokeRogue.modifier.PersistentModifier, ignoreUpdate?: boolean, instant?: boolean): Promise<void>;
       /**
        * Try to transfer a held item to another pokemon.
@@ -419,16 +433,21 @@ declare namespace PokeRogue {
        */
       getModifiers<T extends PokeRogue.modifier.PersistentModifier>(modifierType: PokeRogue.Constructor<T>, player?: boolean): T[];
       findModifiers(modifierFilter: PokeRogue.modifier.ModifierPredicate, player?: boolean): PersistentModifier[];
-      findModifier(modifierFilter: PokeRogue.modifier.ModifierPredicate, player?: boolean): PersistentModifier;
+      findModifier(modifierFilter: PokeRogue.modifier.ModifierPredicate, player?: boolean): PersistentModifier | undefined;
       applyShuffledModifiers(scene: BattleScene, modifierType: PokeRogue.Constructor<Modifier>, player?: boolean, ...args: any[]): PersistentModifier[];
       applyModifiers(modifierType: PokeRogue.Constructor<Modifier>, player?: boolean, ...args: any[]): PersistentModifier[];
       applyModifiersInternal(modifiers: PokeRogue.modifier.PersistentModifier[], player: boolean, args: any[]): PersistentModifier[];
-      applyModifier(modifierType: PokeRogue.Constructor<Modifier>, player?: boolean, ...args: any[]): PersistentModifier;
+      applyModifier(modifierType: PokeRogue.Constructor<Modifier>, player?: boolean, ...args: any[]): PersistentModifier | null;
       triggerPokemonFormChange(pokemon: PokeRogue.field.Pokemon, formChangeTriggerType: PokeRogue.Constructor<SpeciesFormChangeTrigger>, delayed?: boolean, modal?: boolean): boolean;
       validateAchvs(achvType: PokeRogue.Constructor<Achv>, ...args: unknown[]): void;
       validateAchv(achv: PokeRogue.system.Achv, args?: any[]): boolean;
       validateVoucher(voucher: PokeRogue.system.Voucher, args?: any[]): boolean;
       updateGameInfo(): void;
+      /**
+       * Initialized the 2nd phase of the final boss (e.g. form-change for Eternatus)
+       * @param pokemon The (enemy) pokemon
+       */
+      initFinalBossPhaseTwo(pokemon: PokeRogue.field.Pokemon): void;
   }
   export {};
   
@@ -465,15 +484,15 @@ declare namespace PokeRogue {
       args?: any[];
   }
   interface TurnCommands {
-      [key: integer]: TurnCommand;
+      [key: integer]: TurnCommand | null;
   }
   export class Battle {
       protected gameMode: PokeRogue.GameMode;
       waveIndex: integer;
       battleType: BattleType;
       battleSpec: PokeRogue.enums.BattleSpec;
-      trainer: PokeRogue.field.Trainer;
-      enemyLevels: integer[];
+      trainer: PokeRogue.field.Trainer | null;
+      enemyLevels: integer[] | undefined;
       enemyParty: PokeRogue.field.EnemyPokemon[];
       seenEnemyPartyMemberIds: Set<integer>;
       double: boolean;
@@ -489,11 +508,11 @@ declare namespace PokeRogue {
       battleSeed: string;
       public battleSeedState;
       moneyScattered: number;
-      lastUsedPokeball: PokeRogue.data.PokeballType;
+      lastUsedPokeball: PokeRogue.data.PokeballType | null;
       playerFaints: number;
       enemyFaints: number;
       public rngCounter;
-      constructor(gameMode: PokeRogue.GameMode, waveIndex: integer, battleType: BattleType, trainer: PokeRogue.field.Trainer, double: boolean);
+      constructor(gameMode: PokeRogue.GameMode, waveIndex: integer, battleType: BattleType, trainer?: Trainer, double?: boolean);
       public initBattleSpec;
       public getLevelForWave;
       randSeedGaussForLevel(value: number): number;
@@ -504,7 +523,7 @@ declare namespace PokeRogue {
       addPostBattleLoot(enemyPokemon: PokeRogue.field.EnemyPokemon): void;
       pickUpScatteredMoney(scene: PokeRogue.BattleScene): void;
       addBattleScore(scene: PokeRogue.BattleScene): void;
-      getBgmOverride(scene: PokeRogue.BattleScene): string;
+      getBgmOverride(scene: PokeRogue.BattleScene): string | null;
       randSeedInt(scene: PokeRogue.BattleScene, range: integer, min?: integer): integer;
   }
   export declare class FixedBattle extends Battle {
@@ -530,7 +549,8 @@ declare namespace PokeRogue {
   /**
    * Youngster/Lass on 5
    * Rival on 8, 55, 95, 145, 195
-   * Evil team grunts on 35, 62, 64, 66, 112, 114
+   * Evil team grunts on 35, 62, 64, and 112
+   * Evil team admin on 66 and 114
    * Evil leader on 115, 165
    * E4 on 182, 184, 186, 188
    * Champion on 190
@@ -1368,15 +1388,15 @@ declare namespace PokeRogue.data {
       unimplemented(): this;
   }
   type AbAttrCondition = (pokemon: PokeRogue.field.Pokemon) => boolean;
-  type PokemonAttackCondition = (user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: PokeRogue.data.Move) => boolean;
+  type PokemonAttackCondition = (user: PokeRogue.field.Pokemon | null, target: PokeRogue.field.Pokemon | null, move: PokeRogue.data.Move) => boolean;
   type PokemonDefendCondition = (target: PokeRogue.field.Pokemon, user: PokeRogue.field.Pokemon, move: PokeRogue.data.Move) => boolean;
   type PokemonStatChangeCondition = (target: PokeRogue.field.Pokemon, statsChanged: PokeRogue.data.BattleStat[], levels: integer) => boolean;
   export declare abstract class AbAttr {
       showAbility: boolean;
       public extraCondition;
       constructor(showAbility?: boolean);
-      apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
-      getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
+      apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean>;
+      getTriggerMessage(_pokemon: PokeRogue.field.Pokemon, _abilityName: string, ..._args: any[]): string | null;
       getCondition(): AbAttrCondition | null;
       addCondition(condition: AbAttrCondition): AbAttr;
   }
@@ -1405,12 +1425,7 @@ declare namespace PokeRogue.data {
   }
   type PreDefendAbAttrCondition = (pokemon: PokeRogue.field.Pokemon, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move) => boolean;
   export declare class PreDefendAbAttr extends AbAttr {
-      applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
-  }
-  export declare class PreDefendFormChangeAbAttr extends PreDefendAbAttr {
-      public formFunc;
-      constructor(formFunc: ((p: PokeRogue.field.Pokemon) => integer));
-      applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
+      applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move | null, cancelled: Utils.BooleanHolder | null, args: any[]): boolean | Promise<boolean>;
   }
   export declare class PreDefendFullHpEndureAbAttr extends PreDefendAbAttr {
       applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
@@ -1431,10 +1446,6 @@ declare namespace PokeRogue.data {
   export declare class ReceivedTypeDamageMultiplierAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
       constructor(moveType: PokeRogue.data.Type, damageMultiplier: number);
   }
-  export declare class PreDefendMoveDamageToOneAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
-      constructor(condition: PokemonDefendCondition);
-      applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
-  }
   /**
    * Determines whether a Pokemon is immune to a move because of an ability.
    * @extends PreDefendAbAttr
@@ -1444,7 +1455,7 @@ declare namespace PokeRogue.data {
   export declare class TypeImmunityAbAttr extends PreDefendAbAttr {
       public immuneType;
       public condition;
-      constructor(immuneType: PokeRogue.data.Type, condition?: AbAttrCondition);
+      constructor(immuneType: PokeRogue.data.Type | null, condition?: AbAttrCondition);
       /**
        * Applies immunity if this ability grants immunity to the type of the given move.
        * @param pokemon {@linkcode Pokemon} The defending Pokemon.
@@ -1456,7 +1467,16 @@ declare namespace PokeRogue.data {
        * @param args [1] - Whether the move is simulated.
        */
       applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
-      getCondition(): AbAttrCondition;
+      getCondition(): AbAttrCondition | null;
+  }
+  export declare class AttackTypeImmunityAbAttr extends TypeImmunityAbAttr {
+      constructor(immuneType: PokeRogue.data.Type, condition?: AbAttrCondition);
+      /**
+       * Applies immunity if the move used is not a status move.
+       * Type immunity abilities that do not give additional benefits (HP recovery, stat boosts, etc) are not immune to status moves of the type
+       * Example: Levitate
+       */
+      applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
   }
   export declare class TypeImmunityHealAbAttr extends TypeImmunityAbAttr {
       constructor(immuneType: PokeRogue.data.Type);
@@ -1468,15 +1488,25 @@ declare namespace PokeRogue.data {
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
   }
   export declare class PostDefendAbAttr extends AbAttr {
+      applyPostDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult | null, args: any[]): boolean | Promise<boolean>;
+  }
+  /**
+   * Applies the effects of Gulp Missile when the user is hit by an attack.
+   * @extends PostDefendAbAttr
+   */
+  export declare class PostDefendGulpMissileAbAttr extends PostDefendAbAttr {
+      constructor();
+      /**
+       * Damages the attacker and triggers the secondary effect based on the form or the BattlerTagType.
+       * @param {Pokemon} pokemon - The defending Pokemon.
+       * @param passive - n/a
+       * @param {Pokemon} attacker - The attacking Pokemon.
+       * @param {Move} move - The move being used.
+       * @param {HitResult} hitResult - n/a
+       * @param {any[]} args - n/a
+       * @returns Whether the effects of the ability are applied.
+       */
       applyPostDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean | Promise<boolean>;
-  }
-  export declare class PostDefendDisguiseAbAttr extends PostDefendAbAttr {
-      applyPostDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
-  }
-  export declare class PostDefendFormChangeAbAttr extends PostDefendAbAttr {
-      public formFunc;
-      constructor(formFunc: ((p: PokeRogue.field.Pokemon) => integer));
-      applyPostDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
   }
   export declare class FieldPriorityMoveImmunityAbAttr extends PreDefendAbAttr {
       applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
@@ -1609,7 +1639,8 @@ declare namespace PokeRogue.data {
   }
   export declare class PostDefendWeatherChangeAbAttr extends PostDefendAbAttr {
       public weatherType;
-      constructor(weatherType: PokeRogue.data.WeatherType);
+      protected condition: PokemonDefendCondition | null;
+      constructor(weatherType: PokeRogue.data.WeatherType, condition?: PokemonDefendCondition);
       applyPostDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
   }
   export declare class PostDefendAbilitySwapAbAttr extends PostDefendAbAttr {
@@ -1639,7 +1670,7 @@ declare namespace PokeRogue.data {
       applyPostStatChange(pokemon: PokeRogue.field.Pokemon, statsChanged: PokeRogue.data.BattleStat[], levelsChanged: integer, selfTarget: boolean, args: any[]): boolean;
   }
   export declare class PreAttackAbAttr extends AbAttr {
-      applyPreAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, args: any[]): boolean | Promise<boolean>;
+      applyPreAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon | null, move: PokeRogue.data.Move, args: any[]): boolean | Promise<boolean>;
   }
   /**
    * Modifies moves additional effects with multipliers, ie. Sheer Force, Serene Grace.
@@ -1648,7 +1679,7 @@ declare namespace PokeRogue.data {
    */
   export declare class MoveEffectChanceMultiplierAbAttr extends AbAttr {
       public chanceMultiplier;
-      constructor(chanceMultiplier?: number);
+      constructor(chanceMultiplier: number);
       /**
        * @param args [0]: {@linkcode Utils.NumberHolder} Move additional effect chance. Has to be higher than or equal to 0.
        *             [1]: {@linkcode Moves } Move used by the ability user.
@@ -1802,7 +1833,7 @@ declare namespace PokeRogue.data {
        * @param powerMultiplier - The multiplier to apply to the move's power when the condition is met.
        */
       constructor(condition: PokemonAttackCondition, powerMultiplier: number);
-      applyPreAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, args: any[]): boolean;
+      applyPreAttack(pokemon: PokeRogue.field.Pokemon | null, passive: boolean | null, defender: PokeRogue.field.Pokemon | null, move: PokeRogue.data.Move, args: any[]): boolean;
   }
   /**
    * Boosts the power of a specific type of move.
@@ -1846,12 +1877,24 @@ declare namespace PokeRogue.data {
       applyBattleStat(pokemon: PokeRogue.field.Pokemon, passive: boolean, battleStat: PokeRogue.data.BattleStat, statValue: Utils.NumberHolder, args: any[]): boolean | Promise<boolean>;
   }
   export declare class PostAttackAbAttr extends AbAttr {
-      applyPostAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean | Promise<boolean>;
+      public attackCondition;
+      /** The default attackCondition requires that the selected move is a damaging move */
+      constructor(attackCondition?: PokemonAttackCondition);
+      /**
+       * Please override {@link applyPostAttackAfterMoveTypeCheck} instead of this method. By default, this method checks that the move used is a damaging attack before
+       * applying the effect of any inherited class. This can be changed by providing a different {@link attackCondition} to the constructor. See {@link ConfusionOnStatusEffectAbAttr}
+       * for an example of an effect that does not require a damaging move.
+       */
+      applyPostAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult | null, args: any[]): boolean | Promise<boolean>;
+      /**
+       * This method is only called after {@link applyPostAttack} has already been applied. Use this for handling checks specific to the ability in question.
+       */
+      applyPostAttackAfterMoveTypeCheck(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult | null, args: any[]): boolean | Promise<boolean>;
   }
   export declare class PostAttackStealHeldItemAbAttr extends PostAttackAbAttr {
-      public condition;
-      constructor(condition?: PokemonAttackCondition);
-      applyPostAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): Promise<boolean>;
+      public stealCondition;
+      constructor(stealCondition?: PokemonAttackCondition);
+      applyPostAttackAfterMoveTypeCheck(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): Promise<boolean>;
       getTargetHeldItems(target: PokeRogue.field.Pokemon): PokemonHeldItemModifier[];
   }
   export declare class PostAttackApplyStatusEffectAbAttr extends PostAttackAbAttr {
@@ -1859,7 +1902,7 @@ declare namespace PokeRogue.data {
       public chance;
       public effects;
       constructor(contactRequired: boolean, chance: integer, ...effects: PokeRogue.data.StatusEffect[]);
-      applyPostAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
+      applyPostAttackAfterMoveTypeCheck(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
   }
   export declare class PostAttackContactApplyStatusEffectAbAttr extends PostAttackApplyStatusEffectAbAttr {
       constructor(chance: integer, ...effects: PokeRogue.data.StatusEffect[]);
@@ -1869,7 +1912,7 @@ declare namespace PokeRogue.data {
       public chance;
       public effects;
       constructor(contactRequired: boolean, chance: (user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: PokeRogue.data.Move) => integer, ...effects: PokeRogue.enums.BattlerTagType[]);
-      applyPostAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
+      applyPostAttackAfterMoveTypeCheck(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
   }
   export declare class PostDefendStealHeldItemAbAttr extends PostDefendAbAttr {
       public condition;
@@ -2042,6 +2085,25 @@ declare namespace PokeRogue.data {
       applyPostSummon(pokemon: PokeRogue.field.Pokemon, passive: boolean, args: any[]): boolean;
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
   }
+  /**
+   * Removes supplied status effects from the user's field.
+   */
+  export declare class PostSummonUserFieldRemoveStatusEffectAbAttr extends PostSummonAbAttr {
+      public statusEffect;
+      /**
+       * @param statusEffect - The status effects to be removed from the user's field.
+       */
+      constructor(...statusEffect: PokeRogue.data.StatusEffect[]);
+      /**
+       * Removes supplied status effect from the user's field when user of the ability is summoned.
+       *
+       * @param pokemon - The Pokémon that triggered the ability.
+       * @param passive - n/a
+       * @param args - n/a
+       * @returns A boolean or a promise that resolves to a boolean indicating the result of the ability application.
+       */
+      applyPostSummon(pokemon: PokeRogue.field.Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean>;
+  }
   /** Attempt to copy the stat changes on an ally pokemon */
   export declare class PostSummonCopyAllyStatsAbAttr extends PostSummonAbAttr {
       applyPostSummon(pokemon: PokeRogue.field.Pokemon, passive: boolean, args: any[]): boolean;
@@ -2091,7 +2153,7 @@ declare namespace PokeRogue.data {
       applyPreSwitchOut(pokemon: PokeRogue.field.Pokemon, passive: boolean, args: any[]): boolean | Promise<boolean>;
   }
   export declare class PreStatChangeAbAttr extends AbAttr {
-      applyPreStatChange(pokemon: PokeRogue.field.Pokemon, passive: boolean, stat: PokeRogue.data.BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
+      applyPreStatChange(pokemon: PokeRogue.field.Pokemon | null, passive: boolean, stat: PokeRogue.data.BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
   }
   export declare class ProtectStatAbAttr extends PreStatChangeAbAttr {
       public protectedStat;
@@ -2120,25 +2182,69 @@ declare namespace PokeRogue.data {
        * @param args [0] {@linkcode StatusEffect} applied by move
        * @returns true if defender is confused
        */
-      applyPostAttack(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
+      applyPostAttackAfterMoveTypeCheck(pokemon: PokeRogue.field.Pokemon, passive: boolean, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, args: any[]): boolean;
   }
   export declare class PreSetStatusAbAttr extends AbAttr {
-      applyPreSetStatus(pokemon: PokeRogue.field.Pokemon, passive: boolean, effect: PokeRogue.data.StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
+      applyPreSetStatus(pokemon: PokeRogue.field.Pokemon, passive: boolean, effect: PokeRogue.data.StatusEffect | undefined, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
   }
-  export declare class StatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
+  /**
+   * Provides immunity to status effects to specified targets.
+   */
+  export declare class PreSetStatusEffectImmunityAbAttr extends PreSetStatusAbAttr {
       public immuneEffects;
+      /**
+       * @param immuneEffects - The status effects to which the Pokémon is immune.
+       */
       constructor(...immuneEffects: PokeRogue.data.StatusEffect[]);
+      /**
+       * Applies immunity to supplied status effects.
+       *
+       * @param pokemon - The Pokémon to which the status is being applied.
+       * @param passive - n/a
+       * @param effect - The status effect being applied.
+       * @param cancelled - A holder for a boolean value indicating if the status application was cancelled.
+       * @param args - n/a
+       * @returns A boolean indicating the result of the status application.
+       */
       applyPreSetStatus(pokemon: PokeRogue.field.Pokemon, passive: boolean, effect: PokeRogue.data.StatusEffect, cancelled: Utils.BooleanHolder, args: any[]): boolean;
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
+  }
+  /**
+   * Provides immunity to status effects to the user.
+   * @extends PreSetStatusEffectImmunityAbAttr
+   */
+  export declare class StatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr {
+  }
+  /**
+   * Provides immunity to status effects to the user's field.
+   * @extends PreSetStatusEffectImmunityAbAttr
+   */
+  export declare class UserFieldStatusEffectImmunityAbAttr extends PreSetStatusEffectImmunityAbAttr {
   }
   export declare class PreApplyBattlerTagAbAttr extends AbAttr {
       applyPreApplyBattlerTag(pokemon: PokeRogue.field.Pokemon, passive: boolean, tag: PokeRogue.data.BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
   }
-  export declare class BattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
+  /**
+   * Provides immunity to BattlerTags {@linkcode BattlerTag} to specified targets.
+   */
+  export declare class PreApplyBattlerTagImmunityAbAttr extends PreApplyBattlerTagAbAttr {
       public immuneTagType;
+      public battlerTag;
       constructor(immuneTagType: PokeRogue.enums.BattlerTagType);
       applyPreApplyBattlerTag(pokemon: PokeRogue.field.Pokemon, passive: boolean, tag: PokeRogue.data.BattlerTag, cancelled: Utils.BooleanHolder, args: any[]): boolean;
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
+  }
+  /**
+   * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user.
+   * @extends PreApplyBattlerTagImmunityAbAttr
+   */
+  export declare class BattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
+  }
+  /**
+   * Provides immunity to BattlerTags {@linkcode BattlerTag} to the user's field.
+   * @extends PreApplyBattlerTagImmunityAbAttr
+   */
+  export declare class UserFieldBattlerTagImmunityAbAttr extends PreApplyBattlerTagImmunityAbAttr {
   }
   export declare class BlockCritAbAttr extends AbAttr {
       apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
@@ -2191,16 +2297,25 @@ declare namespace PokeRogue.data {
   export declare class BlockOneHitKOAbAttr extends AbAttr {
       apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
   }
-  export declare class IncrementMovePriorityAbAttr extends AbAttr {
-      public moveIncrementFunc;
-      public increaseAmount;
-      constructor(moveIncrementFunc: (pokemon: PokeRogue.field.Pokemon, move: PokeRogue.data.Move) => boolean, increaseAmount?: number);
+  /**
+   * This governs abilities that alter the priority of moves
+   * Abilities: Prankster, Gale Wings, Triage, Mycelium Might, Stall
+   * Note - Quick Claw has a separate and distinct implementation outside of priority
+   */
+  export declare class ChangeMovePriorityAbAttr extends AbAttr {
+      public moveFunc;
+      public changeAmount;
+      /**
+       * @param {(pokemon, move) => boolean} moveFunc applies priority-change to moves within a provided category
+       * @param {number} changeAmount the amount of priority added or subtracted
+       */
+      constructor(moveFunc: (pokemon: PokeRogue.field.Pokemon, move: PokeRogue.data.Move) => boolean, changeAmount: number);
       apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
   }
   export declare class IgnoreContactAbAttr extends AbAttr {
   }
   export declare class PreWeatherEffectAbAttr extends AbAttr {
-      applyPreWeatherEffect(pokemon: PokeRogue.field.Pokemon, passive: boolean, weather: PokeRogue.data.Weather, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
+      applyPreWeatherEffect(pokemon: PokeRogue.field.Pokemon, passive: boolean, weather: PokeRogue.data.Weather | null, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
   }
   export declare class PreWeatherDamageAbAttr extends PreWeatherEffectAbAttr {
   }
@@ -2235,7 +2350,7 @@ declare namespace PokeRogue.data {
   export declare class PostWeatherLapseAbAttr extends AbAttr {
       protected weatherTypes: PokeRogue.data.WeatherType[];
       constructor(...weatherTypes: PokeRogue.data.WeatherType[]);
-      applyPostWeatherLapse(pokemon: PokeRogue.field.Pokemon, passive: boolean, weather: PokeRogue.data.Weather, args: any[]): boolean | Promise<boolean>;
+      applyPostWeatherLapse(pokemon: PokeRogue.field.Pokemon, passive: boolean, weather: PokeRogue.data.Weather | null, args: any[]): boolean | Promise<boolean>;
       getCondition(): AbAttrCondition;
   }
   export declare class PostWeatherLapseHealAbAttr extends PostWeatherLapseAbAttr {
@@ -2412,6 +2527,23 @@ declare namespace PokeRogue.data {
   }
   export declare class BypassBurnDamageReductionAbAttr extends AbAttr {
       constructor();
+      apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
+  }
+  /**
+   * Causes Pokemon to take reduced damage from the {@linkcode StatusEffect.BURN | Burn} status
+   * @param multiplier Multiplied with the damage taken
+  */
+  export declare class ReduceBurnDamageAbAttr extends AbAttr {
+      protected multiplier: number;
+      constructor(multiplier: number);
+      /**
+       * Applies the damage reduction
+       * @param pokemon N/A
+       * @param passive N/A
+       * @param cancelled N/A
+       * @param args `[0]` {@linkcode Utils.NumberHolder} The damage value being modified
+       * @returns `true`
+       */
       apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
   }
   export declare class DoubleBerryEffectAbAttr extends AbAttr {
@@ -2647,31 +2779,35 @@ declare namespace PokeRogue.data {
       applyPostSummon(pokemon: PokeRogue.field.Pokemon, passive: boolean, args: any[]): boolean;
   }
   /**
-   * Takes no damage from the first hit of a physical move.
-   * This is used in Ice Face ability.
+   * Takes no damage from the first hit of a damaging move.
+   * This is used in the Disguise and Ice Face abilities.
+   * @extends ReceivedMoveDamageMultiplierAbAttr
    */
-  export declare class IceFaceBlockPhysicalAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
+  export declare class FormBlockDamageAbAttr extends ReceivedMoveDamageMultiplierAbAttr {
       public multiplier;
-      constructor(condition: PokemonDefendCondition, multiplier: number);
+      public tagType;
+      public recoilDamageFunc;
+      public triggerMessageFunc;
+      constructor(condition: PokemonDefendCondition, multiplier: number, tagType: PokeRogue.enums.BattlerTagType, triggerMessageFunc: (pokemon: PokeRogue.field.Pokemon, abilityName: string) => string, recoilDamageFunc?: (pokemon: PokeRogue.field.Pokemon) => number);
       /**
-       * Applies the Ice Face pre-defense ability to the Pokémon.
-       * Removes BattlerTagType.ICE_FACE when hit by physical attack and is in Ice Face form.
+       * Applies the pre-defense ability to the Pokémon.
+       * Removes the appropriate `BattlerTagType` when hit by an attack and is in its defense form.
        *
-       * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
-       * @param {boolean} passive - Whether the ability is passive.
-       * @param {Pokemon} attacker - The attacking Pokémon.
-       * @param {PokemonMove} move - The move being used.
-       * @param {Utils.BooleanHolder} cancelled - A holder for whether the move was cancelled.
-       * @param {any[]} args - Additional arguments.
-       * @returns {boolean} - Whether the immunity was applied.
+       * @param {Pokemon} pokemon The Pokémon with the ability.
+       * @param {boolean} passive n/a
+       * @param {Pokemon} attacker The attacking Pokémon.
+       * @param {PokemonMove} move The move being used.
+       * @param {Utils.BooleanHolder} cancelled n/a
+       * @param {any[]} args Additional arguments.
+       * @returns {boolean} Whether the immunity was applied.
        */
       applyPreDefend(pokemon: PokeRogue.field.Pokemon, passive: boolean, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, args: any[]): boolean;
       /**
-       * Gets the message triggered when the Pokémon avoids damage using the Ice Face ability.
-       * @param {Pokemon} pokemon - The Pokémon with the Ice Face ability.
-       * @param {string} abilityName - The name of the ability.
-       * @param {...any} args - Additional arguments.
-       * @returns {string} - The trigger message.
+       * Gets the message triggered when the Pokémon avoids damage using the form-changing ability.
+       * @param {Pokemon} pokemon The Pokémon with the ability.
+       * @param {string} abilityName The name of the ability.
+       * @param {...any} args n/a
+       * @returns {string} The trigger message.
        */
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
   }
@@ -2697,10 +2833,26 @@ declare namespace PokeRogue.data {
       apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
   }
-  export declare function applyAbAttrs(attrType: PokeRogue.Constructor<AbAttr>, pokemon: PokeRogue.field.Pokemon, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
+  /**
+   * This attribute checks if a Pokemon's move meets a provided condition to determine if the Pokemon can use Quick Claw
+   * It was created because Pokemon with the ability Mycelium Might cannot access Quick Claw's benefits when using status moves.
+  */
+  export declare class PreventBypassSpeedChanceAbAttr extends AbAttr {
+      public condition;
+      /**
+       * @param {function} condition - checks if a move meets certain conditions
+       */
+      constructor(condition: (pokemon: PokeRogue.field.Pokemon, move: PokeRogue.data.Move) => boolean);
+      /**
+       * @argument {boolean} bypassSpeed - determines if a Pokemon is able to bypass speed at the moment
+       * @argument {boolean} canCheckHeldItems - determines if a Pokemon has access to Quick Claw's effects or not
+       */
+      apply(pokemon: PokeRogue.field.Pokemon, passive: boolean, cancelled: Utils.BooleanHolder, args: any[]): boolean;
+  }
+  export declare function applyAbAttrs(attrType: PokeRogue.Constructor<AbAttr>, pokemon: PokeRogue.field.Pokemon, cancelled: Utils.BooleanHolder | null, ...args: any[]): Promise<void>;
   export declare function applyPostBattleInitAbAttrs(attrType: PokeRogue.Constructor<PostBattleInitAbAttr>, pokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
-  export declare function applyPreDefendAbAttrs(attrType: PokeRogue.Constructor<PreDefendAbAttr>, pokemon: PokeRogue.field.Pokemon, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
-  export declare function applyPostDefendAbAttrs(attrType: PokeRogue.Constructor<PostDefendAbAttr>, pokemon: PokeRogue.field.Pokemon, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, ...args: any[]): Promise<void>;
+  export declare function applyPreDefendAbAttrs(attrType: PokeRogue.Constructor<PreDefendAbAttr>, pokemon: PokeRogue.field.Pokemon, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move | null, cancelled: Utils.BooleanHolder | null, ...args: any[]): Promise<void>;
+  export declare function applyPostDefendAbAttrs(attrType: PokeRogue.Constructor<PostDefendAbAttr>, pokemon: PokeRogue.field.Pokemon, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult | null, ...args: any[]): Promise<void>;
   export declare function applyPostMoveUsedAbAttrs(attrType: PokeRogue.Constructor<PostMoveUsedAbAttr>, pokemon: PokeRogue.field.Pokemon, move: PokeRogue.field.PokemonMove, source: PokeRogue.field.Pokemon, targets: PokeRogue.BattlerIndex[], ...args: any[]): Promise<void>;
   export declare function applyBattleStatMultiplierAbAttrs(attrType: PokeRogue.Constructor<BattleStatMultiplierAbAttr>, pokemon: PokeRogue.field.Pokemon, battleStat: PokeRogue.data.BattleStat, statValue: Utils.NumberHolder, ...args: any[]): Promise<void>;
   /**
@@ -2714,35 +2866,27 @@ declare namespace PokeRogue.data {
    * @param args unused
    */
   export declare function applyFieldBattleStatMultiplierAbAttrs(attrType: PokeRogue.Constructor<FieldMultiplyBattleStatAbAttr>, pokemon: PokeRogue.field.Pokemon, stat: PokeRogue.data.Stat, statValue: Utils.NumberHolder, checkedPokemon: PokeRogue.field.Pokemon, hasApplied: Utils.BooleanHolder, ...args: any[]): Promise<void>;
-  export declare function applyPreAttackAbAttrs(attrType: PokeRogue.Constructor<PreAttackAbAttr>, pokemon: PokeRogue.field.Pokemon, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, ...args: any[]): Promise<void>;
-  export declare function applyPostAttackAbAttrs(attrType: PokeRogue.Constructor<PostAttackAbAttr>, pokemon: PokeRogue.field.Pokemon, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, ...args: any[]): Promise<void>;
+  export declare function applyPreAttackAbAttrs(attrType: PokeRogue.Constructor<PreAttackAbAttr>, pokemon: PokeRogue.field.Pokemon, defender: PokeRogue.field.Pokemon | null, move: PokeRogue.data.Move, ...args: any[]): Promise<void>;
+  export declare function applyPostAttackAbAttrs(attrType: PokeRogue.Constructor<PostAttackAbAttr>, pokemon: PokeRogue.field.Pokemon, defender: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult | null, ...args: any[]): Promise<void>;
   export declare function applyPostKnockOutAbAttrs(attrType: PokeRogue.Constructor<PostKnockOutAbAttr>, pokemon: PokeRogue.field.Pokemon, knockedOut: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
   export declare function applyPostVictoryAbAttrs(attrType: PokeRogue.Constructor<PostVictoryAbAttr>, pokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
   export declare function applyPostSummonAbAttrs(attrType: PokeRogue.Constructor<PostSummonAbAttr>, pokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
   export declare function applyPreSwitchOutAbAttrs(attrType: PokeRogue.Constructor<PreSwitchOutAbAttr>, pokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
-  export declare function applyPreStatChangeAbAttrs(attrType: PokeRogue.Constructor<PreStatChangeAbAttr>, pokemon: PokeRogue.field.Pokemon, stat: PokeRogue.data.BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
+  export declare function applyPreStatChangeAbAttrs(attrType: PokeRogue.Constructor<PreStatChangeAbAttr>, pokemon: PokeRogue.field.Pokemon | null, stat: PokeRogue.data.BattleStat, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
   export declare function applyPostStatChangeAbAttrs(attrType: PokeRogue.Constructor<PostStatChangeAbAttr>, pokemon: PokeRogue.field.Pokemon, stats: PokeRogue.data.BattleStat[], levels: integer, selfTarget: boolean, ...args: any[]): Promise<void>;
-  export declare function applyPreSetStatusAbAttrs(attrType: PokeRogue.Constructor<PreSetStatusAbAttr>, pokemon: PokeRogue.field.Pokemon, effect: PokeRogue.data.StatusEffect, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
+  export declare function applyPreSetStatusAbAttrs(attrType: PokeRogue.Constructor<PreSetStatusAbAttr>, pokemon: PokeRogue.field.Pokemon, effect: PokeRogue.data.StatusEffect | undefined, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
   export declare function applyPreApplyBattlerTagAbAttrs(attrType: PokeRogue.Constructor<PreApplyBattlerTagAbAttr>, pokemon: PokeRogue.field.Pokemon, tag: PokeRogue.data.BattlerTag, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
-  export declare function applyPreWeatherEffectAbAttrs(attrType: PokeRogue.Constructor<PreWeatherEffectAbAttr>, pokemon: PokeRogue.field.Pokemon, weather: PokeRogue.data.Weather, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
+  export declare function applyPreWeatherEffectAbAttrs(attrType: PokeRogue.Constructor<PreWeatherEffectAbAttr>, pokemon: PokeRogue.field.Pokemon, weather: PokeRogue.data.Weather | null, cancelled: Utils.BooleanHolder, ...args: any[]): Promise<void>;
   export declare function applyPostTurnAbAttrs(attrType: PokeRogue.Constructor<PostTurnAbAttr>, pokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
   export declare function applyPostWeatherChangeAbAttrs(attrType: PokeRogue.Constructor<PostWeatherChangeAbAttr>, pokemon: PokeRogue.field.Pokemon, weather: PokeRogue.data.WeatherType, ...args: any[]): Promise<void>;
-  export declare function applyPostWeatherLapseAbAttrs(attrType: PokeRogue.Constructor<PostWeatherLapseAbAttr>, pokemon: PokeRogue.field.Pokemon, weather: PokeRogue.data.Weather, ...args: any[]): Promise<void>;
+  export declare function applyPostWeatherLapseAbAttrs(attrType: PokeRogue.Constructor<PostWeatherLapseAbAttr>, pokemon: PokeRogue.field.Pokemon, weather: PokeRogue.data.Weather | null, ...args: any[]): Promise<void>;
   export declare function applyPostTerrainChangeAbAttrs(attrType: PokeRogue.Constructor<PostTerrainChangeAbAttr>, pokemon: PokeRogue.field.Pokemon, terrain: PokeRogue.data.TerrainType, ...args: any[]): Promise<void>;
-  export declare function applyCheckTrappedAbAttrs(attrType: PokeRogue.Constructor<CheckTrappedAbAttr>, pokemon: PokeRogue.field.Pokemon, trapped: Utils.BooleanHolder, otherPokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
+  export declare function applyCheckTrappedAbAttrs(attrType: PokeRogue.Constructor<CheckTrappedAbAttr>, pokemon: PokeRogue.field.Pokemon, trapped: Utils.BooleanHolder, otherPokemon: PokeRogue.field.Pokemon, isQuiet: boolean, messages: string[], ...args: any[]): Promise<void>;
   export declare function applyPostBattleAbAttrs(attrType: PokeRogue.Constructor<PostBattleAbAttr>, pokemon: PokeRogue.field.Pokemon, ...args: any[]): Promise<void>;
   export declare function applyPostFaintAbAttrs(attrType: PokeRogue.Constructor<PostFaintAbAttr>, pokemon: PokeRogue.field.Pokemon, attacker: PokeRogue.field.Pokemon, move: PokeRogue.data.Move, hitResult: PokeRogue.field.HitResult, ...args: any[]): Promise<void>;
   export declare const allAbilities: Ability[];
   export declare function initAbilities(): void;
   export {};
-  
-}
-
-declare namespace PokeRogue.data {
-  export declare function printPokemon(): Promise<void>;
-  export declare function printAbilities(): Promise<void>;
-  export declare function printMoves(): Promise<void>;
-  export declare function printTmSpecies(): Promise<void>;
   
 }
 
@@ -2762,16 +2906,16 @@ declare namespace PokeRogue.data {
   export declare abstract class ArenaTag {
       tagType: PokeRogue.enums.ArenaTagType;
       turnCount: integer;
-      sourceMove: PokeRogue.enums.Moves;
-      sourceId: integer;
+      sourceMove?: Moves;
+      sourceId?: integer;
       side: ArenaTagSide;
-      constructor(tagType: PokeRogue.enums.ArenaTagType, turnCount: integer, sourceMove: PokeRogue.enums.Moves, sourceId?: integer, side?: ArenaTagSide);
+      constructor(tagType: PokeRogue.enums.ArenaTagType, turnCount: integer, sourceMove: PokeRogue.enums.Moves | undefined, sourceId?: integer, side?: ArenaTagSide);
       apply(arena: PokeRogue.field.Arena, args: any[]): boolean;
       onAdd(arena: PokeRogue.field.Arena, quiet?: boolean): void;
       onRemove(arena: PokeRogue.field.Arena, quiet?: boolean): void;
       onOverlap(arena: PokeRogue.field.Arena): void;
       lapse(arena: PokeRogue.field.Arena): boolean;
-      getMoveName(): string;
+      getMoveName(): string | null;
   }
   /**
    * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Mist_(move) Mist}.
@@ -2811,6 +2955,50 @@ declare namespace PokeRogue.data {
        * @returns True if the move was weakened, otherwise false.
        */
       apply(arena: PokeRogue.field.Arena, args: any[]): boolean;
+  }
+  type ProtectConditionFunc = (arena: PokeRogue.field.Arena, moveId: PokeRogue.enums.Moves) => boolean;
+  /**
+   * Class to implement conditional team protection
+   * applies protection based on the attributes of incoming moves
+   */
+  export declare class ConditionalProtectTag extends ArenaTag {
+      /** The condition function to determine which moves are negated */
+      protected protectConditionFunc: ProtectConditionFunc;
+      /** Does this apply to all moves, including those that ignore other forms of protection? */
+      protected ignoresBypass: boolean;
+      constructor(tagType: PokeRogue.enums.ArenaTagType, sourceMove: PokeRogue.enums.Moves, sourceId: integer, side: ArenaTagSide, condition: ProtectConditionFunc, ignoresBypass?: boolean);
+      onAdd(arena: PokeRogue.field.Arena): void;
+      onRemove(arena: PokeRogue.field.Arena): void;
+      /**
+       * apply(): Checks incoming moves against the condition function
+       * and protects the target if conditions are met
+       * @param arena The arena containing this tag
+       * @param args\[0\] (Utils.BooleanHolder) Signals if the move is cancelled
+       * @param args\[1\] (Pokemon) The Pokemon using the move
+       * @param args\[2\] (Pokemon) The intended target of the move
+       * @param args\[3\] (Moves) The parameters to the condition function
+       * @param args\[4\] (Utils.BooleanHolder) Signals if the applied protection supercedes protection-ignoring effects
+       * @returns
+       */
+      apply(arena: PokeRogue.field.Arena, args: any[]): boolean;
+  }
+  /**
+   * Arena Tag class for {@link https://bulbapedia.bulbagarden.net/wiki/Lucky_Chant_(move) Lucky Chant}.
+   * Prevents critical hits against the tag's side.
+   */
+  export declare class NoCritTag extends ArenaTag {
+      /**
+       * Constructor method for the NoCritTag class
+       * @param turnCount `integer` the number of turns this effect lasts
+       * @param sourceMove {@linkcode Moves} the move that created this effect
+       * @param sourceId `integer` the ID of the {@linkcode Pokemon} that created this effect
+       * @param side {@linkcode ArenaTagSide} the side to which this effect belongs
+       */
+      constructor(turnCount: integer, sourceMove: PokeRogue.enums.Moves, sourceId: integer, side: ArenaTagSide);
+      /** Queues a message upon adding this effect to the field */
+      onAdd(arena: PokeRogue.field.Arena): void;
+      /** Queues a message upon removing this effect from the field */
+      onRemove(arena: PokeRogue.field.Arena): void;
   }
   /**
    * Abstract class to implement weakened moves of a specific type.
@@ -2871,7 +3059,8 @@ declare namespace PokeRogue.data {
       onAdd(arena: PokeRogue.field.Arena): void;
       onRemove(arena: PokeRogue.field.Arena): void;
   }
-  export declare function getArenaTag(tagType: PokeRogue.enums.ArenaTagType, turnCount: integer, sourceMove: PokeRogue.enums.Moves, sourceId: integer, targetIndex?: BattlerIndex, side?: ArenaTagSide): ArenaTag;
+  export declare function getArenaTag(tagType: PokeRogue.enums.ArenaTagType, turnCount: integer, sourceMove: PokeRogue.enums.Moves | undefined, sourceId: integer, targetIndex?: BattlerIndex, side?: ArenaTagSide): ArenaTag | null;
+  export {};
   
 }
 
@@ -3016,14 +3205,14 @@ declare namespace PokeRogue.data {
   export declare function loadCommonAnimAssets(scene: PokeRogue.BattleScene, startLoad?: boolean): Promise<void>;
   export declare function loadMoveAnimAssets(scene: PokeRogue.BattleScene, moveIds: PokeRogue.enums.Moves[], startLoad?: boolean): Promise<void>;
   export declare abstract class BattleAnim {
-      user: PokeRogue.field.Pokemon;
-      target: PokeRogue.field.Pokemon;
+      user: PokeRogue.field.Pokemon | null;
+      target: PokeRogue.field.Pokemon | null;
       sprites: Phaser.GameObjects.Sprite[];
       bgSprite: Phaser.GameObjects.TileSprite | Phaser.GameObjects.Rectangle;
       public srcLine;
       public dstLine;
-      constructor(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon);
-      abstract getAnim(): AnimConfig;
+      constructor(user?: Pokemon, target?: Pokemon);
+      abstract getAnim(): AnimConfig | null;
       abstract isOppAnim(): boolean;
       protected isHideUser(): boolean;
       protected isHideTarget(): boolean;
@@ -3031,9 +3220,9 @@ declare namespace PokeRogue.data {
       play(scene: PokeRogue.BattleScene, callback?: Function): void;
   }
   export declare class CommonBattleAnim extends BattleAnim {
-      commonAnim: CommonAnim;
-      constructor(commonAnim: CommonAnim, user: PokeRogue.field.Pokemon, target?: Pokemon);
-      getAnim(): AnimConfig;
+      commonAnim: CommonAnim | null;
+      constructor(commonAnim: CommonAnim | null, user: PokeRogue.field.Pokemon, target?: Pokemon);
+      getAnim(): AnimConfig | null;
       isOppAnim(): boolean;
   }
   export declare class MoveAnim extends BattleAnim {
@@ -3064,10 +3253,11 @@ declare namespace PokeRogue.data {
       SPD = 4,
       ACC = 5,
       EVA = 6,
-      RAND = 7
+      RAND = 7,
+      HP = 8
   }
   export declare function getBattleStatName(stat: BattleStat): string;
-  export declare function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean, count?: integer): never;
+  export declare function getBattleStatLevelChangeDescription(pokemonNameWithAffix: string, stats: string, levels: integer, up: boolean, count?: number): never;
   
 }
 
@@ -3093,11 +3283,11 @@ declare namespace PokeRogue.data {
   }
   export declare class BattlerTag {
       tagType: PokeRogue.enums.BattlerTagType;
-      lapseType: BattlerTagLapseType[];
+      lapseTypes: BattlerTagLapseType[];
       turnCount: number;
       sourceMove: PokeRogue.enums.Moves;
       sourceId?: number;
-      constructor(tagType: PokeRogue.enums.BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove: PokeRogue.enums.Moves, sourceId?: number);
+      constructor(tagType: PokeRogue.enums.BattlerTagType, lapseType: BattlerTagLapseType | BattlerTagLapseType[], turnCount: number, sourceMove?: Moves, sourceId?: number);
       canAdd(pokemon: PokeRogue.field.Pokemon): boolean;
       onAdd(pokemon: PokeRogue.field.Pokemon): void;
       onRemove(pokemon: PokeRogue.field.Pokemon): void;
@@ -3105,7 +3295,7 @@ declare namespace PokeRogue.data {
       lapse(pokemon: PokeRogue.field.Pokemon, lapseType: BattlerTagLapseType): boolean;
       getDescriptor(): string;
       isSourceLinked(): boolean;
-      getMoveName(): string;
+      getMoveName(): string | null;
       /**
       * When given a battler tag or json representing one, load the data for it.
       * This is meant to be inherited from by any battler tag with custom attributes
@@ -3126,6 +3316,40 @@ declare namespace PokeRogue.data {
       constructor(sourceMove: PokeRogue.enums.Moves);
       onAdd(pokemon: PokeRogue.field.Pokemon): void;
       /** Cancels the source's move this turn and queues a "__ must recharge!" message */
+      lapse(pokemon: PokeRogue.field.Pokemon, lapseType: BattlerTagLapseType): boolean;
+  }
+  /**
+   * BattlerTag representing the "charge phase" of Beak Blast.
+   * Pokemon with this tag will inflict BURN status on any attacker that makes contact.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
+   */
+  export declare class BeakBlastChargingTag extends BattlerTag {
+      constructor();
+      onAdd(pokemon: PokeRogue.field.Pokemon): void;
+      /**
+       * Inflicts `BURN` status on attackers that make contact, and causes this tag
+       * to be removed after the source makes a move (or the turn ends, whichever comes first)
+       * @param pokemon {@linkcode Pokemon} the owner of this tag
+       * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+       * @returns `true` if invoked with the CUSTOM lapse type; `false` otherwise
+       */
+      lapse(pokemon: PokeRogue.field.Pokemon, lapseType: BattlerTagLapseType): boolean;
+  }
+  /**
+   * BattlerTag implementing Shell Trap's pre-move behavior.
+   * Pokemon with this tag will act immediately after being hit by a physical move.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Shell_Trap_(move) | Shell Trap}
+   */
+  export declare class ShellTrapTag extends BattlerTag {
+      activated: boolean;
+      constructor();
+      onAdd(pokemon: PokeRogue.field.Pokemon): void;
+      /**
+       * "Activates" the shell trap, causing the tag owner to move next.
+       * @param pokemon {@linkcode Pokemon} the owner of this tag
+       * @param lapseType {@linkcode BattlerTagLapseType} the type of functionality invoked in battle
+       * @returns `true` if invoked with the `CUSTOM` lapse type; `false` otherwise
+       */
       lapse(pokemon: PokeRogue.field.Pokemon, lapseType: BattlerTagLapseType): boolean;
   }
   export declare class TrappedTag extends BattlerTag {
@@ -3222,9 +3446,6 @@ declare namespace PokeRogue.data {
   export declare class FrenzyTag extends BattlerTag {
       constructor(turnCount: number, sourceMove: PokeRogue.enums.Moves, sourceId: number);
       onRemove(pokemon: PokeRogue.field.Pokemon): void;
-  }
-  export declare class ChargingTag extends BattlerTag {
-      constructor(sourceMove: PokeRogue.enums.Moves, sourceId: number);
   }
   export declare class EncoreTag extends BattlerTag {
       moveId: PokeRogue.enums.Moves;
@@ -3485,18 +3706,6 @@ declare namespace PokeRogue.data {
       lapse(pokemon: PokeRogue.field.Pokemon, lapseType: BattlerTagLapseType): boolean;
       onRemove(pokemon: PokeRogue.field.Pokemon): void;
   }
-  export declare class AlwaysCritTag extends BattlerTag {
-      constructor(sourceMove: PokeRogue.enums.Moves);
-  }
-  export declare class IgnoreAccuracyTag extends BattlerTag {
-      constructor(sourceMove: PokeRogue.enums.Moves);
-  }
-  export declare class AlwaysGetHitTag extends BattlerTag {
-      constructor(sourceMove: PokeRogue.enums.Moves);
-  }
-  export declare class ReceiveDoubleDamageTag extends BattlerTag {
-      constructor(sourceMove: PokeRogue.enums.Moves);
-  }
   export declare class SaltCuredTag extends BattlerTag {
       public sourceIndex;
       constructor(sourceId: number);
@@ -3527,29 +3736,37 @@ declare namespace PokeRogue.data {
   export declare class GroundedTag extends BattlerTag {
       constructor(tagType: PokeRogue.enums.BattlerTagType, lapseType: BattlerTagLapseType, sourceMove: PokeRogue.enums.Moves);
   }
-  /**
-   * Provides the Ice Face ability's effects.
-   */
-  export declare class IceFaceTag extends BattlerTag {
-      constructor(sourceMove: PokeRogue.enums.Moves);
+  /** Common attributes of form change abilities that block damage */
+  export declare class FormBlockDamageTag extends BattlerTag {
+      constructor(tagType: PokeRogue.enums.BattlerTagType);
       /**
-       * Determines if the Ice Face tag can be added to the Pokémon.
-       * @param {Pokemon} pokemon - The Pokémon to which the tag might be added.
-       * @returns {boolean} - True if the tag can be added, false otherwise.
+       * Determines if the tag can be added to the Pokémon.
+       * @param {Pokemon} pokemon The Pokémon to which the tag might be added.
+       * @returns {boolean} True if the tag can be added, false otherwise.
        */
       canAdd(pokemon: PokeRogue.field.Pokemon): boolean;
       /**
-       * Applies the Ice Face tag to the Pokémon.
-       * Triggers a form change to Ice Face if the Pokémon is not in its Ice Face form.
-       * @param {Pokemon} pokemon - The Pokémon to which the tag is added.
+       * Applies the tag to the Pokémon.
+       * Triggers a form change if the Pokémon is not in its defense form.
+       * @param {Pokemon} pokemon The Pokémon to which the tag is added.
        */
       onAdd(pokemon: PokeRogue.field.Pokemon): void;
       /**
-       * Removes the Ice Face tag from the Pokémon.
-       * Triggers a form change to Noice when the tag is removed.
-       * @param {Pokemon} pokemon - The Pokémon from which the tag is removed.
+       * Removes the tag from the Pokémon.
+       * Triggers a form change when the tag is removed.
+       * @param {Pokemon} pokemon The Pokémon from which the tag is removed.
        */
       onRemove(pokemon: PokeRogue.field.Pokemon): void;
+  }
+  /** Provides the additional weather-based effects of the Ice Face ability */
+  export declare class IceFaceBlockDamageTag extends FormBlockDamageTag {
+      constructor(tagType: PokeRogue.enums.BattlerTagType);
+      /**
+       * Determines if the tag can be added to the Pokémon.
+       * @param {Pokemon} pokemon The Pokémon to which the tag might be added.
+       * @returns {boolean} True if the tag can be added, false otherwise.
+       */
+      canAdd(pokemon: PokeRogue.field.Pokemon): boolean;
   }
   /**
    * Battler tag enabling the Stockpile mechanic. This tag handles:
@@ -3583,6 +3800,47 @@ declare namespace PokeRogue.data {
        * one stage for each stack which had successfully changed that particular stat during onAdd.
        */
       onRemove(pokemon: PokeRogue.field.Pokemon): void;
+  }
+  /**
+   * Battler tag for Gulp Missile used by Cramorant.
+   * @extends BattlerTag
+   */
+  export declare class GulpMissileTag extends BattlerTag {
+      constructor(tagType: PokeRogue.enums.BattlerTagType, sourceMove: PokeRogue.enums.Moves);
+      /**
+       * Gulp Missile's initial form changes are triggered by using Surf and Dive.
+       * @param {Pokemon} pokemon The Pokemon with Gulp Missile ability.
+       * @returns Whether the BattlerTag can be added.
+       */
+      canAdd(pokemon: PokeRogue.field.Pokemon): boolean;
+      onAdd(pokemon: PokeRogue.field.Pokemon): void;
+      onRemove(pokemon: PokeRogue.field.Pokemon): void;
+  }
+  /**
+   * Tag that makes the target drop all of it type immunities
+   * and all accuracy checks ignore its evasiveness stat.
+   *
+   * Applied by moves: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth},
+   * {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}.
+   *
+   * @extends BattlerTag
+   * @see {@linkcode ignoreImmunity}
+   */
+  export declare class ExposedTag extends BattlerTag {
+      public defenderType;
+      public allowedTypes;
+      constructor(tagType: PokeRogue.enums.BattlerTagType, sourceMove: PokeRogue.enums.Moves, defenderType: PokeRogue.data.Type, allowedTypes: PokeRogue.data.Type[]);
+      /**
+      * When given a battler tag or json representing one, load the data for it.
+      * @param {BattlerTag | any} source A battler tag
+      */
+      loadTag(source: BattlerTag | any): void;
+      /**
+       * @param types {@linkcode Type} of the defending Pokemon
+       * @param moveType {@linkcode Type} of the move targetting it
+       * @returns `true` if the move should be allowed to target the defender.
+       */
+      ignoreImmunity(type: PokeRogue.data.Type, moveType: PokeRogue.data.Type): boolean;
   }
   export declare function getBattlerTag(tagType: PokeRogue.enums.BattlerTagType, turnCount: number, sourceMove: PokeRogue.enums.Moves, sourceId: number): BattlerTag;
   /**
@@ -3835,11 +4093,9 @@ declare namespace PokeRogue.data {
        * @param valid {@link Utils.BooleanHolder} A BooleanHolder, the value gets set to false if the pokemon isn't allowed.
        * @param dexAttr {@link DexAttrProps} The dex attributes of the pokemon.
        * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
-       * @param checkEvolutions {@link boolean} If true, check the pokemon's future evolutions
-       * @param checkForms {@link boolean} If true, check the pokemon's alternative forms
        * @returns {@link boolean} Whether this function did anything.
        */
-      applyStarterChoice(pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft?: boolean, checkEvolutions?: boolean, checkForms?: boolean): boolean;
+      applyStarterChoice(pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft?: boolean): boolean;
       /**
        * An apply function for STARTER_POINTS challenges. Derived classes should alter this.
        * @param points {@link Utils.NumberHolder} The amount of points you have available.
@@ -3927,7 +4183,7 @@ declare namespace PokeRogue.data {
    */
   export declare class SingleGenerationChallenge extends Challenge {
       constructor();
-      applyStarterChoice(pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft?: boolean, checkEvolutions?: boolean): boolean;
+      applyStarterChoice(pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft?: boolean): boolean;
       applyPokemonInBattle(pokemon: PokeRogue.field.Pokemon, valid: Utils.BooleanHolder): boolean;
       applyFixedBattle(waveIndex: Number, battleConfig: PokeRogue.FixedBattleConfig): boolean;
       /**
@@ -3954,7 +4210,7 @@ declare namespace PokeRogue.data {
   export declare class SingleTypeChallenge extends Challenge {
       public static TYPE_OVERRIDES;
       constructor();
-      applyStarterChoice(pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft?: boolean, checkEvolutions?: boolean, checkForms?: boolean): boolean;
+      applyStarterChoice(pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft?: boolean): boolean;
       applyPokemonInBattle(pokemon: PokeRogue.field.Pokemon, valid: Utils.BooleanHolder): boolean;
       /**
        * @overrides
@@ -4022,7 +4278,7 @@ declare namespace PokeRogue.data {
    * @param soft {@link boolean} If true, allow it if it could become a valid pokemon.
    * @returns True if any challenge was successfully applied.
    */
-  export declare function applyChallenges(gameMode: PokeRogue.GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft: boolean, checkEvolutions?: boolean, checkForms?: boolean): boolean;
+  export declare function applyChallenges(gameMode: PokeRogue.GameMode, challengeType: ChallengeType.STARTER_CHOICE, pokemon: PokeRogue.data.PokemonSpecies, valid: Utils.BooleanHolder, dexAttr: PokeRogue.system.DexAttrProps, soft: boolean): boolean;
   /**
    * Apply all challenges that modify available total starter points.
    * @param gameMode {@link GameMode} The current gameMode
@@ -4143,7 +4399,7 @@ declare namespace PokeRogue.data {
       seed: integer;
       starters: PokeRogue.ui.Starter;
   }
-  export declare function fetchDailyRunSeed(): Promise<string>;
+  export declare function fetchDailyRunSeed(): Promise<string | null>;
   export declare function getDailyRunStarters(scene: PokeRogue.BattleScene, seed: string): Starter[];
   
 }
@@ -5252,7 +5508,7 @@ declare namespace PokeRogue.data {
        * @param target {@linkcode Pokemon} the Pokemon receiving the move
        * @returns boolean
        */
-      checkFlag(flag: MoveFlags, user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon): boolean;
+      checkFlag(flag: MoveFlags, user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon | null): boolean;
       /**
        * Applies each {@linkcode MoveCondition} of this move to the params
        * @param user {@linkcode Pokemon} to apply conditions to
@@ -5332,12 +5588,12 @@ declare namespace PokeRogue.data {
        * @param args Set of unique arguments needed by this attribute
        * @returns true if application of the ability succeeds
        */
-      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean | Promise<boolean>;
+      apply(user: PokeRogue.field.Pokemon | null, target: PokeRogue.field.Pokemon | null, move: Move, args: any[]): boolean | Promise<boolean>;
       /**
        * @virtual
        * @returns the {@linkcode MoveCondition} or {@linkcode MoveConditionFunc} for this {@linkcode Move}
        */
-      getCondition(): MoveCondition | MoveConditionFunc;
+      getCondition(): MoveCondition | MoveConditionFunc | null;
       /**
        * @virtual
        * @param user {@linkcode Pokemon} using the move
@@ -5392,9 +5648,9 @@ declare namespace PokeRogue.data {
        * @param args Set of unique arguments needed by this attribute
        * @returns true if basic application of the ability attribute should be possible
        */
-      canApply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
+      canApply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args?: any[]): boolean;
       /** Applies move effects so long as they are able based on {@linkcode canApply} */
-      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean | Promise<boolean>;
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args?: any[]): boolean | Promise<boolean>;
       /**
        * Gets the used move's additional effect chance.
        * If user's ability has MoveEffectChanceMultiplierAbAttr or IgnoreMoveEffectsAbAttr modifies the base chance.
@@ -5405,6 +5661,44 @@ declare namespace PokeRogue.data {
        * @returns Move chance value.
        */
       getMoveChance(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, selfEffect?: Boolean, showAbility?: Boolean): integer;
+  }
+  /**
+   * Base class defining all Move Header attributes.
+   * Move Header effects apply at the beginning of a turn before any moves are resolved.
+   * They can be used to apply effects to the field (e.g. queueing a message) or to the user
+   * (e.g. adding a battler tag).
+   */
+  export declare class MoveHeaderAttr extends MoveAttr {
+      constructor();
+  }
+  /**
+   * Header attribute to queue a message at the beginning of a turn.
+   * @see {@link MoveHeaderAttr}
+   */
+  export declare class MessageHeaderAttr extends MoveHeaderAttr {
+      public message;
+      constructor(message: string | ((user: PokeRogue.field.Pokemon, move: Move) => string));
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
+  }
+  /**
+   * Header attribute to add a battler tag to the user at the beginning of a turn.
+   * @see {@linkcode MoveHeaderAttr}
+   */
+  export declare class AddBattlerTagHeaderAttr extends MoveHeaderAttr {
+      public tagType;
+      constructor(tagType: PokeRogue.enums.BattlerTagType);
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
+  }
+  /**
+   * Header attribute to implement the "charge phase" of Beak Blast at the
+   * beginning of a turn.
+   * @see {@link https://bulbapedia.bulbagarden.net/wiki/Beak_Blast_(move) | Beak Blast}
+   * @see {@linkcode BeakBlastChargingTag}
+   */
+  export declare class BeakBlastHeaderAttr extends AddBattlerTagHeaderAttr {
+      /** Required to initialize Beak Blast's charge animation correctly */
+      chargeAnim: PokeRogue.data.ChargeAnim;
+      constructor();
   }
   export declare class PreMoveMessageAttr extends MoveAttr {
       public message;
@@ -5570,10 +5864,25 @@ declare namespace PokeRogue.data {
       public message;
       /** Skips mons with this ability, ie. Soundproof */
       public abilityCondition;
-      constructor(message: string, abilityCondition: PokeRogue.enums.Abilities);
+      constructor(message: string | null, abilityCondition: PokeRogue.enums.Abilities);
       canApply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       addPartyCurePhase(user: PokeRogue.field.Pokemon): void;
+  }
+  /**
+   * Applies damage to the target's ally equal to 1/16 of that ally's max HP.
+   * @extends MoveEffectAttr
+   */
+  export declare class FlameBurstAttr extends MoveEffectAttr {
+      /**
+       * @param user - n/a
+       * @param target - The target Pokémon.
+       * @param move - n/a
+       * @param args - n/a
+       * @returns A boolean indicating whether the effect was successfully applied.
+       */
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean | Promise<boolean>;
+      getTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer;
   }
   export declare class SacrificialFullRestoreAttr extends SacrificialAttr {
       constructor();
@@ -5620,9 +5929,9 @@ declare namespace PokeRogue.data {
    */
   export declare class BoostHealAttr extends HealAttr {
       /** Healing received when {@linkcode condition} is false */
-      public normalHealRatio?;
+      public normalHealRatio;
       /** Healing received when {@linkcode condition} is true */
-      public boostedHealRatio?;
+      public boostedHealRatio;
       /** The lambda expression to check against when boosting the healing value */
       public condition?;
       constructor(normalHealRatio?: number, boostedHealRatio?: number, showAnim?: boolean, selfTarget?: boolean, condition?: MoveConditionFunc);
@@ -5661,7 +5970,7 @@ declare namespace PokeRogue.data {
       public healRatio;
       public message;
       public healStat;
-      constructor(healRatio?: number, healStat?: Stat);
+      constructor(healRatio?: number | null, healStat?: Stat);
       /**
        * Heals the user the determined amount and possibly displays a message about regaining health.
        * If the target has the {@linkcode ReverseDrainAbAttr}, all healing is instead converted
@@ -5746,7 +6055,7 @@ declare namespace PokeRogue.data {
   }
   export declare class StatusEffectAttr extends MoveEffectAttr {
       effect: PokeRogue.data.StatusEffect;
-      cureTurn: integer;
+      cureTurn: integer | null;
       overrideStatus: boolean;
       constructor(effect: PokeRogue.data.StatusEffect, selfTarget?: boolean, cureTurn?: integer, overrideStatus?: boolean);
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
@@ -5804,7 +6113,7 @@ declare namespace PokeRogue.data {
    * Attribute that causes targets of the move to eat a berry. Used for Teatime, Stuff Cheeks
    */
   export declare class EatBerryAttr extends MoveEffectAttr {
-      protected chosenBerry: PokeRogue.modifier.BerryModifier;
+      protected chosenBerry: PokeRogue.modifier.BerryModifier | undefined;
       constructor();
       /**
        * Causes the target to eat a berry.
@@ -5911,11 +6220,10 @@ declare namespace PokeRogue.data {
       public chargeText;
       public tagType;
       public chargeEffect;
-      sameTurn: boolean;
-      followUpPriority: integer;
-      constructor(chargeAnim: PokeRogue.data.ChargeAnim, chargeText: string, tagType?: BattlerTagType, chargeEffect?: boolean, sameTurn?: boolean, followUpPriority?: integer);
+      followUpPriority: integer | null;
+      constructor(chargeAnim: PokeRogue.data.ChargeAnim, chargeText: string, tagType?: BattlerTagType | null, chargeEffect?: boolean);
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): Promise<boolean>;
-      usedChargeEffect(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): boolean;
+      usedChargeEffect(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon | null, move: Move): boolean;
   }
   export declare class SunlightChargeAttr extends ChargeAttr {
       constructor(chargeAnim: PokeRogue.data.ChargeAnim, chargeText: string);
@@ -5938,8 +6246,8 @@ declare namespace PokeRogue.data {
       levels: integer;
       public condition;
       public showMessage;
-      constructor(stats: PokeRogue.data.BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc, showMessage?: boolean, firstHitOnly?: boolean, moveEffectTrigger?: MoveEffectTrigger, firstTargetOnly?: boolean);
-      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean | Promise<boolean>;
+      constructor(stats: PokeRogue.data.BattleStat | BattleStat[], levels: integer, selfTarget?: boolean, condition?: MoveConditionFunc | null, showMessage?: boolean, firstHitOnly?: boolean, moveEffectTrigger?: MoveEffectTrigger, firstTargetOnly?: boolean);
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args?: any[]): boolean | Promise<boolean>;
       getLevels(_user: PokeRogue.field.Pokemon): integer;
       getTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer;
   }
@@ -5959,14 +6267,10 @@ declare namespace PokeRogue.data {
       constructor();
       getLevels(user: PokeRogue.field.Pokemon): number;
   }
-  export declare class HalfHpStatMaxAttr extends StatChangeAttr {
-      constructor(stat: PokeRogue.data.BattleStat);
-      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): Promise<boolean>;
-      getCondition(): MoveConditionFunc;
-  }
   export declare class CutHpStatBoostAttr extends StatChangeAttr {
       public cutRatio;
-      constructor(stat: PokeRogue.data.BattleStat | BattleStat[], levels: integer, cutRatio: integer);
+      public messageCallback;
+      constructor(stat: PokeRogue.data.BattleStat | BattleStat[], levels: integer, cutRatio: integer, messageCallback?: ((user: PokeRogue.field.Pokemon) => void) | undefined);
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): Promise<boolean>;
       getCondition(): MoveConditionFunc;
   }
@@ -5977,7 +6281,10 @@ declare namespace PokeRogue.data {
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
   export declare class ResetStatsAttr extends MoveEffectAttr {
+      public targetAllPokemon;
+      constructor(targetAllPokemon: boolean);
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
+      resetStats(pokemon: PokeRogue.field.Pokemon): void;
   }
   /**
    * Attribute used for moves which swap the user and the target's stat changes.
@@ -6197,6 +6504,29 @@ declare namespace PokeRogue.data {
        */
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
+  /**
+   * Attribute used for moves that double in power if the given move immediately
+   * preceded the move applying the attribute, namely Fusion Flare and
+   * Fusion Bolt.
+   * @extends VariablePowerAttr
+   * @see {@linkcode apply}
+   */
+  export declare class LastMoveDoublePowerAttr extends VariablePowerAttr {
+      /** The move that must precede the current move */
+      public move;
+      constructor(move: PokeRogue.enums.Moves);
+      /**
+       * Doubles power of move if the given move is found to precede the current
+       * move with no other moves being executed in between, only ignoring failed
+       * moves if any.
+       * @param user {@linkcode Pokemon} that used the move
+       * @param target N/A
+       * @param move N/A
+       * @param args [0] {@linkcode Utils.NumberHolder} that holds the resulting power of the move
+       * @returns true if attribute application succeeds, false otherwise
+       */
+      apply(user: PokeRogue.field.Pokemon, _target: PokeRogue.field.Pokemon, _move: Move, args: any[]): boolean;
+  }
   export declare class VariableAtkAttr extends MoveAttr {
       constructor();
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
@@ -6220,7 +6550,18 @@ declare namespace PokeRogue.data {
   export declare class VariableAccuracyAttr extends MoveAttr {
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
+  /**
+   * Attribute used for Thunder and Hurricane that sets accuracy to 50 in sun and never miss in rain
+   */
   export declare class ThunderAccuracyAttr extends VariableAccuracyAttr {
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
+  }
+  /**
+   * Attribute used for Bleakwind Storm, Wildbolt Storm, and Sandsear Storm that sets accuracy to never
+   * miss in rain
+   * Springtide Storm does NOT have this property
+   */
+  export declare class StormAccuracyAttr extends VariableAccuracyAttr {
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
   /**
@@ -6389,12 +6730,31 @@ declare namespace PokeRogue.data {
       tagType: PokeRogue.enums.BattlerTagType;
       turnCountMin: integer;
       turnCountMax: integer;
+      protected cancelOnFail: boolean;
       public failOnOverlap;
-      constructor(tagType: PokeRogue.enums.BattlerTagType, selfTarget?: boolean, failOnOverlap?: boolean, turnCountMin?: integer, turnCountMax?: integer, lastHitOnly?: boolean);
+      constructor(tagType: PokeRogue.enums.BattlerTagType, selfTarget?: boolean, failOnOverlap?: boolean, turnCountMin?: integer, turnCountMax?: integer, lastHitOnly?: boolean, cancelOnFail?: boolean);
+      canApply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
-      getCondition(): MoveConditionFunc;
-      getTagTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer;
+      getCondition(): MoveConditionFunc | null;
+      getTagTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer | void;
       getTargetBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer;
+  }
+  /**
+   * Adds the appropriate battler tag for Gulp Missile when Surf or Dive is used.
+   * @extends MoveEffectAttr
+   */
+  export declare class GulpMissileTagAttr extends MoveEffectAttr {
+      constructor();
+      /**
+       * Adds BattlerTagType from GulpMissileTag based on the Pokemon's HP ratio.
+       * @param {Pokemon} user The Pokemon using the move.
+       * @param {Pokemon} target The Pokemon being targeted by the move.
+       * @param {Move} move The move being used.
+       * @param {any[]} args Additional arguments, if any.
+       * @returns Whether the BattlerTag is applied.
+       */
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean | Promise<boolean>;
+      getUserBenefitScore(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move): integer;
   }
   export declare class CurseAttr extends MoveEffectAttr {
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
@@ -6425,18 +6785,7 @@ declare namespace PokeRogue.data {
       constructor(tagType?: BattlerTagType);
       getCondition(): MoveConditionFunc;
   }
-  export declare class EndureAttr extends ProtectAttr {
-      constructor();
-  }
   export declare class IgnoreAccuracyAttr extends AddBattlerTagAttr {
-      constructor();
-      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
-  }
-  export declare class AlwaysGetHitAttr extends AddBattlerTagAttr {
-      constructor();
-      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
-  }
-  export declare class ReceiveDoubleDamageAttr extends AddBattlerTagAttr {
       constructor();
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
@@ -6461,9 +6810,9 @@ declare namespace PokeRogue.data {
       turnCount: integer;
       public failOnOverlap;
       selfSideTarget: boolean;
-      constructor(tagType: PokeRogue.enums.ArenaTagType, turnCount?: integer, failOnOverlap?: boolean, selfSideTarget?: boolean);
+      constructor(tagType: PokeRogue.enums.ArenaTagType, turnCount?: integer | null, failOnOverlap?: boolean, selfSideTarget?: boolean);
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
-      getCondition(): MoveConditionFunc;
+      getCondition(): MoveConditionFunc | null;
   }
   /**
    * Generic class for removing arena tags
@@ -6530,6 +6879,7 @@ declare namespace PokeRogue.data {
       public user;
       public batonPass;
       constructor(user?: boolean, batonPass?: boolean);
+      isBatonPass(): boolean;
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): Promise<boolean>;
       getCondition(): MoveConditionFunc;
       getFailedText(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, cancelled: Utils.BooleanHolder): string | null;
@@ -6624,8 +6974,24 @@ declare namespace PokeRogue.data {
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       getCondition(): MoveConditionFunc;
   }
+  /**
+   * Attribute for {@linkcode Moves.SKETCH} that causes the user to copy the opponent's last used move
+   * This move copies the last used non-virtual move
+   *  e.g. if Metronome is used, it copies Metronome itself, not the virtual move called by Metronome
+   * Fails if the opponent has not yet used a move.
+   * Fails if used on an uncopiable move, listed in unsketchableMoves in getCondition
+   * Fails if the move is already in the user's moveset
+   */
   export declare class SketchAttr extends MoveEffectAttr {
       constructor();
+      /**
+       * User copies the opponent's last used move, if possible
+       * @param {Pokemon} user Pokemon that used the move and will replace Sketch with the copied move
+       * @param {Pokemon} target Pokemon that the user wants to copy a move from
+       * @param {Move} move Move being used
+       * @param {any[]} args Unused
+       * @returns {boolean} true if the function succeeds, otherwise false
+       */
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       getCondition(): MoveConditionFunc;
   }
@@ -6727,8 +7093,8 @@ declare namespace PokeRogue.data {
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
   export type MoveAttrFilter = (attr: MoveAttr) => boolean;
-  export declare function applyMoveAttrs(attrType: PokeRogue.Constructor<MoveAttr>, user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, ...args: any[]): Promise<void>;
-  export declare function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, ...args: any[]): Promise<void>;
+  export declare function applyMoveAttrs(attrType: PokeRogue.Constructor<MoveAttr>, user: PokeRogue.field.Pokemon | null, target: PokeRogue.field.Pokemon | null, move: Move, ...args: any[]): Promise<void>;
+  export declare function applyFilteredMoveAttrs(attrFilter: MoveAttrFilter, user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon | null, move: Move, ...args: any[]): Promise<void>;
   export declare class MoveCondition {
       protected func: MoveConditionFunc;
       constructor(func: MoveConditionFunc);
@@ -6763,6 +7129,26 @@ declare namespace PokeRogue.data {
        */
       apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
       getCondition(): MoveConditionFunc;
+  }
+  /**
+   * Drops the target's immunity to types it is immune to
+   * and makes its evasiveness be ignored during accuracy
+   * checks. Used by: {@linkcode Moves.ODOR_SLEUTH | Odor Sleuth}, {@linkcode Moves.MIRACLE_EYE | Miracle Eye} and {@linkcode Moves.FORESIGHT | Foresight}
+   *
+   * @extends AddBattlerTagAttr
+   * @see {@linkcode apply}
+   */
+  export declare class ExposedMoveAttr extends AddBattlerTagAttr {
+      constructor(tagType: PokeRogue.enums.BattlerTagType);
+      /**
+       * Applies {@linkcode ExposedTag} to the target.
+       * @param user {@linkcode Pokemon} using this move
+       * @param target {@linkcode Pokemon} target of this move
+       * @param move {@linkcode Move} being used
+       * @param args N/A
+       * @returns `true` if the function succeeds
+       */
+      apply(user: PokeRogue.field.Pokemon, target: PokeRogue.field.Pokemon, move: Move, args: any[]): boolean;
   }
   export type MoveTargetSet = {
       targets: PokeRogue.BattlerIndex[];
@@ -6840,20 +7226,26 @@ declare namespace PokeRogue.data {
       SCROLL_OF_WATERS = 61,
       SYRUPY_APPLE = 62
   }
+  /**
+   * Pokemon Evolution tuple type consisting of:
+   * @property 0 {@linkcode Species} The species of the Pokemon.
+   * @property 1 {@linkcode integer} The level at which the Pokemon evolves.
+   */
+  export type EvolutionLevel = [species: PokeRogue.enums.Species, level: integer];
   export type EvolutionConditionPredicate = (p: PokeRogue.field.Pokemon) => boolean;
   export type EvolutionConditionEnforceFunc = (p: PokeRogue.field.Pokemon) => void;
   export declare class SpeciesFormEvolution {
       speciesId: PokeRogue.enums.Species;
-      preFormKey: string;
-      evoFormKey: string;
+      preFormKey: string | null;
+      evoFormKey: string | null;
       level: integer;
-      item: EvolutionItem;
-      condition: SpeciesEvolutionCondition;
+      item: EvolutionItem | null;
+      condition: SpeciesEvolutionCondition | null;
       wildDelay: SpeciesWildEvolutionDelay;
-      constructor(speciesId: PokeRogue.enums.Species, preFormKey: string, evoFormKey: string, level: integer, item: EvolutionItem, condition: SpeciesEvolutionCondition, wildDelay?: SpeciesWildEvolutionDelay);
+      constructor(speciesId: PokeRogue.enums.Species, preFormKey: string | null, evoFormKey: string | null, level: integer, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay);
   }
   export declare class SpeciesEvolution extends SpeciesFormEvolution {
-      constructor(speciesId: PokeRogue.enums.Species, level: integer, item: EvolutionItem, condition: SpeciesEvolutionCondition, wildDelay?: SpeciesWildEvolutionDelay);
+      constructor(speciesId: PokeRogue.enums.Species, level: integer, item: EvolutionItem | null, condition: SpeciesEvolutionCondition | null, wildDelay?: SpeciesWildEvolutionDelay);
   }
   export declare class FusionSpeciesFormEvolution extends SpeciesFormEvolution {
       primarySpeciesId: PokeRogue.enums.Species;
@@ -6861,7 +7253,7 @@ declare namespace PokeRogue.data {
   }
   export declare class SpeciesEvolutionCondition {
       predicate: EvolutionConditionPredicate;
-      enforceFunc: EvolutionConditionEnforceFunc;
+      enforceFunc: EvolutionConditionEnforceFunc | undefined;
       constructor(predicate: EvolutionConditionPredicate, enforceFunc?: EvolutionConditionEnforceFunc);
   }
   export declare class SpeciesFriendshipEvolutionCondition extends SpeciesEvolutionCondition {
@@ -6964,6 +7356,7 @@ declare namespace PokeRogue.data {
       BURN_DRIVE = 74,
       CHILL_DRIVE = 75,
       DOUSE_DRIVE = 76,
+      ULTRANECROZIUM_Z = 77,
       FIST_PLATE = 100,
       SKY_PLATE = 101,
       TOXIC_PLATE = 102,
@@ -7010,14 +7403,14 @@ declare namespace PokeRogue.data {
       formKey: string;
       trigger: SpeciesFormChangeTrigger;
       quiet: boolean;
-      conditions: SpeciesFormChangeCondition[];
+      readonly conditions: SpeciesFormChangeCondition[];
       constructor(speciesId: PokeRogue.enums.Species, preFormKey: string, evoFormKey: string, trigger: SpeciesFormChangeTrigger, quiet?: boolean, ...conditions: SpeciesFormChangeCondition[]);
       canChange(pokemon: PokeRogue.field.Pokemon): boolean;
-      findTrigger(triggerType: PokeRogue.Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger;
+      findTrigger(triggerType: PokeRogue.Constructor<SpeciesFormChangeTrigger>): SpeciesFormChangeTrigger | null;
   }
   export declare class SpeciesFormChangeCondition {
       predicate: SpeciesFormChangeConditionPredicate;
-      enforceFunc: SpeciesFormChangeConditionEnforceFunc;
+      enforceFunc: SpeciesFormChangeConditionEnforceFunc | null;
       constructor(predicate: SpeciesFormChangeConditionPredicate, enforceFunc?: SpeciesFormChangeConditionEnforceFunc);
   }
   export declare abstract class SpeciesFormChangeTrigger {
@@ -7109,6 +7502,7 @@ declare namespace PokeRogue.data {
   //import BattleScene, { AnySound } from "../battle-scene";
   //import { Variant } from "./variant";
   //import { GrowthRate } from "./exp";
+  //import { EvolutionLevel } from "./pokemon-evolutions";
   //import { Type } from "./type";
   //import { LevelMoves } from "./pokemon-level-moves";
   //import { StarterMoveset } from "../system/game-data";
@@ -7125,7 +7519,7 @@ declare namespace PokeRogue.data {
       HISUI = 3,
       PALDEA = 4
   }
-  export declare function getPokemonSpecies(species: PokeRogue.enums.Species): PokemonSpecies;
+  export declare function getPokemonSpecies(species: PokeRogue.enums.Species | Species[]): PokemonSpecies;
   export declare function getPokemonSpeciesForm(species: PokeRogue.enums.Species, formIndex: integer): PokemonSpeciesForm;
   export declare function getFusedSpeciesName(speciesAName: string, speciesBName: string): string;
   export type PokemonSpeciesFilter = (species: PokemonSpecies) => boolean;
@@ -7134,7 +7528,7 @@ declare namespace PokeRogue.data {
       formIndex: integer;
       generation: integer;
       type1: PokeRogue.data.Type;
-      type2: PokeRogue.data.Type;
+      type2: PokeRogue.data.Type | null;
       height: number;
       weight: number;
       ability1: PokeRogue.enums.Abilities;
@@ -7147,7 +7541,7 @@ declare namespace PokeRogue.data {
       baseExp: integer;
       genderDiffs: boolean;
       isStarterSelectable: boolean;
-      constructor(type1: PokeRogue.data.Type, type2: PokeRogue.data.Type, height: number, weight: number, ability1: PokeRogue.enums.Abilities, ability2: PokeRogue.enums.Abilities, abilityHidden: PokeRogue.enums.Abilities, baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer, catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs: boolean, isStarterSelectable: boolean);
+      constructor(type1: PokeRogue.data.Type, type2: PokeRogue.data.Type | null, height: number, weight: number, ability1: PokeRogue.enums.Abilities, ability2: PokeRogue.enums.Abilities, abilityHidden: PokeRogue.enums.Abilities, baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer, catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs: boolean, isStarterSelectable: boolean);
       /**
        * Method to get the root species id of a Pokemon.
        * Magmortar.getRootSpeciesId(true) => Magmar
@@ -7207,20 +7601,20 @@ declare namespace PokeRogue.data {
       mythical: boolean;
       species: string;
       growthRate: PokeRogue.data.GrowthRate;
-      malePercent: number;
+      malePercent: number | null;
       genderDiffs: boolean;
       canChangeForm: boolean;
       forms: PokemonForm[];
-      constructor(id: PokeRogue.enums.Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string, type1: PokeRogue.data.Type, type2: PokeRogue.data.Type, height: number, weight: number, ability1: PokeRogue.enums.Abilities, ability2: PokeRogue.enums.Abilities, abilityHidden: PokeRogue.enums.Abilities, baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer, catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: PokeRogue.data.GrowthRate, malePercent: number, genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]);
+      constructor(id: PokeRogue.enums.Species, generation: integer, subLegendary: boolean, legendary: boolean, mythical: boolean, species: string, type1: PokeRogue.data.Type, type2: PokeRogue.data.Type | null, height: number, weight: number, ability1: PokeRogue.enums.Abilities, ability2: PokeRogue.enums.Abilities, abilityHidden: PokeRogue.enums.Abilities, baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer, catchRate: integer, baseFriendship: integer, baseExp: integer, growthRate: PokeRogue.data.GrowthRate, malePercent: number | null, genderDiffs: boolean, canChangeForm?: boolean, ...forms: PokemonForm[]);
       getName(formIndex?: integer): string;
       localize(): void;
       getWildSpeciesForLevel(level: integer, allowEvolving: boolean, isBoss: boolean, gameMode: PokeRogue.GameMode): Species;
       getTrainerSpeciesForLevel(level: integer, allowEvolving: boolean, strength: PokeRogue.enums.PartyMemberStrength): Species;
       public getStrengthLevelDiff;
       getSpeciesForLevel(level: integer, allowEvolving?: boolean, forTrainer?: boolean, strength?: PartyMemberStrength): Species;
-      getEvolutionLevels(): any[];
-      getPrevolutionLevels(): any[];
-      getSimulatedEvolutionChain(currentLevel: integer, forTrainer?: boolean, isBoss?: boolean, player?: boolean): [Species, integer][];
+      getEvolutionLevels(): EvolutionLevel[];
+      getPrevolutionLevels(): EvolutionLevel[];
+      getSimulatedEvolutionChain(currentLevel: integer, forTrainer?: boolean, isBoss?: boolean, player?: boolean): EvolutionLevel[];
       getCompatibleFusionSpeciesFilter(): PokemonSpeciesFilter;
       isObtainable(): boolean;
       hasVariants(): any;
@@ -7229,9 +7623,9 @@ declare namespace PokeRogue.data {
   export declare class PokemonForm extends PokemonSpeciesForm {
       formName: string;
       formKey: string;
-      formSpriteKey: string;
+      formSpriteKey: string | null;
       public starterSelectableKeys;
-      constructor(formName: string, formKey: string, type1: PokeRogue.data.Type, type2: PokeRogue.data.Type, height: number, weight: number, ability1: PokeRogue.enums.Abilities, ability2: PokeRogue.enums.Abilities, abilityHidden: PokeRogue.enums.Abilities, baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer, catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string, isStarterSelectable?: boolean);
+      constructor(formName: string, formKey: string, type1: PokeRogue.data.Type, type2: PokeRogue.data.Type | null, height: number, weight: number, ability1: PokeRogue.enums.Abilities, ability2: PokeRogue.enums.Abilities, abilityHidden: PokeRogue.enums.Abilities, baseTotal: integer, baseHp: integer, baseAtk: integer, baseDef: integer, baseSpatk: integer, baseSpdef: integer, baseSpd: integer, catchRate: integer, baseFriendship: integer, baseExp: integer, genderDiffs?: boolean, formSpriteKey?: string | null, isStarterSelectable?: boolean);
       getFormSpriteKey(_formIndex?: integer): string;
   }
   export declare enum SpeciesFormKey {
@@ -8433,12 +8827,12 @@ declare namespace PokeRogue.data {
   export declare class Status {
       effect: PokeRogue.enums.StatusEffect;
       turnCount: integer;
-      cureTurn: integer;
+      cureTurn: integer | null;
       constructor(effect: PokeRogue.enums.StatusEffect, turnCount?: integer, cureTurn?: integer);
       incrementTurn(): void;
       isPostTurn(): boolean;
   }
-  export declare function getStatusEffectObtainText(statusEffect: PokeRogue.enums.StatusEffect, pokemonNameWithAffix: string, sourceText?: string): string;
+  export declare function getStatusEffectObtainText(statusEffect: PokeRogue.enums.StatusEffect | undefined, pokemonNameWithAffix: string, sourceText?: string): string;
   export declare function getStatusEffectActivationText(statusEffect: PokeRogue.enums.StatusEffect, pokemonNameWithAffix: string): string;
   export declare function getStatusEffectOverlapText(statusEffect: PokeRogue.enums.StatusEffect, pokemonNameWithAffix: string): string;
   export declare function getStatusEffectHealText(statusEffect: PokeRogue.enums.StatusEffect, pokemonNameWithAffix: string): string;
@@ -8459,7 +8853,7 @@ declare namespace PokeRogue.data {
   * @param statusA The first Status
   * @param statusB The second Status
   */
-  export declare function getRandomStatus(statusA: Status, statusB: Status): Status;
+  export declare function getRandomStatus(statusA: Status | null, statusB: Status | null): Status | null;
   /**
    * Gets all non volatile status effects
    * @returns A list containing all non volatile status effects
@@ -8659,6 +9053,7 @@ declare namespace PokeRogue.data {
       speciesPools: TrainerTierPools;
       speciesFilter: PokeRogue.data.PokemonSpeciesFilter;
       specialtyTypes: PokeRogue.data.Type[];
+      hasVoucher: boolean;
       encounterMessages: string[];
       victoryMessages: string[];
       defeatMessages: string[];
@@ -8672,43 +9067,48 @@ declare namespace PokeRogue.data {
       getKey(): string;
       getSpriteKey(female?: boolean, isDouble?: boolean): string;
       setName(name: string): TrainerConfig;
+      /**
+       * Sets if a boss trainer will have a voucher or not.
+       * @param hasVoucher - If the boss trainer will have a voucher.
+       */
+      setHasVoucher(hasVoucher: boolean): void;
       setTitle(title: string): TrainerConfig;
       /**
-       * Returns the derived trainer type for a given trainer type.
-       * @param trainerTypeToDeriveFrom - The trainer type to derive from. (If null, the this.trainerType property will be used.)
-       * @returns {TrainerType} - The derived trainer type.
-       */
-      getDerivedType(trainerTypeToDeriveFrom?: TrainerType): TrainerType;
+         * Returns the derived trainer type for a given trainer type.
+         * @param trainerTypeToDeriveFrom - The trainer type to derive from. (If null, the this.trainerType property will be used.)
+         * @returns {TrainerType} - The derived trainer type.
+         */
+      getDerivedType(trainerTypeToDeriveFrom?: TrainerType | null): TrainerType;
       /**
-       * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
-       * @param {string} [nameFemale] - The name of the female trainer. If 'Ivy', a localized name will be assigned.
-       * @param {TrainerType | string} [femaleEncounterBgm] - The encounter BGM for the female trainer, which can be a TrainerType or a string.
-       * @returns {TrainerConfig} - The updated TrainerConfig instance.
-       **/
+         * Sets the configuration for trainers with genders, including the female name and encounter background music (BGM).
+         * @param {string} [nameFemale] - The name of the female trainer. If 'Ivy', a localized name will be assigned.
+         * @param {TrainerType | string} [femaleEncounterBgm] - The encounter BGM for the female trainer, which can be a TrainerType or a string.
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         **/
       setHasGenders(nameFemale?: string, femaleEncounterBgm?: TrainerType | string): TrainerConfig;
       /**
-       * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
-       * @param nameDouble - The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
-       * @param doubleEncounterBgm - The encounter BGM for the double trainer, which can be a TrainerType or a string.
-       * @returns {TrainerConfig} - The updated TrainerConfig instance.
-       */
+         * Sets the configuration for trainers with double battles, including the name of the double trainer and the encounter BGM.
+         * @param nameDouble - The name of the double trainer (e.g., "Ace Duo" for Trainer Class Doubles or "red_blue_double" for NAMED trainer doubles).
+         * @param doubleEncounterBgm - The encounter BGM for the double trainer, which can be a TrainerType or a string.
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         */
       setHasDouble(nameDouble: string, doubleEncounterBgm?: TrainerType | string): TrainerConfig;
       /**
-       * Sets the trainer type for double battles.
-       * @param trainerTypeDouble - The TrainerType of the partner in a double battle.
-       * @returns {TrainerConfig} - The updated TrainerConfig instance.
-       */
+         * Sets the trainer type for double battles.
+         * @param trainerTypeDouble - The TrainerType of the partner in a double battle.
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         */
       setDoubleTrainerType(trainerTypeDouble: PokeRogue.enums.TrainerType): TrainerConfig;
       /**
-       * Sets the encounter and victory messages for double trainers.
-       * @param nameDouble - The name of the pair (e.g. "red_blue_double").
-       */
+         * Sets the encounter and victory messages for double trainers.
+         * @param nameDouble - The name of the pair (e.g. "red_blue_double").
+         */
       setDoubleMessages(nameDouble: string): void;
       /**
-       * Sets the title for double trainers
-       * @param titleDouble - the key for the title in the i18n file. (e.g., "champion_double").
-       * @returns {TrainerConfig} - The updated TrainerConfig instance.
-       */
+         * Sets the title for double trainers
+         * @param titleDouble - the key for the title in the i18n file. (e.g., "champion_double").
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         */
       setDoubleTitle(titleDouble: string): TrainerConfig;
       setHasCharSprite(): TrainerConfig;
       setDoubleOnly(): TrainerConfig;
@@ -8729,6 +9129,20 @@ declare namespace PokeRogue.data {
       setGenModifiersFunc(genModifiersFunc: GenModifiersFunc): TrainerConfig;
       setModifierRewardFuncs(...modifierTypeFuncs: (() => ModifierTypeFunc)[]): TrainerConfig;
       /**
+      * Returns the pool of species for an evil team admin
+      * @param team - The evil team the admin belongs to.
+      * @returns {TrainerTierPools}
+      */
+      speciesPoolPerEvilTeamAdmin(team: any): TrainerTierPools;
+      /**
+         * Initializes the trainer configuration for an evil team admin.
+         * @param title - The title of the evil team admin.
+         * @param poolName - The evil team the admin belongs to.
+         * @param {Species | Species[]} signatureSpecies - The signature species for the evil team leader.
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         * **/
+      initForEvilTeamAdmin(title: string, poolName: string, signatureSpecies: (Species | Species[])[]): TrainerConfig;
+      /**
          * Initializes the trainer configuration for an evil team leader. Temporarily hardcoding evil leader teams though.
          * @param {Species | Species[]} signatureSpecies - The signature species for the evil team leader.
          * @param {Type[]} specialtyTypes - The specialty types for the evil team Leader.
@@ -8737,34 +9151,34 @@ declare namespace PokeRogue.data {
          * **/
       initForEvilTeamLeader(title: string, signatureSpecies: (Species | Species[])[], rematch?: boolean, ...specialtyTypes: PokeRogue.data.Type[]): TrainerConfig;
       /**
-       * Initializes the trainer configuration for a Gym Leader.
-       * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
-       * @param {Type[]} specialtyTypes - The specialty types for the Gym Leader.
-       * @param isMale - Whether the Gym Leader is Male or Not (for localization of the title).
-       * @returns {TrainerConfig} - The updated TrainerConfig instance.
-       * **/
+         * Initializes the trainer configuration for a Gym Leader.
+         * @param {Species | Species[]} signatureSpecies - The signature species for the Gym Leader.
+         * @param {Type[]} specialtyTypes - The specialty types for the Gym Leader.
+         * @param isMale - Whether the Gym Leader is Male or Not (for localization of the title).
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         * **/
       initForGymLeader(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: PokeRogue.data.Type[]): TrainerConfig;
       /**
-       * Initializes the trainer configuration for an Elite Four member.
-       * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
-       * @param {Type[]} specialtyTypes - The specialty types for the Elite Four member.
-       * @param isMale - Whether the Elite Four Member is Male or Female (for localization of the title).
-       * @returns {TrainerConfig} - The updated TrainerConfig instance.
-       **/
+         * Initializes the trainer configuration for an Elite Four member.
+         * @param {Species | Species[]} signatureSpecies - The signature species for the Elite Four member.
+         * @param {Type[]} specialtyTypes - The specialty types for the Elite Four member.
+         * @param isMale - Whether the Elite Four Member is Male or Female (for localization of the title).
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         **/
       initForEliteFour(signatureSpecies: (Species | Species[])[], isMale: boolean, ...specialtyTypes: PokeRogue.data.Type[]): TrainerConfig;
       /**
-       * Initializes the trainer configuration for a Champion.
-       * @param {Species | Species[]} signatureSpecies - The signature species for the Champion.
-       * @param isMale - Whether the Champion is Male or Female (for localization of the title).
-       * @returns {TrainerConfig} - The updated TrainerConfig instance.
-       **/
+         * Initializes the trainer configuration for a Champion.
+         * @param {Species | Species[]} signatureSpecies - The signature species for the Champion.
+         * @param isMale - Whether the Champion is Male or Female (for localization of the title).
+         * @returns {TrainerConfig} - The updated TrainerConfig instance.
+         **/
       initForChampion(signatureSpecies: (Species | Species[])[], isMale: boolean): TrainerConfig;
       /**
-       * Retrieves the title for the trainer based on the provided trainer slot and variant.
-       * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
-       * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
-       * @returns {string} - The title of the trainer.
-       **/
+         * Retrieves the title for the trainer based on the provided trainer slot and variant.
+         * @param {TrainerSlot} trainerSlot - The slot to determine which title to use. Defaults to TrainerSlot.NONE.
+         * @param {TrainerVariant} variant - The variant of the trainer to determine the specific title.
+         * @returns {string} - The title of the trainer.
+         **/
       getTitle(trainerSlot: TrainerSlot, variant: PokeRogue.field.TrainerVariant): string;
       loadAssets(scene: PokeRogue.BattleScene, variant: PokeRogue.field.TrainerVariant): Promise<void>;
   }
@@ -8865,7 +9279,7 @@ declare namespace PokeRogue.data {
    * Retrieve the types resisting a given type
    * @returns An array populated with Types, or an empty array if no resistances exist (Unknown or Stellar type)
    */
-  export declare function getTypeResistances(type: integer): Type[];
+  export declare function getTypeResistances(type: number): Type[];
   /**
    * Retrieve the color corresponding to a specific damage multiplier
    * @returns A color or undefined if the default color should be used
@@ -8905,12 +9319,12 @@ declare namespace PokeRogue.data {
       isMoveWeatherCancelled(move: PokeRogue.data.Move): boolean;
       isEffectSuppressed(scene: PokeRogue.BattleScene): boolean;
   }
-  export declare function getWeatherStartMessage(weatherType: PokeRogue.enums.WeatherType): string;
-  export declare function getWeatherLapseMessage(weatherType: PokeRogue.enums.WeatherType): string;
-  export declare function getWeatherDamageMessage(weatherType: PokeRogue.enums.WeatherType, pokemon: PokeRogue.field.Pokemon): string;
-  export declare function getWeatherClearMessage(weatherType: PokeRogue.enums.WeatherType): string;
-  export declare function getTerrainStartMessage(terrainType: PokeRogue.data.TerrainType): string;
-  export declare function getTerrainClearMessage(terrainType: PokeRogue.data.TerrainType): string;
+  export declare function getWeatherStartMessage(weatherType: PokeRogue.enums.WeatherType): string | null;
+  export declare function getWeatherLapseMessage(weatherType: PokeRogue.enums.WeatherType): string | null;
+  export declare function getWeatherDamageMessage(weatherType: PokeRogue.enums.WeatherType, pokemon: PokeRogue.field.Pokemon): string | null;
+  export declare function getWeatherClearMessage(weatherType: PokeRogue.enums.WeatherType): string | null;
+  export declare function getTerrainStartMessage(terrainType: PokeRogue.data.TerrainType): string | null;
+  export declare function getTerrainClearMessage(terrainType: PokeRogue.data.TerrainType): string | null;
   export declare function getTerrainBlockMessage(pokemon: PokeRogue.field.Pokemon, terrainType: PokeRogue.data.TerrainType): string;
   export declare function getRandomWeatherType(arena: any): WeatherType;
   
@@ -9666,7 +10080,8 @@ declare namespace PokeRogue.enums {
       MAT_BLOCK = "MAT_BLOCK",
       CRAFTY_SHIELD = "CRAFTY_SHIELD",
       TAILWIND = "TAILWIND",
-      HAPPY_HOUR = "HAPPY_HOUR"
+      HAPPY_HOUR = "HAPPY_HOUR",
+      NO_CRIT = "NO_CRIT"
   }
   
 }
@@ -9742,7 +10157,6 @@ declare namespace PokeRogue.enums {
       FIRE_BOOST = "FIRE_BOOST",
       CRIT_BOOST = "CRIT_BOOST",
       ALWAYS_CRIT = "ALWAYS_CRIT",
-      NO_CRIT = "NO_CRIT",
       IGNORE_ACCURACY = "IGNORE_ACCURACY",
       BYPASS_SLEEP = "BYPASS_SLEEP",
       IGNORE_FLYING = "IGNORE_FLYING",
@@ -9755,9 +10169,16 @@ declare namespace PokeRogue.enums {
       DESTINY_BOND = "DESTINY_BOND",
       CENTER_OF_ATTENTION = "CENTER_OF_ATTENTION",
       ICE_FACE = "ICE_FACE",
+      DISGUISE = "DISGUISE",
       STOCKPILING = "STOCKPILING",
       RECEIVE_DOUBLE_DAMAGE = "RECEIVE_DOUBLE_DAMAGE",
-      ALWAYS_GET_HIT = "ALWAYS_GET_HIT"
+      ALWAYS_GET_HIT = "ALWAYS_GET_HIT",
+      IGNORE_GHOST = "IGNORE_GHOST",
+      IGNORE_DARK = "IGNORE_DARK",
+      GULP_MISSILE_ARROKUDA = "GULP_MISSILE_ARROKUDA",
+      GULP_MISSILE_PIKACHU = "GULP_MISSILE_PIKACHU",
+      BEAK_BLAST_CHARGING = "BEAK_BLAST_CHARGING",
+      SHELL_TRAP = "SHELL_TRAP"
   }
   
 }
@@ -14217,23 +14638,38 @@ declare namespace PokeRogue.enums {
       WORKER = 49,
       YOUNGSTER = 50,
       ROCKET_GRUNT = 51,
-      MAGMA_GRUNT = 52,
-      AQUA_GRUNT = 53,
-      GALACTIC_GRUNT = 54,
-      PLASMA_GRUNT = 55,
-      FLARE_GRUNT = 56,
-      ROCKET_BOSS_GIOVANNI_1 = 57,
-      ROCKET_BOSS_GIOVANNI_2 = 58,
-      MAXIE = 59,
-      MAXIE_2 = 60,
-      ARCHIE = 61,
-      ARCHIE_2 = 62,
-      CYRUS = 63,
-      CYRUS_2 = 64,
-      GHETSIS = 65,
-      GHETSIS_2 = 66,
-      LYSANDRE = 67,
-      LYSANDRE_2 = 68,
+      ARCHER = 52,
+      ARIANA = 53,
+      PROTON = 54,
+      PETREL = 55,
+      MAGMA_GRUNT = 56,
+      TABITHA = 57,
+      COURTNEY = 58,
+      AQUA_GRUNT = 59,
+      MATT = 60,
+      SHELLY = 61,
+      GALACTIC_GRUNT = 62,
+      JUPITER = 63,
+      MARS = 64,
+      SATURN = 65,
+      PLASMA_GRUNT = 66,
+      ZINZOLIN = 67,
+      ROOD = 68,
+      FLARE_GRUNT = 69,
+      BRYONY = 70,
+      XEROSIC = 71,
+      ROCKET_BOSS_GIOVANNI_1 = 72,
+      ROCKET_BOSS_GIOVANNI_2 = 73,
+      MAXIE = 74,
+      MAXIE_2 = 75,
+      ARCHIE = 76,
+      ARCHIE_2 = 77,
+      CYRUS = 78,
+      CYRUS_2 = 79,
+      GHETSIS = 80,
+      GHETSIS_2 = 81,
+      LYSANDRE = 82,
+      LYSANDRE_2 = 83,
       BROCK = 200,
       MISTY = 201,
       LT_SURGE = 202,
@@ -14634,7 +15070,7 @@ declare namespace PokeRogue {
       protected pokemonTintSprite: Phaser.GameObjects.Sprite;
       protected pokemonEvoSprite: Phaser.GameObjects.Sprite;
       protected pokemonEvoTintSprite: Phaser.GameObjects.Sprite;
-      constructor(scene: PokeRogue.BattleScene, pokemon: PokeRogue.field.PlayerPokemon, evolution: PokeRogue.data.SpeciesFormEvolution, lastLevel: integer);
+      constructor(scene: PokeRogue.BattleScene, pokemon: PokeRogue.field.PlayerPokemon, evolution: PokeRogue.data.SpeciesFormEvolution | null, lastLevel: integer);
       validate(): boolean;
       setMode(): Promise<void>;
       start(): void;
@@ -14685,8 +15121,8 @@ declare namespace PokeRogue.field {
   export declare class Arena {
       scene: PokeRogue.BattleScene;
       biomeType: PokeRogue.enums.Biome;
-      weather: PokeRogue.data.Weather;
-      terrain: PokeRogue.data.Terrain;
+      weather: PokeRogue.data.Weather | null;
+      terrain: PokeRogue.data.Terrain | null;
       tags: PokeRogue.data.ArenaTag[];
       bgm: string;
       ignoreAbilities: boolean;
@@ -14734,16 +15170,18 @@ declare namespace PokeRogue.field {
       setIgnoreAbilities(ignoreAbilities?: boolean): void;
       applyTagsForSide(tagType: PokeRogue.enums.ArenaTagType | Constructor<ArenaTag>, side: PokeRogue.data.ArenaTagSide, ...args: unknown[]): void;
       applyTags(tagType: PokeRogue.enums.ArenaTagType | Constructor<ArenaTag>, ...args: unknown[]): void;
-      addTag(tagType: PokeRogue.enums.ArenaTagType, turnCount: integer, sourceMove: PokeRogue.enums.Moves, sourceId: integer, side?: ArenaTagSide, quiet?: boolean, targetIndex?: BattlerIndex): boolean;
-      getTag(tagType: PokeRogue.enums.ArenaTagType | Constructor<ArenaTag>): ArenaTag;
-      getTagOnSide(tagType: PokeRogue.enums.ArenaTagType | Constructor<ArenaTag>, side: PokeRogue.data.ArenaTagSide): ArenaTag;
+      addTag(tagType: PokeRogue.enums.ArenaTagType, turnCount: integer, sourceMove: PokeRogue.enums.Moves | undefined, sourceId: integer, side?: ArenaTagSide, quiet?: boolean, targetIndex?: BattlerIndex): boolean;
+      getTag(tagType: PokeRogue.enums.ArenaTagType | Constructor<ArenaTag>): ArenaTag | undefined;
+      getTagOnSide(tagType: PokeRogue.enums.ArenaTagType | Constructor<ArenaTag>, side: PokeRogue.data.ArenaTagSide): ArenaTag | undefined;
       findTags(tagPredicate: (t: PokeRogue.data.ArenaTag) => boolean): ArenaTag[];
       findTagsOnSide(tagPredicate: (t: PokeRogue.data.ArenaTag) => boolean, side: PokeRogue.data.ArenaTagSide): ArenaTag[];
       lapseTags(): void;
       removeTag(tagType: PokeRogue.enums.ArenaTagType): boolean;
       removeTagOnSide(tagType: PokeRogue.enums.ArenaTagType, side: PokeRogue.data.ArenaTagSide, quiet?: boolean): boolean;
       removeAllTags(): void;
-      /** Clears terrain and arena tags when entering new biome or trainer battle. */
+      /**
+       * Clears weather, terrain and arena tags when entering new biome or trainer battle.
+       */
       resetArenaEffects(): void;
       preloadBgm(): void;
       getBgmLoopPoint(): number;
@@ -14814,6 +15252,7 @@ declare namespace PokeRogue.field {
   //import { BerryType } from "#enums/berry-type";
   //import { Biome } from "#enums/biome";
   //import { Moves } from "#enums/moves";
+  //import { Species } from "#enums/species";
   export declare enum FieldPosition {
       CENTER = 0,
       LEFT = 1,
@@ -14840,15 +15279,17 @@ declare namespace PokeRogue.field {
       ivs: integer[];
       nature: PokeRogue.data.Nature;
       natureOverride: PokeRogue.data.Nature | -1;
-      moveset: PokemonMove[];
-      status: PokeRogue.data.Status;
+      moveset: (PokemonMove | null)[];
+      status: PokeRogue.data.Status | null;
       friendship: integer;
       metLevel: integer;
       metBiome: PokeRogue.enums.Biome | -1;
+      metSpecies: PokeRogue.enums.Species;
       luck: integer;
       pauseEvolutions: boolean;
       pokerus: boolean;
-      fusionSpecies: PokeRogue.data.PokemonSpecies;
+      wildFlee: boolean;
+      fusionSpecies: PokeRogue.data.PokemonSpecies | null;
       fusionFormIndex: integer;
       fusionAbilityIndex: integer;
       fusionShiny: boolean;
@@ -14862,7 +15303,7 @@ declare namespace PokeRogue.field {
       turnData: PokemonTurnData;
       fieldPosition: FieldPosition;
       maskEnabled: boolean;
-      maskSprite: Phaser.GameObjects.Sprite;
+      maskSprite: Phaser.GameObjects.Sprite | null;
       public shinySparkle;
       constructor(scene: PokeRogue.BattleScene, x: number, y: number, species: PokeRogue.data.PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData);
       getNameToRender(): string;
@@ -14871,7 +15312,7 @@ declare namespace PokeRogue.field {
       isOnField(): boolean;
       isFainted(checkStatus?: boolean): boolean;
       /**
-       * Check if this pokemon is both not fainted and allowed to be in battle.
+       * Check if this pokemon is both not fainted (or a fled wild pokemon) and allowed to be in battle.
        * This is frequently a better alternative to {@link isFainted}
        * @returns {boolean} True if pokemon is allowed in battle
        */
@@ -14890,7 +15331,7 @@ declare namespace PokeRogue.field {
       abstract getBattlerIndex(): BattlerIndex;
       loadAssets(ignoreOverride?: boolean): Promise<void>;
       getFormKey(): string;
-      getFusionFormKey(): string;
+      getFusionFormKey(): string | null;
       getSpriteAtlasPath(ignoreOverride?: boolean): string;
       getBattleSpriteAtlasPath(back?: boolean, ignoreOverride?: boolean): string;
       getSpriteId(ignoreOverride?: boolean): string;
@@ -14908,7 +15349,7 @@ declare namespace PokeRogue.field {
       getSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm;
       getFusionSpeciesForm(ignoreOverride?: boolean): PokemonSpeciesForm;
       getSprite(): Phaser.GameObjects.Sprite;
-      getTintSprite(): Phaser.GameObjects.Sprite;
+      getTintSprite(): Phaser.GameObjects.Sprite | null;
       getSpriteScale(): number;
       getHeldItems(): PokemonHeldItemModifier[];
       updateScale(): void;
@@ -14944,10 +15385,23 @@ declare namespace PokeRogue.field {
       getLuck(): integer;
       isFusion(): boolean;
       abstract isBoss(): boolean;
-      getMoveset(ignoreOverride?: boolean): PokemonMove[];
+      getMoveset(ignoreOverride?: boolean): (PokemonMove | null)[];
       /**
-       * All moves that could be relearned by this pokemon at this point. Used for memory mushrooms.
-       * @returns {Moves[]} The valid moves
+       * Checks which egg moves have been unlocked for the {@linkcode Pokemon} based
+       * on the species it was met at or by the first {@linkcode Pokemon} in its evolution
+       * line that can act as a starter and provides those egg moves.
+       * @returns an array of {@linkcode Moves}, the length of which is determined by how many
+       * egg moves are unlocked for that species.
+       */
+      getUnlockedEggMoves(): Moves[];
+      /**
+       * Gets all possible learnable level moves for the {@linkcode Pokemon},
+       * excluding any moves already known.
+       *
+       * Available egg moves are only included if the {@linkcode Pokemon} was
+       * in the starting party of the run and if Fresh Start is not active.
+       * @returns an array of {@linkcode Moves}, the length of which is determined
+       * by how many learnable moves there are for the {@linkcode Pokemon}.
        */
       getLearnableLevelMoves(): Moves[];
       /**
@@ -15059,8 +15513,14 @@ declare namespace PokeRogue.field {
        * @returns a multiplier for the type effectiveness
        */
       getAttackTypeEffectiveness(moveOrType: PokeRogue.data.Move | Type, source?: Pokemon, ignoreStrongWinds?: boolean, simulated?: boolean): TypeDamageMultiplier;
-      getMatchupScore(pokemon: Pokemon): number;
-      getEvolution(): SpeciesFormEvolution;
+      /**
+       * Computes the given Pokemon's matchup score against this Pokemon.
+       * In most cases, this score ranges from near-zero to 16, but the maximum possible matchup score is 64.
+       * @param opponent {@linkcode Pokemon} The Pokemon to compare this Pokemon against
+       * @returns A score value based on how favorable this Pokemon is when fighting the given Pokemon
+       */
+      getMatchupScore(opponent: Pokemon): number;
+      getEvolution(): SpeciesFormEvolution | null;
       /**
        * Gets all level up moves in a given range for a particular pokemon.
        * @param {integer} startingLevel Don't include moves below this level
@@ -15070,6 +15530,15 @@ declare namespace PokeRogue.field {
        * @returns {LevelMoves} A list of moves and the levels they can be learned at
        */
       getLevelMoves(startingLevel?: integer, includeEvolutionMoves?: boolean, simulateEvolutionChain?: boolean, includeRelearnerMoves?: boolean): LevelMoves;
+      /**
+       * Helper function for getLevelMoves.
+       * Finds all non-duplicate items from the input, and pushes them into the output.
+       * Two items count as duplicate if they have the same Move, regardless of level.
+       *
+       * @param levelMoves the input array to search for non-duplicates from
+       * @param ret the output array to be pushed into.
+       */
+      public getUniqueMoves;
       setMove(moveIndex: integer, moveId: PokeRogue.enums.Moves): void;
       /**
        * Function that tries to set a Pokemon shiny based on the trainer's trainer ID and secret ID
@@ -15096,6 +15565,11 @@ declare namespace PokeRogue.field {
       trySelectMove(moveIndex: integer, ignorePp?: boolean): boolean;
       showInfo(): void;
       hideInfo(): Promise<void>;
+      /**
+       * sets if the pokemon has fled (implies it's a wild pokemon)
+       * @param status - boolean
+       */
+      setWildFlee(status: boolean): void;
       updateInfo(instant?: boolean): Promise<void>;
       /**
        * Show or hide the type effectiveness multiplier window
@@ -15105,10 +15579,16 @@ declare namespace PokeRogue.field {
       toggleStats(visible: boolean): void;
       toggleFlyout(visible: boolean): void;
       addExp(exp: integer): void;
-      getOpponent(targetIndex: integer): Pokemon;
+      getOpponent(targetIndex: integer): Pokemon | null;
       getOpponents(): Pokemon[];
       getOpponentDescriptor(): string;
       getAlly(): Pokemon;
+      /**
+       * Gets the Pokémon on the allied field.
+       *
+       * @returns An array of Pokémon on the allied field.
+       */
+      getAlliedField(): Pokemon[];
       /**
        * Calculates the accuracy multiplier of the user against a target.
        *
@@ -15146,9 +15626,9 @@ declare namespace PokeRogue.field {
       isMax(): boolean;
       addTag(tagType: PokeRogue.enums.BattlerTagType, turnCount?: integer, sourceMove?: Moves, sourceId?: integer): boolean;
       /** @overload */
-      getTag(tagType: PokeRogue.enums.BattlerTagType): BattlerTag;
+      getTag(tagType: PokeRogue.enums.BattlerTagType): BattlerTag | null;
       /** @overload */
-      getTag<T extends PokeRogue.data.BattlerTag>(tagType: PokeRogue.Constructor<T>): T;
+      getTag<T extends PokeRogue.data.BattlerTag>(tagType: PokeRogue.Constructor<T>): T | null;
       findTag(tagFilter: ((tag: PokeRogue.data.BattlerTag) => boolean)): BattlerTag;
       findTags(tagFilter: ((tag: PokeRogue.data.BattlerTag) => boolean)): BattlerTag[];
       lapseTag(tagType: PokeRogue.enums.BattlerTagType): boolean;
@@ -15176,8 +15656,8 @@ declare namespace PokeRogue.field {
       faintCry(callback: Function): void;
       public fusionFaintCry;
       isOppositeGender(pokemon: Pokemon): boolean;
-      canSetStatus(effect: PokeRogue.data.StatusEffect, quiet?: boolean, overrideStatus?: boolean, sourcePokemon?: Pokemon): boolean;
-      trySetStatus(effect: PokeRogue.data.StatusEffect, asPhase?: boolean, sourcePokemon?: Pokemon, cureTurn?: integer, sourceText?: string): boolean;
+      canSetStatus(effect: PokeRogue.data.StatusEffect | undefined, quiet?: boolean, overrideStatus?: boolean, sourcePokemon?: Pokemon | null): boolean;
+      trySetStatus(effect: PokeRogue.data.StatusEffect | undefined, asPhase?: boolean, sourcePokemon?: Pokemon | null, cureTurn?: integer | null, sourceText?: string | null): boolean;
       /**
       * Resets the status of a pokemon.
       * @param revive Whether revive should be cured; defaults to true.
@@ -15200,6 +15680,12 @@ declare namespace PokeRogue.field {
       updateFusionPalette(ignoreOveride?: boolean): void;
       randSeedInt(range: integer, min?: integer): integer;
       randSeedIntRange(min: integer, max: integer): integer;
+      /**
+       * Causes a Pokemon to leave the field (such as in preparation for a switch out/escape).
+       * @param clearEffects Indicates if effects should be cleared (true) or passed
+       * to the next pokemon, such as during a baton pass (false)
+       */
+      leaveField(clearEffects?: boolean): void;
       destroy(): void;
       getBattleInfo(): BattleInfo;
       /**
@@ -15214,7 +15700,7 @@ declare namespace PokeRogue.field {
   }
   export declare class PlayerPokemon extends Pokemon {
       compatibleTms: PokeRogue.enums.Moves[];
-      constructor(scene: PokeRogue.BattleScene, species: PokeRogue.data.PokemonSpecies, level: integer, abilityIndex: integer, formIndex: integer, gender: PokeRogue.data.Gender, shiny: boolean, variant: PokeRogue.data.Variant, ivs: integer[], nature: PokeRogue.data.Nature, dataSource: Pokemon | PokemonData);
+      constructor(scene: PokeRogue.BattleScene, species: PokeRogue.data.PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData);
       initBattleInfo(): void;
       isPlayer(): boolean;
       hasTrainer(): boolean;
@@ -15223,7 +15709,13 @@ declare namespace PokeRogue.field {
       getBattlerIndex(): BattlerIndex;
       generateCompatibleTms(): void;
       tryPopulateMoveset(moveset: PokeRogue.system.StarterMoveset): boolean;
-      switchOut(batonPass: boolean, removeFromField?: boolean): Promise<void>;
+      /**
+       * Causes this mon to leave the field (via {@linkcode leaveField}) and then
+       * opens the party switcher UI to switch a new mon in
+       * @param batonPass Indicates if this switch was caused by a baton pass (and
+       * thus should maintain active mon effects)
+       */
+      switchOut(batonPass: boolean): Promise<void>;
       addFriendship(friendship: integer): void;
       /**
        * Handles Revival Blessing when used by player.
@@ -15231,8 +15723,8 @@ declare namespace PokeRogue.field {
        * @see {@linkcode RevivalBlessingAttr}
        */
       revivalBlessing(): Promise<void>;
-      getPossibleEvolution(evolution: PokeRogue.data.SpeciesFormEvolution): Promise<Pokemon>;
-      evolve(evolution: PokeRogue.data.SpeciesFormEvolution, preEvolution: PokeRogue.data.PokemonSpeciesForm): Promise<void>;
+      getPossibleEvolution(evolution: PokeRogue.data.SpeciesFormEvolution | null): Promise<Pokemon>;
+      evolve(evolution: PokeRogue.data.SpeciesFormEvolution | null, preEvolution: PokeRogue.data.PokemonSpeciesForm): Promise<void>;
       public handleSpecialEvolutions;
       getPossibleForm(formChange: PokeRogue.data.SpeciesFormChange): Promise<Pokemon>;
       changeForm(formChange: PokeRogue.data.SpeciesFormChange): Promise<void>;
@@ -15253,7 +15745,7 @@ declare namespace PokeRogue.field {
       bossSegmentIndex: integer;
       /** To indicate of the instance was populated with a dataSource -> e.g. loaded & populated from session data */
       readonly isPopulatedFromDataSource: boolean;
-      constructor(scene: PokeRogue.BattleScene, species: PokeRogue.data.PokemonSpecies, level: integer, trainerSlot: PokeRogue.data.TrainerSlot, boss: boolean, dataSource: PokeRogue.system.PokemonData);
+      constructor(scene: PokeRogue.BattleScene, species: PokeRogue.data.PokemonSpecies, level: integer, trainerSlot: PokeRogue.data.TrainerSlot, boss: boolean, dataSource?: PokemonData);
       initBattleInfo(): void;
       /**
        * Sets the pokemons boss status. If true initializes the boss segments either from the arguments
@@ -15264,7 +15756,17 @@ declare namespace PokeRogue.field {
        */
       setBoss(boss?: boolean, bossSegments?: integer): void;
       generateAndPopulateMoveset(formIndex?: integer): void;
+      /**
+       * Determines the move this Pokemon will use on the next turn, as well as
+       * the Pokemon the move will target.
+       * @returns this Pokemon's next move in the format {move, moveTargets}
+       */
       getNextMove(): QueuedMove;
+      /**
+       * Determines the Pokemon the given move would target if used by this Pokemon
+       * @param moveId {@linkcode Moves} The move to be used
+       * @returns The indexes of the Pokemon the given move would target
+       */
       getNextTargets(moveId: PokeRogue.enums.Moves): BattlerIndex[];
       isPlayer(): boolean;
       hasTrainer(): boolean;
@@ -15296,7 +15798,7 @@ declare namespace PokeRogue.field {
       damage: integer;
       critical: boolean;
       sourceId: integer;
-      attackingPosition: PokeRogue.BattlerIndex;
+      sourceBattlerIndex: PokeRogue.BattlerIndex;
   }
   export declare class PokemonSummonData {
       battleStats: integer[];
@@ -15306,13 +15808,13 @@ declare namespace PokeRogue.field {
       tags: PokeRogue.data.BattlerTag[];
       abilitySuppressed: boolean;
       abilitiesApplied: PokeRogue.enums.Abilities[];
-      speciesForm: PokeRogue.data.PokemonSpeciesForm;
+      speciesForm: PokeRogue.data.PokemonSpeciesForm | null;
       fusionSpeciesForm: PokeRogue.data.PokemonSpeciesForm;
       ability: PokeRogue.enums.Abilities;
       gender: PokeRogue.data.Gender;
       fusionGender: PokeRogue.data.Gender;
       stats: integer[];
-      moveset: PokemonMove[];
+      moveset: (PokemonMove | null)[];
       types: PokeRogue.data.Type[];
   }
   export declare class PokemonBattleData {
@@ -15337,6 +15839,7 @@ declare namespace PokeRogue.field {
       currDamageDealt: integer;
       damageTaken: integer;
       attacksReceived: AttackMoveResult[];
+      order: number;
   }
   export declare enum AiType {
       RANDOM = 0,
@@ -15502,6 +16005,7 @@ declare namespace PokeRogue {
   //import PokemonSpecies from "./data/pokemon-species";
   //import { Arena } from "./field/arena";
   //import { Biome } from "#enums/biome";
+  //import { Challenges } from "./enums/challenges";
   export declare enum GameModes {
       CLASSIC = 0,
       ENDLESS = 1,
@@ -15537,6 +16041,17 @@ declare namespace PokeRogue {
       battleConfig: PokeRogue.FixedBattleConfigs;
       constructor(modeId: GameModes, config: GameModeConfig, battleConfig?: FixedBattleConfigs);
       /**
+       * Helper function to see if a GameMode has a specific challenge type
+       * @param challenge the Challenges it looks for
+       * @returns true if the game mode has that challenge
+       */
+      hasChallenge(challenge: PokeRogue.enums.Challenges): boolean;
+      /**
+       * Helper function to see if the game mode is using fresh start
+       * @returns true if a fresh start challenge is being applied
+       */
+      isFreshStartChallenge(): boolean;
+      /**
        * @returns either:
        * - override from overrides.ts
        * - 20 for Daily Runs
@@ -15566,7 +16081,7 @@ declare namespace PokeRogue {
        */
       isWaveTrainer(waveIndex: integer, arena: PokeRogue.field.Arena): boolean;
       isTrainerBoss(waveIndex: integer, biomeType: PokeRogue.enums.Biome, offsetGym: boolean): boolean;
-      getOverrideSpecies(waveIndex: integer): PokemonSpecies;
+      getOverrideSpecies(waveIndex: integer): PokemonSpecies | null;
       /**
        * Checks if wave provided is the final for current or specified game mode
        * @param waveIndex
@@ -15626,6 +16141,7 @@ declare namespace PokeRogue {
   //import { SettingKeyboard } from "#app/system/settings/settings-keyboard";
   //import { Button } from "#enums/buttons";
   //import { Device } from "#enums/devices";
+  //import MoveTouchControlsHandler from "./ui/settings/move-touch-controls-handler";
   export interface DeviceMapping {
       [key: string]: number;
   }
@@ -15695,6 +16211,7 @@ declare namespace PokeRogue {
       lastSource: string;
       public inputInterval;
       public touchControls;
+      moveTouchControlsHandler: PokeRogue.ui.settings.MoveTouchControlsHandler;
       /**
          * Initializes a new instance of the game control system, setting up initial state and configurations.
          *
@@ -15980,6 +16497,7 @@ declare namespace PokeRogue.interfaces {
 declare namespace PokeRogue {
   //import { SceneBase } from "./scene-base";
   export declare class LoadingScene extends PokeRogue.SceneBase {
+      static readonly KEY = "loading";
       readonly LOAD_EVENTS: typeof import("phaser").Loader.Events;
       constructor();
       preload(): void;
@@ -15987,7 +16505,373 @@ declare namespace PokeRogue {
       get gameHeight(): number;
       get gameWidth(): number;
       create(): Promise<void>;
+      handleDestroy(): void;
   }
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const abilityTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { AbilityTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const ability: PokeRogue.interfaces.AbilityTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const PGMachv: PokeRogue.interfaces.AchievementTranslationEntries;
+  export declare const PGFachv: PokeRogue.interfaces.AchievementTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battleInfo: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battleMessageUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battle: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlerTags: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { BerryTranslationEntries } from "#app/interfaces/locales";
+  export declare const berry: PokeRogue.interfaces.BerryTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const biome: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { TranslationEntries } from "#app/interfaces/locales.js";
+  export declare const challenges: PokeRogue.interfaces.TranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const commandUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const common: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  export declare const caESConfig: {
+      ability: import("../../interfaces/locales.js").AbilityTranslationEntries;
+      abilityTriggers: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      arenaFlyout: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battle: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battleInfo: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battleMessageUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battlerTags: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      berry: import("../../interfaces/locales.js").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      biome: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      challenges: import("../../interfaces/locales.js").TranslationEntries;
+      commandUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      common: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGMachv: import("../../interfaces/locales.js").AchievementTranslationEntries;
+      PGFachv: import("../../interfaces/locales.js").AchievementTranslationEntries;
+      PGMdialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      PGFdialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      PGMbattleSpecDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGFbattleSpecDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGMmiscDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGFmiscDialogue: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      PGFdoubleBattleDialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
+      egg: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      fightUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      gameMode: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      gameStatsUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      growth: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      menu: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      menuUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      modifierType: import("../../interfaces/locales.js").ModifierTypeTranslationEntries;
+      move: import("../../interfaces/locales.js").MoveTranslationEntries;
+      nature: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokeball: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokemon: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokemonForm: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokemonInfo: import("../../interfaces/locales.js").PokemonInfoTranslationEntries;
+      pokemonInfoContainer: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      pokemonSummary: import("../../interfaces/locales.js").TranslationEntries;
+      saveSlotSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      settings: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      splashMessages: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      starterSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales.js").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      titles: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      trainerClasses: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      trainerNames: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      tutorial: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      voucher: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      weather: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      partyUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales.js").SimpleTranslationEntries;
+  };
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const PGMdialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  export declare const PGFdialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  export declare const PGMbattleSpecDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGFbattleSpecDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGMmiscDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGFmiscDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGMdoubleBattleDialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  export declare const PGFdoubleBattleDialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const egg: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const gameMode: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const gameStatsUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const growth: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const menuUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  /**
+   * The menu namespace holds most miscellaneous text that isn't directly part of the game's
+   * contents or directly related to Pokemon data. This includes menu navigation, settings,
+   * account interactions, descriptive text, etc.
+   */
+  export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { MoveTranslationEntries } from "#app/interfaces/locales";
+  export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const nature: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const partyUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemonInfoContainer: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { PokemonInfoTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemonInfo: PokeRogue.interfaces.PokemonInfoTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { TranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemonSummary: PokeRogue.interfaces.TranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemon: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const saveSlotSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const settings: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const splashMessages: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  /**
+   * The menu namespace holds most miscellaneous text that isn't directly part of the game's
+   * contents or directly related to Pokemon data. This includes menu navigation, settings,
+   * account interactions, descriptive text, etc.
+   */
+  export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const titles: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const trainerClasses: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const trainerNames: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const tutorial: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const voucher: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ca_ES {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  /**
+   * The weather namespace holds text displayed when weather is active during a battle
+   */
+  export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16013,6 +16897,12 @@ declare namespace PokeRogue.locales.de {
 declare namespace PokeRogue.locales.de {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.de {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16081,9 +16971,11 @@ declare namespace PokeRogue.locales.de {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16103,6 +16995,7 @@ declare namespace PokeRogue.locales.de {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16132,6 +17025,7 @@ declare namespace PokeRogue.locales.de {
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -16158,6 +17052,12 @@ declare namespace PokeRogue.locales.de {
 declare namespace PokeRogue.locales.de {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.de {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16215,6 +17115,8 @@ declare namespace PokeRogue.locales.de {
 }
 
 declare namespace PokeRogue.locales.de {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16244,6 +17146,7 @@ declare namespace PokeRogue.locales.de {
 
 declare namespace PokeRogue.locales.de {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -16359,6 +17262,12 @@ declare namespace PokeRogue.locales.en {
 declare namespace PokeRogue.locales.en {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.en {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16427,9 +17336,11 @@ declare namespace PokeRogue.locales.en {
       ability: import("../../interfaces/locales.js").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales.js").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales.js").SimpleTranslationEntries;
       battle: import("../../interfaces/locales.js").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales.js").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales.js").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales.js").SimpleTranslationEntries;
       berry: import("../../interfaces/locales.js").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales.js").SimpleTranslationEntries;
@@ -16449,6 +17360,7 @@ declare namespace PokeRogue.locales.en {
       PGFdoubleBattleDialogue: import("../../interfaces/locales.js").DialogueTranslationEntries;
       egg: import("../../interfaces/locales.js").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales.js").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales.js").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
       growth: import("../../interfaces/locales.js").SimpleTranslationEntries;
@@ -16478,6 +17390,7 @@ declare namespace PokeRogue.locales.en {
       weather: import("../../interfaces/locales.js").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales.js").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales.js").SimpleTranslationEntries;
   };
   
 }
@@ -16504,6 +17417,12 @@ declare namespace PokeRogue.locales.en {
 declare namespace PokeRogue.locales.en {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.en {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16561,6 +17480,12 @@ declare namespace PokeRogue.locales.en {
 }
 
 declare namespace PokeRogue.locales.en {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.en {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
   
@@ -16586,6 +17511,7 @@ declare namespace PokeRogue.locales.en {
 
 declare namespace PokeRogue.locales.en {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -16701,6 +17627,12 @@ declare namespace PokeRogue.locales.es {
 declare namespace PokeRogue.locales.es {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.es {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16769,9 +17701,11 @@ declare namespace PokeRogue.locales.es {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16791,6 +17725,7 @@ declare namespace PokeRogue.locales.es {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -16820,6 +17755,7 @@ declare namespace PokeRogue.locales.es {
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -16846,6 +17782,12 @@ declare namespace PokeRogue.locales.es {
 declare namespace PokeRogue.locales.es {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.es {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -16903,6 +17845,12 @@ declare namespace PokeRogue.locales.es {
 }
 
 declare namespace PokeRogue.locales.es {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.es {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
   
@@ -16928,6 +17876,7 @@ declare namespace PokeRogue.locales.es {
 
 declare namespace PokeRogue.locales.es {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -17043,6 +17992,12 @@ declare namespace PokeRogue.locales.fr {
 declare namespace PokeRogue.locales.fr {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.fr {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17111,9 +18066,11 @@ declare namespace PokeRogue.locales.fr {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17133,6 +18090,7 @@ declare namespace PokeRogue.locales.fr {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17162,6 +18120,7 @@ declare namespace PokeRogue.locales.fr {
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -17188,6 +18147,12 @@ declare namespace PokeRogue.locales.fr {
 declare namespace PokeRogue.locales.fr {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.fr {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17240,6 +18205,12 @@ declare namespace PokeRogue.locales.fr {
 }
 
 declare namespace PokeRogue.locales.fr {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.fr {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
   
@@ -17265,6 +18236,7 @@ declare namespace PokeRogue.locales.fr {
 
 declare namespace PokeRogue.locales.fr {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -17380,6 +18352,12 @@ declare namespace PokeRogue.locales.it {
 declare namespace PokeRogue.locales.it {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.it {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17448,9 +18426,11 @@ declare namespace PokeRogue.locales.it {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17470,6 +18450,7 @@ declare namespace PokeRogue.locales.it {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17499,6 +18480,7 @@ declare namespace PokeRogue.locales.it {
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -17525,6 +18507,12 @@ declare namespace PokeRogue.locales.it {
 declare namespace PokeRogue.locales.it {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.it {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17582,6 +18570,12 @@ declare namespace PokeRogue.locales.it {
 }
 
 declare namespace PokeRogue.locales.it {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.it {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
   
@@ -17607,6 +18601,7 @@ declare namespace PokeRogue.locales.it {
 
 declare namespace PokeRogue.locales.it {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -17700,6 +18695,371 @@ declare namespace PokeRogue.locales.it {
   
 }
 
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const abilityTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { AbilityTranslationEntries } from "#app/interfaces/locales";
+  export declare const ability: PokeRogue.interfaces.AbilityTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { AchievementTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const PGMachv: PokeRogue.interfaces.AchievementTranslationEntries;
+  export declare const PGFachv: PokeRogue.interfaces.AchievementTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battleInfo: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battleMessageUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battle: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlerTags: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { BerryTranslationEntries } from "#app/interfaces/locales";
+  export declare const berry: PokeRogue.interfaces.BerryTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const bgmName: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const biome: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { TranslationEntries } from "#app/interfaces/locales";
+  export declare const challenges: PokeRogue.interfaces.TranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const commandUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const common: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  export declare const jaConfig: {
+      ability: import("../../interfaces/locales").AbilityTranslationEntries;
+      abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
+      battle: import("../../interfaces/locales").SimpleTranslationEntries;
+      battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
+      battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
+      berry: import("../../interfaces/locales").BerryTranslationEntries;
+      bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
+      biome: import("../../interfaces/locales").SimpleTranslationEntries;
+      challenges: import("../../interfaces/locales").TranslationEntries;
+      commandUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      common: import("../../interfaces/locales").SimpleTranslationEntries;
+      PGMachv: import("../../interfaces/locales").AchievementTranslationEntries;
+      PGFachv: import("../../interfaces/locales").AchievementTranslationEntries;
+      PGMdialogue: import("../../interfaces/locales").DialogueTranslationEntries;
+      PGFdialogue: import("../../interfaces/locales").DialogueTranslationEntries;
+      PGMbattleSpecDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
+      PGFbattleSpecDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
+      PGMmiscDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
+      PGFmiscDialogue: import("../../interfaces/locales").SimpleTranslationEntries;
+      PGMdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
+      PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
+      egg: import("../../interfaces/locales").SimpleTranslationEntries;
+      fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
+      gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
+      gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      growth: import("../../interfaces/locales").SimpleTranslationEntries;
+      menu: import("../../interfaces/locales").SimpleTranslationEntries;
+      menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifier: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
+      move: import("../../interfaces/locales").MoveTranslationEntries;
+      nature: import("../../interfaces/locales").SimpleTranslationEntries;
+      pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
+      pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
+      pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
+      pokemonInfo: import("../../interfaces/locales").PokemonInfoTranslationEntries;
+      pokemonInfoContainer: import("../../interfaces/locales").SimpleTranslationEntries;
+      pokemonSummary: import("../../interfaces/locales").TranslationEntries;
+      saveSlotSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      settings: import("../../interfaces/locales").SimpleTranslationEntries;
+      splashMessages: import("../../interfaces/locales").SimpleTranslationEntries;
+      starterSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      statusEffect: import("../../interfaces/locales").StatusEffectTranslationEntries;
+      terrain: import("../../interfaces/locales").SimpleTranslationEntries;
+      titles: import("../../interfaces/locales").SimpleTranslationEntries;
+      trainerClasses: import("../../interfaces/locales").SimpleTranslationEntries;
+      trainerNames: import("../../interfaces/locales").SimpleTranslationEntries;
+      tutorial: import("../../interfaces/locales").SimpleTranslationEntries;
+      voucher: import("../../interfaces/locales").SimpleTranslationEntries;
+      weather: import("../../interfaces/locales").SimpleTranslationEntries;
+      partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
+  };
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { DialogueTranslationEntries, SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const PGMdialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  export declare const PGFdialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  export declare const PGMbattleSpecDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGFbattleSpecDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGMmiscDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGFmiscDialogue: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const PGMdoubleBattleDialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  export declare const PGFdoubleBattleDialogue: PokeRogue.interfaces.DialogueTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const egg: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const gameMode: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const gameStatsUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const growth: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const menuUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  /**
+   * The menu namespace holds most miscellaneous text that isn't directly part of the game's
+   * contents or directly related to Pokemon data. This includes menu navigation, settings,
+   * account interactions, descriptive text, etc.
+   */
+  export declare const menu: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { ModifierTypeTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifierType: PokeRogue.interfaces.ModifierTypeTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const modifier: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { MoveTranslationEntries } from "#app/interfaces/locales";
+  export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const nature: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const partyUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokeball: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemonInfoContainer: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { PokemonInfoTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemonInfo: PokeRogue.interfaces.PokemonInfoTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { TranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemonSummary: PokeRogue.interfaces.TranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const pokemon: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const saveSlotSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const settings: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const splashMessages: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  /**
+   * The menu namespace holds most miscellaneous text that isn't directly part of the game's
+   * contents or directly related to Pokemon data. This includes menu navigation, settings,
+   * account interactions, descriptive text, etc.
+   */
+  export declare const starterSelectUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { StatusEffectTranslationEntries } from "#app/interfaces/locales.js";
+  export declare const statusEffect: PokeRogue.interfaces.StatusEffectTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const titles: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const trainerClasses: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const trainerNames: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const tutorial: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const voucher: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ja {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  /**
+   * The weather namespace holds text displayed when weather is active during a battle
+   */
+  export declare const weather: PokeRogue.interfaces.SimpleTranslationEntries;
+  export declare const terrain: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
 declare namespace PokeRogue.locales.ko {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const abilityTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
@@ -17725,6 +19085,12 @@ declare namespace PokeRogue.locales.ko {
 declare namespace PokeRogue.locales.ko {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ko {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17793,9 +19159,11 @@ declare namespace PokeRogue.locales.ko {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17815,6 +19183,7 @@ declare namespace PokeRogue.locales.ko {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -17844,6 +19213,7 @@ declare namespace PokeRogue.locales.ko {
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -17870,6 +19240,12 @@ declare namespace PokeRogue.locales.ko {
 declare namespace PokeRogue.locales.ko {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ko {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -17927,6 +19303,12 @@ declare namespace PokeRogue.locales.ko {
 }
 
 declare namespace PokeRogue.locales.ko {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.ko {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   /**
    * 본가 게임과 텍스트가 다르거나 번역문을 완전히 확인하지 못한 경우 주석으로 표시
@@ -17955,6 +19337,7 @@ declare namespace PokeRogue.locales.ko {
 
 declare namespace PokeRogue.locales.ko {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -18070,6 +19453,12 @@ declare namespace PokeRogue.locales.pt_BR {
 declare namespace PokeRogue.locales.pt_BR {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.pt_BR {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -18138,9 +19527,11 @@ declare namespace PokeRogue.locales.pt_BR {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18160,15 +19551,19 @@ declare namespace PokeRogue.locales.pt_BR {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
       menu: import("../../interfaces/locales").SimpleTranslationEntries;
       menuUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifier: import("../../interfaces/locales").SimpleTranslationEntries;
+      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierType: import("../../interfaces/locales").ModifierTypeTranslationEntries;
       move: import("../../interfaces/locales").MoveTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       nature: import("../../interfaces/locales").SimpleTranslationEntries;
+      partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       pokeball: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemon: import("../../interfaces/locales").SimpleTranslationEntries;
       pokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18187,8 +19582,6 @@ declare namespace PokeRogue.locales.pt_BR {
       tutorial: import("../../interfaces/locales").SimpleTranslationEntries;
       voucher: import("../../interfaces/locales").SimpleTranslationEntries;
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
-      partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
-      modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -18215,6 +19608,12 @@ declare namespace PokeRogue.locales.pt_BR {
 declare namespace PokeRogue.locales.pt_BR {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.pt_BR {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -18272,6 +19671,12 @@ declare namespace PokeRogue.locales.pt_BR {
 }
 
 declare namespace PokeRogue.locales.pt_BR {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.pt_BR {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
   
@@ -18297,6 +19702,7 @@ declare namespace PokeRogue.locales.pt_BR {
 
 declare namespace PokeRogue.locales.pt_BR {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -18412,6 +19818,12 @@ declare namespace PokeRogue.locales.zh_CN {
 declare namespace PokeRogue.locales.zh_CN {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const arenaFlyout: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_CN {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -18480,9 +19892,11 @@ declare namespace PokeRogue.locales.zh_CN {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18502,6 +19916,7 @@ declare namespace PokeRogue.locales.zh_CN {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18531,6 +19946,7 @@ declare namespace PokeRogue.locales.zh_CN {
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -18557,6 +19973,12 @@ declare namespace PokeRogue.locales.zh_CN {
 declare namespace PokeRogue.locales.zh_CN {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_CN {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -18614,6 +20036,12 @@ declare namespace PokeRogue.locales.zh_CN {
 }
 
 declare namespace PokeRogue.locales.zh_CN {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_CN {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
   
@@ -18639,6 +20067,7 @@ declare namespace PokeRogue.locales.zh_CN {
 
 declare namespace PokeRogue.locales.zh_CN {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -18759,6 +20188,12 @@ declare namespace PokeRogue.locales.zh_TW {
 
 declare namespace PokeRogue.locales.zh_TW {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const arenaTag: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_TW {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const battleInfo: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -18822,9 +20257,11 @@ declare namespace PokeRogue.locales.zh_TW {
       ability: import("../../interfaces/locales").AbilityTranslationEntries;
       abilityTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
       arenaFlyout: import("../../interfaces/locales").SimpleTranslationEntries;
+      arenaTag: import("../../interfaces/locales").SimpleTranslationEntries;
       battle: import("../../interfaces/locales").SimpleTranslationEntries;
       battleInfo: import("../../interfaces/locales").SimpleTranslationEntries;
       battleMessageUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      battlePokemonForm: import("../../interfaces/locales").SimpleTranslationEntries;
       battlerTags: import("../../interfaces/locales").SimpleTranslationEntries;
       berry: import("../../interfaces/locales").BerryTranslationEntries;
       bgmName: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18844,6 +20281,7 @@ declare namespace PokeRogue.locales.zh_TW {
       PGFdoubleBattleDialogue: import("../../interfaces/locales").DialogueTranslationEntries;
       egg: import("../../interfaces/locales").SimpleTranslationEntries;
       fightUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      filterBar: import("../../interfaces/locales").SimpleTranslationEntries;
       gameMode: import("../../interfaces/locales").SimpleTranslationEntries;
       gameStatsUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       growth: import("../../interfaces/locales").SimpleTranslationEntries;
@@ -18873,6 +20311,7 @@ declare namespace PokeRogue.locales.zh_TW {
       weather: import("../../interfaces/locales").SimpleTranslationEntries;
       partyUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
       modifierSelectUiHandler: import("../../interfaces/locales").SimpleTranslationEntries;
+      moveTriggers: import("../../interfaces/locales").SimpleTranslationEntries;
   };
   
 }
@@ -18899,6 +20338,12 @@ declare namespace PokeRogue.locales.zh_TW {
 declare namespace PokeRogue.locales.zh_TW {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
   export declare const fightUiHandler: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_TW {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const filterBar: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
 
@@ -18956,6 +20401,12 @@ declare namespace PokeRogue.locales.zh_TW {
 }
 
 declare namespace PokeRogue.locales.zh_TW {
+  //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const moveTriggers: PokeRogue.interfaces.SimpleTranslationEntries;
+  
+}
+
+declare namespace PokeRogue.locales.zh_TW {
   //import { MoveTranslationEntries } from "#app/interfaces/locales";
   export declare const move: PokeRogue.interfaces.MoveTranslationEntries;
   
@@ -18981,6 +20432,7 @@ declare namespace PokeRogue.locales.zh_TW {
 
 declare namespace PokeRogue.locales.zh_TW {
   //import { SimpleTranslationEntries } from "#app/interfaces/locales";
+  export declare const battlePokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   export declare const pokemonForm: PokeRogue.interfaces.SimpleTranslationEntries;
   
 }
@@ -19140,19 +20592,11 @@ declare namespace PokeRogue {
 declare namespace PokeRogue {
   //import Pokemon from "./field/pokemon";
   /**
-   * Builds a message by concatenating the Pokemon name with its potential affix and the given text
-   * @param pokemon {@linkcode Pokemon} name and battle context will be retrieved from this instance for {@linkcode getPokemonNameWithAffix}
-   * @param {string} content any text
-   * @returns {string} ex: "Wild Gengar fainted!", "Ectoplasma sauvage est K.O!"
-   * @see {@linkcode getPokemonNameWithAffix} for the Pokemon's name and potentiel affix
-   */
-  export declare function getPokemonMessage(pokemon: PokeRogue.field.Pokemon, content: string): string;
-  /**
    * Retrieves the Pokemon's name, potentially with an affix indicating its role (wild or foe) in the current battle context, translated
    * @param pokemon {@linkcode Pokemon} name and battle context will be retrieved from this instance
    * @returns {string} ex: "Wild Gengar", "Ectoplasma sauvage"
    */
-  export declare function getPokemonNameWithAffix(pokemon: PokeRogue.field.Pokemon): string;
+  export declare function getPokemonNameWithAffix(pokemon: PokeRogue.field.Pokemon | undefined): string;
   
 }
 
@@ -19202,16 +20646,22 @@ declare namespace PokeRogue.modifier {
       group: string;
       soundName: string;
       tier: PokeRogue.modifier.ModifierTier;
-      protected newModifierFunc: NewModifierFunc;
-      constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierFunc, group?: string, soundName?: string);
+      protected newModifierFunc: NewModifierFunc | null;
+      constructor(localeKey: string | null, iconImage: string | null, newModifierFunc: NewModifierFunc | null, group?: string, soundName?: string);
       get name(): string;
       getDescription(scene: PokeRogue.BattleScene): string;
       setTier(tier: PokeRogue.modifier.ModifierTier): void;
-      getOrInferTier(poolType?: ModifierPoolType): ModifierTier;
+      getOrInferTier(poolType?: ModifierPoolType): ModifierTier | null;
       withIdFromFunc(func: ModifierTypeFunc): ModifierType;
-      newModifier(...args: any[]): Modifier;
+      /**
+       * Populates the tier field by performing a reverse lookup on the modifier pool specified by {@linkcode poolType} using the
+       * {@linkcode ModifierType}'s id.
+       * @param poolType the {@linkcode ModifierPoolType} to look into to derive the item's tier; defaults to {@linkcode ModifierPoolType.PLAYER}
+       */
+      withTierFromPool(poolType?: ModifierPoolType): ModifierType;
+      newModifier(...args: any[]): Modifier | null;
   }
-  type ModifierTypeGeneratorFunc = (party: PokeRogue.field.Pokemon[], pregenArgs?: any[]) => ModifierType;
+  type ModifierTypeGeneratorFunc = (party: PokeRogue.field.Pokemon[], pregenArgs?: any[]) => ModifierType | null;
   export declare class ModifierTypeGenerator extends ModifierType {
       public genTypeFunc;
       constructor(genTypeFunc: ModifierTypeGeneratorFunc);
@@ -19235,7 +20685,7 @@ declare namespace PokeRogue.modifier {
       getDescription(scene: PokeRogue.BattleScene): string;
   }
   export declare class PokemonModifierType extends ModifierType {
-      selectFilter: PokeRogue.ui.PokemonSelectFilter;
+      selectFilter: PokeRogue.ui.PokemonSelectFilter | undefined;
       constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierFunc, selectFilter?: PokemonSelectFilter, group?: string, soundName?: string);
   }
   export declare class PokemonHeldItemModifierType extends PokemonModifierType {
@@ -19258,7 +20708,7 @@ declare namespace PokeRogue.modifier {
       getDescription(scene: PokeRogue.BattleScene): string;
   }
   export declare abstract class PokemonMoveModifierType extends PokemonModifierType {
-      moveSelectFilter: PokeRogue.ui.PokemonMoveSelectFilter;
+      moveSelectFilter: PokeRogue.ui.PokemonMoveSelectFilter | undefined;
       constructor(localeKey: string, iconImage: string, newModifierFunc: NewModifierFunc, selectFilter?: PokemonSelectFilter, moveSelectFilter?: PokemonMoveSelectFilter, group?: string);
   }
   export declare class PokemonPpRestoreModifierType extends PokemonMoveModifierType {
@@ -19629,6 +21079,14 @@ declare namespace PokeRogue.modifier {
   export declare function regenerateModifierPoolThresholds(party: PokeRogue.field.Pokemon[], poolType: ModifierPoolType, rerollCount?: integer): void;
   export declare function getModifierTypeFuncById(id: string): ModifierTypeFunc;
   export declare function getPlayerModifierTypeOptions(count: integer, party: PokeRogue.field.PlayerPokemon[], modifierTiers?: ModifierTier[]): ModifierTypeOption[];
+  /**
+   * Replaces the {@linkcode ModifierType} of the entries within {@linkcode options} with any
+   * {@linkcode ModifierOverride} entries listed in {@linkcode Overrides.ITEM_REWARD_OVERRIDE}
+   * up to the smallest amount of entries between {@linkcode options} and the override array.
+   * @param options Array of naturally rolled {@linkcode ModifierTypeOption}s
+   * @param party Array of the player's current party
+   */
+  export declare function overridePlayerModifierTypeOptions(options: ModifierTypeOption[], party: PokeRogue.field.PlayerPokemon[]): void;
   export declare function getPlayerShopModifierTypeOptionsForWave(waveIndex: integer, baseCost: integer): ModifierTypeOption[];
   export declare function getEnemyBuffModifierForWave(tier: PokeRogue.modifier.ModifierTier, enemyModifiers: Modifiers.PersistentModifier[], scene: PokeRogue.BattleScene): Modifiers.EnemyPersistentModifier;
   export declare function getEnemyModifierTypesForWave(waveIndex: integer, count: integer, party: PokeRogue.field.EnemyPokemon[], poolType: ModifierPoolType.WILD | ModifierPoolType.TRAINER, upgradeChance?: integer): PokemonHeldItemModifierType[];
@@ -19687,7 +21145,7 @@ declare namespace PokeRogue.modifier {
   export declare abstract class PersistentModifier extends Modifier {
       stackCount: integer;
       virtualStackCount: integer;
-      constructor(type: PokeRogue.modifier.ModifierType, stackCount: integer);
+      constructor(type: PokeRogue.modifier.ModifierType, stackCount?: integer);
       add(modifiers: PersistentModifier[], virtual: boolean, scene: PokeRogue.BattleScene): boolean;
       abstract clone(): PersistentModifier;
       getArgs(): any[];
@@ -19696,7 +21154,7 @@ declare namespace PokeRogue.modifier {
       abstract getMaxStackCount(scene: PokeRogue.BattleScene, forThreshold?: boolean): integer;
       isIconVisible(scene: PokeRogue.BattleScene): boolean;
       getIcon(scene: PokeRogue.BattleScene, forSummary?: boolean): Phaser.GameObjects.Container;
-      getIconStackText(scene: PokeRogue.BattleScene, virtual?: boolean): Phaser.GameObjects.BitmapText;
+      getIconStackText(scene: PokeRogue.BattleScene, virtual?: boolean): Phaser.GameObjects.BitmapText | null;
   }
   export declare abstract class ConsumableModifier extends Modifier {
       constructor(type: PokeRogue.modifier.ModifierType);
@@ -19770,18 +21228,18 @@ declare namespace PokeRogue.modifier {
   export declare abstract class PokemonHeldItemModifier extends PersistentModifier {
       pokemonId: integer;
       readonly isTransferrable: boolean;
-      constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stackCount: integer);
+      constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stackCount?: integer);
       abstract matchType(_modifier: Modifier): boolean;
       match(modifier: Modifier): boolean;
       getArgs(): any[];
       shouldApply(args: any[]): boolean;
       isIconVisible(scene: PokeRogue.BattleScene): boolean;
       getIcon(scene: PokeRogue.BattleScene, forSummary?: boolean): Phaser.GameObjects.Container;
-      getPokemon(scene: PokeRogue.BattleScene): Pokemon;
+      getPokemon(scene: PokeRogue.BattleScene): Pokemon | undefined;
       getScoreMultiplier(): number;
       getSecondaryChanceMultiplier(pokemon: PokeRogue.field.Pokemon): integer;
       getMaxStackCount(scene: PokeRogue.BattleScene, forThreshold?: boolean): integer;
-      abstract getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
+      abstract getMaxHeldItemCount(pokemon?: Pokemon): integer;
   }
   export declare abstract class LapsingPokemonHeldItemModifier extends PokemonHeldItemModifier {
       protected battlesLeft: integer;
@@ -20446,17 +21904,22 @@ declare namespace PokeRogue.modifier {
       getMaxStackCount(scene: PokeRogue.BattleScene): integer;
   }
   /**
-   * Uses override from overrides.ts to set PersistentModifiers for starting a new game
-   * @param scene current BattleScene
-   * @param player is this for player for enemy
+   * Uses either `MODIFIER_OVERRIDE` in overrides.ts to set {@linkcode PersistentModifier}s for either:
+   *  - The player
+   *  - The enemy
+   * @param scene current {@linkcode BattleScene}
+   * @param isPlayer {@linkcode boolean} for whether the the player (`true`) or enemy (`false`) is being overridden
    */
-  export declare function overrideModifiers(scene: PokeRogue.BattleScene, player?: boolean): void;
+  export declare function overrideModifiers(scene: PokeRogue.BattleScene, isPlayer?: boolean): void;
   /**
-   * Uses override from overrides.ts to set PokemonHeldItemModifiers for starting a new game
-   * @param scene current BattleScene
-   * @param player is this for player for enemy
+   * Uses either `HELD_ITEMS_OVERRIDE` in overrides.ts to set {@linkcode PokemonHeldItemModifier}s for either:
+   *  - The first member of the player's team when starting a new game
+   *  - An enemy {@linkcode Pokemon} being spawned in
+   * @param scene current {@linkcode BattleScene}
+   * @param pokemon {@linkcode Pokemon} whose held items are being overridden
+   * @param isPlayer {@linkcode boolean} for whether the {@linkcode pokemon} is the player's (`true`) or an enemy (`false`)
    */
-  export declare function overrideHeldItems(scene: PokeRogue.BattleScene, pokemon: PokeRogue.field.Pokemon, player?: boolean): void;
+  export declare function overrideHeldItems(scene: PokeRogue.BattleScene, pokemon: PokeRogue.field.Pokemon, isPlayer?: boolean): void;
   export {};
   
 }
@@ -20474,7 +21937,7 @@ declare namespace PokeRogue {
   //import { type PokeballCounts } from "./battle-scene";
   //import { Gender } from "./data/gender";
   //import { Variant } from "./data/variant";
-  //import { type ModifierOverride, type ModifierTypeKeys } from "./modifier/modifier-type";
+  //import { type ModifierOverride } from "./modifier/modifier-type";
   /**
    * If you need to add Overrides values for local testing do that inside {@linkcode overrides}
    * ---
@@ -20489,11 +21952,16 @@ declare namespace PokeRogue {
       readonly BATTLE_TYPE_OVERRIDE: "double" | "single" | null;
       readonly STARTING_WAVE_OVERRIDE: integer;
       readonly STARTING_BIOME_OVERRIDE: PokeRogue.enums.Biome;
-      readonly ARENA_TINT_OVERRIDE: PokeRogue.enums.TimeOfDay;
+      readonly ARENA_TINT_OVERRIDE: PokeRogue.enums.TimeOfDay | null;
       /** Multiplies XP gained by this value including 0. Set to null to ignore the override */
-      readonly XP_MULTIPLIER_OVERRIDE: number;
+      readonly XP_MULTIPLIER_OVERRIDE: number | null;
+      readonly NEVER_CRIT_OVERRIDE: boolean;
       /** default 1000 */
       readonly STARTING_MONEY_OVERRIDE: integer;
+      /** Sets all shop item prices to 0 */
+      readonly WAIVE_SHOP_FEES_OVERRIDE: boolean;
+      /** Sets reroll price to 0 */
+      readonly WAIVE_ROLL_FEE_OVERRIDE: boolean;
       readonly FREE_CANDY_UPGRADE_OVERRIDE: boolean;
       readonly POKEBALL_OVERRIDE: {
           active: boolean;
@@ -20522,7 +21990,7 @@ declare namespace PokeRogue {
       readonly ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       readonly PASSIVE_ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       readonly STATUS_OVERRIDE: PokeRogue.enums.StatusEffect;
-      readonly GENDER_OVERRIDE: PokeRogue.data.Gender;
+      readonly GENDER_OVERRIDE: PokeRogue.data.Gender | null;
       readonly MOVESET_OVERRIDE: Array<Moves>;
       readonly SHINY_OVERRIDE: boolean;
       readonly VARIANT_OVERRIDE: PokeRogue.data.Variant;
@@ -20531,15 +21999,15 @@ declare namespace PokeRogue {
       readonly OPP_ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       readonly OPP_PASSIVE_ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       readonly OPP_STATUS_OVERRIDE: PokeRogue.enums.StatusEffect;
-      readonly OPP_GENDER_OVERRIDE: PokeRogue.data.Gender;
+      readonly OPP_GENDER_OVERRIDE: PokeRogue.data.Gender | null;
       readonly OPP_MOVESET_OVERRIDE: Array<Moves>;
       readonly OPP_SHINY_OVERRIDE: boolean;
       readonly OPP_VARIANT_OVERRIDE: PokeRogue.data.Variant;
       readonly OPP_IVS_OVERRIDE: integer | integer[];
       readonly EGG_IMMEDIATE_HATCH_OVERRIDE: boolean;
-      readonly EGG_TIER_OVERRIDE: PokeRogue.enums.EggTier;
+      readonly EGG_TIER_OVERRIDE: PokeRogue.enums.EggTier | null;
       readonly EGG_SHINY_OVERRIDE: boolean;
-      readonly EGG_VARIANT_OVERRIDE: PokeRogue.enums.VariantTier;
+      readonly EGG_VARIANT_OVERRIDE: PokeRogue.enums.VariantTier | null;
       readonly EGG_FREE_GACHA_PULLS_OVERRIDE: boolean;
       readonly EGG_GACHA_PULL_COUNT_OVERRIDE: number;
       /**
@@ -20569,18 +22037,26 @@ declare namespace PokeRogue {
        * STARTING_HELD_ITEM_OVERRIDE = [{name: "BERRY"}]
        * ```
        */
-      readonly STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride>;
-      readonly OPP_MODIFIER_OVERRIDE: Array<ModifierOverride>;
-      readonly STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride>;
-      readonly OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride>;
-      readonly NEVER_CRIT_OVERRIDE: boolean;
+      readonly STARTING_MODIFIER_OVERRIDE: ModifierOverride[];
       /**
-       * An array of items by keys as defined in the "modifierTypes" object in the "modifier/modifier-type.ts" file.
-       * Items listed will replace the normal rolls.
-       * If less items are listed than rolled, only some items will be replaced
-       * If more items are listed than rolled, only the first X items will be shown, where X is the number of items rolled.
+       * Override array of {@linkcode ModifierOverride}s used to provide modifiers to enemies.
+       *
+       * Note that any previous modifiers are cleared.
        */
-      readonly ITEM_REWARD_OVERRIDE: Array<ModifierTypeKeys>;
+      readonly OPP_MODIFIER_OVERRIDE: ModifierOverride[];
+      /** Override array of {@linkcode ModifierOverride}s used to provide held items to first party member when starting a new game. */
+      readonly STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[];
+      /** Override array of {@linkcode ModifierOverride}s used to provide held items to enemies on spawn. */
+      readonly OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[];
+      /**
+       * Override array of {@linkcode ModifierOverride}s used to replace the generated item rolls after a wave.
+       *
+       * If less entries are listed than rolled, only those entries will be used to replace the corresponding items while the rest randomly generated.
+       * If more entries are listed than rolled, only the first X entries will be used, where X is the number of items rolled.
+       *
+       * Note that, for all items in the array, `count` is not used.
+       */
+      readonly ITEM_REWARD_OVERRIDE: ModifierOverride[];
   }
   export declare const defaultOverrides: DefaultOverrides;
   declare const _default: {
@@ -20589,9 +22065,12 @@ declare namespace PokeRogue {
       BATTLE_TYPE_OVERRIDE: "double" | "single" | null;
       STARTING_WAVE_OVERRIDE: integer;
       STARTING_BIOME_OVERRIDE: PokeRogue.enums.Biome;
-      ARENA_TINT_OVERRIDE: PokeRogue.enums.TimeOfDay;
-      XP_MULTIPLIER_OVERRIDE: number;
+      ARENA_TINT_OVERRIDE: PokeRogue.enums.TimeOfDay | null;
+      XP_MULTIPLIER_OVERRIDE: number | null;
+      NEVER_CRIT_OVERRIDE: boolean;
       STARTING_MONEY_OVERRIDE: integer;
+      WAIVE_SHOP_FEES_OVERRIDE: boolean;
+      WAIVE_ROLL_FEE_OVERRIDE: boolean;
       FREE_CANDY_UPGRADE_OVERRIDE: boolean;
       POKEBALL_OVERRIDE: {
           active: boolean;
@@ -20603,7 +22082,7 @@ declare namespace PokeRogue {
       ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       PASSIVE_ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       STATUS_OVERRIDE: PokeRogue.enums.StatusEffect;
-      GENDER_OVERRIDE: PokeRogue.data.Gender;
+      GENDER_OVERRIDE: PokeRogue.data.Gender | null;
       MOVESET_OVERRIDE: Array<Moves>;
       SHINY_OVERRIDE: boolean;
       VARIANT_OVERRIDE: PokeRogue.data.Variant;
@@ -20612,23 +22091,22 @@ declare namespace PokeRogue {
       OPP_ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       OPP_PASSIVE_ABILITY_OVERRIDE: PokeRogue.enums.Abilities;
       OPP_STATUS_OVERRIDE: PokeRogue.enums.StatusEffect;
-      OPP_GENDER_OVERRIDE: PokeRogue.data.Gender;
+      OPP_GENDER_OVERRIDE: PokeRogue.data.Gender | null;
       OPP_MOVESET_OVERRIDE: Array<Moves>;
       OPP_SHINY_OVERRIDE: boolean;
       OPP_VARIANT_OVERRIDE: PokeRogue.data.Variant;
       OPP_IVS_OVERRIDE: integer | integer[];
       EGG_IMMEDIATE_HATCH_OVERRIDE: boolean;
-      EGG_TIER_OVERRIDE: PokeRogue.enums.EggTier;
+      EGG_TIER_OVERRIDE: PokeRogue.enums.EggTier | null;
       EGG_SHINY_OVERRIDE: boolean;
-      EGG_VARIANT_OVERRIDE: PokeRogue.enums.VariantTier;
+      EGG_VARIANT_OVERRIDE: PokeRogue.enums.VariantTier | null;
       EGG_FREE_GACHA_PULLS_OVERRIDE: boolean;
       EGG_GACHA_PULL_COUNT_OVERRIDE: number;
-      STARTING_MODIFIER_OVERRIDE: Array<ModifierOverride>;
-      OPP_MODIFIER_OVERRIDE: Array<ModifierOverride>;
-      STARTING_HELD_ITEMS_OVERRIDE: Array<ModifierOverride>;
-      OPP_HELD_ITEMS_OVERRIDE: Array<ModifierOverride>;
-      NEVER_CRIT_OVERRIDE: boolean;
-      ITEM_REWARD_OVERRIDE: Array<ModifierTypeKeys>;
+      STARTING_MODIFIER_OVERRIDE: ModifierOverride[];
+      OPP_MODIFIER_OVERRIDE: ModifierOverride[];
+      STARTING_HELD_ITEMS_OVERRIDE: ModifierOverride[];
+      OPP_HELD_ITEMS_OVERRIDE: ModifierOverride[];
+      ITEM_REWARD_OVERRIDE: ModifierOverride[];
   };
 
 }
@@ -20729,7 +22207,7 @@ declare namespace PokeRogue {
       protected battlerIndex: PokeRogue.BattlerIndex | integer;
       player: boolean;
       fieldIndex: integer;
-      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex | integer);
+      constructor(scene: PokeRogue.BattleScene, battlerIndex?: BattlerIndex | integer);
       getPokemon(): Pokemon;
   }
   export declare abstract class PartyMemberPokemonPhase extends FieldPhase {
@@ -20859,6 +22337,15 @@ declare namespace PokeRogue {
       getPokemon(): PlayerPokemon;
       end(): void;
   }
+  /**
+   * Phase for determining an enemy AI's action for the next turn.
+   * During this phase, the enemy decides whether to switch (if it has a trainer)
+   * or to use a move from its moveset.
+   *
+   * For more information on how the Enemy AI works, see docs/enemy-ai.md
+   * @see {@linkcode Pokemon.getMatchupScore}
+   * @see {@linkcode EnemyPokemon.getNextMove}
+   */
   export declare class EnemyCommandPhase extends FieldPhase {
       protected fieldIndex: integer;
       constructor(scene: PokeRogue.BattleScene, fieldIndex: integer);
@@ -20889,8 +22376,15 @@ declare namespace PokeRogue {
   export declare class CommonAnimPhase extends PokemonPhase {
       public anim;
       public targetIndex;
-      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, targetIndex: PokeRogue.BattlerIndex, anim: PokeRogue.data.CommonAnim);
+      constructor(scene: PokeRogue.BattleScene, battlerIndex?: BattlerIndex, targetIndex?: BattlerIndex | undefined, anim?: CommonAnim);
       setAnimation(anim: PokeRogue.data.CommonAnim): void;
+      start(): void;
+  }
+  export declare class MoveHeaderPhase extends BattlePhase {
+      pokemon: PokeRogue.field.Pokemon;
+      move: PokeRogue.field.PokemonMove;
+      constructor(scene: PokeRogue.BattleScene, pokemon: PokeRogue.field.Pokemon, move: PokeRogue.field.PokemonMove);
+      canMove(): boolean;
       start(): void;
   }
   export declare class MovePhase extends BattlePhase {
@@ -20910,7 +22404,7 @@ declare namespace PokeRogue {
       start(): void;
       getEffectPhase(): MoveEffectPhase;
       showMoveText(): void;
-      showFailedText(failedText?: string): void;
+      showFailedText(failedText?: string | null): void;
       end(): void;
   }
   export declare class MoveEffectPhase extends PokemonPhase {
@@ -20919,12 +22413,30 @@ declare namespace PokeRogue {
       constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, targets: PokeRogue.BattlerIndex[], move: PokeRogue.field.PokemonMove);
       start(): void;
       end(): void;
+      /**
+       * Resolves whether this phase's invoked move hits or misses the given target
+       * @param target {@linkcode Pokemon} the Pokemon targeted by the invoked move
+       * @returns `true` if the move does not miss the target; `false` otherwise
+       */
       hitCheck(target: PokeRogue.field.Pokemon): boolean;
-      getUserPokemon(): Pokemon;
+      /** Returns the {@linkcode Pokemon} using this phase's invoked move */
+      getUserPokemon(): Pokemon | undefined;
+      /** Returns an array of all {@linkcode Pokemon} targeted by this phase's invoked move */
       getTargets(): Pokemon[];
-      getTarget(): Pokemon;
+      /** Returns the first target of this phase's invoked move */
+      getTarget(): Pokemon | undefined;
+      /**
+       * Removes the given {@linkcode Pokemon} from this phase's target list
+       * @param target {@linkcode Pokemon} the Pokemon to be removed
+       */
       removeTarget(target: PokeRogue.field.Pokemon): void;
+      /**
+       * Prevents subsequent strikes of this phase's invoked move from occurring
+       * @param target {@linkcode Pokemon} if defined, only stop subsequent
+       * strikes against this Pokemon
+       */
       stopMultiHit(target?: Pokemon): void;
+      /** Returns a new MoveEffectPhase with the same properties as this phase */
       getNewHitPhase(): MoveEffectPhase;
   }
   export declare class MoveEndPhase extends PokemonPhase {
@@ -20942,7 +22454,7 @@ declare namespace PokeRogue {
       constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, passive?: boolean);
       start(): void;
   }
-  export type StatChangeCallback = (target: PokeRogue.field.Pokemon, changed: PokeRogue.data.BattleStat[], relativeChanges: number[]) => void;
+  export type StatChangeCallback = (target: PokeRogue.field.Pokemon | null, changed: PokeRogue.data.BattleStat[], relativeChanges: number[]) => void;
   export declare class StatChangePhase extends PokemonPhase {
       public stats;
       public selfTarget;
@@ -20951,14 +22463,14 @@ declare namespace PokeRogue {
       public ignoreAbilities;
       public canBeCopied;
       public onChange;
-      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, selfTarget: boolean, stats: PokeRogue.data.BattleStat[], levels: integer, showMessage?: boolean, ignoreAbilities?: boolean, canBeCopied?: boolean, onChange?: StatChangeCallback);
+      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, selfTarget: boolean, stats: PokeRogue.data.BattleStat[], levels: integer, showMessage?: boolean, ignoreAbilities?: boolean, canBeCopied?: boolean, onChange?: StatChangeCallback | null);
       start(): void;
       getRandomStat(): BattleStat;
       aggregateStatChanges(random?: boolean): void;
       getStatChangeMessages(stats: PokeRogue.data.BattleStat[], levels: integer, relLevels: integer[]): string[];
   }
   export declare class WeatherEffectPhase extends CommonAnimPhase {
-      weather: PokeRogue.data.Weather;
+      weather: PokeRogue.data.Weather | null;
       constructor(scene: PokeRogue.BattleScene);
       start(): void;
   }
@@ -20967,19 +22479,20 @@ declare namespace PokeRogue {
       public cureTurn;
       public sourceText;
       public sourcePokemon;
-      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, statusEffect: PokeRogue.data.StatusEffect, cureTurn?: integer, sourceText?: string, sourcePokemon?: Pokemon);
+      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, statusEffect?: StatusEffect, cureTurn?: integer | null, sourceText?: string, sourcePokemon?: Pokemon);
       start(): void;
   }
   export declare class PostTurnStatusEffectPhase extends PokemonPhase {
       constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex);
       start(): void;
+      end(): void;
   }
   export declare class MessagePhase extends PokeRogue.Phase {
       public text;
       public callbackDelay;
       public prompt;
       public promptDelay;
-      constructor(scene: PokeRogue.BattleScene, text: string, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer);
+      constructor(scene: PokeRogue.BattleScene, text: string, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null);
       start(): void;
       end(): void;
   }
@@ -21050,13 +22563,26 @@ declare namespace PokeRogue {
   }
   export declare class PostGameOverPhase extends PokeRogue.Phase {
       public endCardPhase;
-      constructor(scene: PokeRogue.BattleScene, endCardPhase: EndCardPhase);
+      constructor(scene: PokeRogue.BattleScene, endCardPhase?: EndCardPhase);
       start(): void;
   }
+  /**
+   * Opens the party selector UI and transitions into a {@linkcode SwitchSummonPhase}
+   * for the player (if a switch would be valid for the current battle state).
+   */
   export declare class SwitchPhase extends BattlePhase {
       protected fieldIndex: integer;
       public isModal;
       public doReturn;
+      /**
+       * Creates a new SwitchPhase
+       * @param scene {@linkcode BattleScene} Current battle scene
+       * @param fieldIndex Field index to switch out
+       * @param isModal Indicates if the switch should be forced (true) or is
+       * optional (false).
+       * @param doReturn Indicates if the party member on the field should be
+       * recalled to ball or has already left the field. Passed to {@linkcode SwitchSummonPhase}.
+       */
       constructor(scene: PokeRogue.BattleScene, fieldIndex: integer, isModal: boolean, doReturn: boolean);
       start(): void;
   }
@@ -21093,7 +22619,7 @@ declare namespace PokeRogue {
       public revive;
       public healStatus;
       public preventFullHeal;
-      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, hpHealed: integer, message: string, showFullHpMessage: boolean, skipAnim?: boolean, revive?: boolean, healStatus?: boolean, preventFullHeal?: boolean);
+      constructor(scene: PokeRogue.BattleScene, battlerIndex: PokeRogue.BattlerIndex, hpHealed: integer, message: string | null, showFullHpMessage: boolean, skipAnim?: boolean, revive?: boolean, healStatus?: boolean, preventFullHeal?: boolean);
       start(): void;
       end(): void;
   }
@@ -21222,6 +22748,17 @@ declare namespace PokeRogue.plugins {
   
 }
 
+declare namespace PokeRogue.plugins.vite {
+  import { type Plugin as VitePlugin } from "vite";
+  /**
+   * Plugin to mnify json files in the build folder after the bundling is done.
+   * @param basePath base path/es starting inside the build dir (e.g. will always start with "/dist" if dist is the build dir)
+   * @param recursive if true, will crawl subdirectories
+   */
+  export declare function minifyJsonPlugin(basePath: string | string[], recursive?: boolean): VitePlugin;
+  
+}
+
 declare namespace PokeRogue {
   export declare const legacyCompatibleImages: string[];
   export declare class SceneBase extends Phaser.Scene {
@@ -21254,6 +22791,7 @@ declare namespace PokeRogue.system {
   //import BattleScene from "../battle-scene";
   //import { PlayerGender } from "#enums/player-gender";
   //import { Challenge } from "#app/data/challenge.js";
+  //import { ConditionFn } from "#app/@types/common.js";
   export declare enum AchvTier {
       COMMON = 0,
       GREAT = 1,
@@ -21272,7 +22810,7 @@ declare namespace PokeRogue.system {
       hasParent: boolean;
       parentId: string;
       public conditionFunc;
-      constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: (scene: PokeRogue.BattleScene, args: any[]) => boolean);
+      constructor(localizationKey: string, name: string, description: string, iconImage: string, score: integer, conditionFunc?: ConditionFn);
       /**
        * Get the name of the achievement based on the gender of the player
        * @param playerGender - the gender of the player
@@ -21282,7 +22820,7 @@ declare namespace PokeRogue.system {
       getDescription(): string;
       getIconImage(): string;
       setSecret(hasParent?: boolean): this;
-      validate(scene: PokeRogue.BattleScene, args: any[]): boolean;
+      validate(scene: PokeRogue.BattleScene, args?: any[]): boolean;
       getTier(): AchvTier;
   }
   export declare class MoneyAchv extends Achv {
@@ -21358,6 +22896,7 @@ declare namespace PokeRogue.system {
       HIDDEN_ABILITY: Achv;
       PERFECT_IVS: Achv;
       CLASSIC_VICTORY: Achv;
+      UNEVOLVED_CLASSIC_VICTORY: Achv;
       MONO_GEN_ONE_VICTORY: ChallengeAchv;
       MONO_GEN_TWO_VICTORY: ChallengeAchv;
       MONO_GEN_THREE_VICTORY: ChallengeAchv;
@@ -21399,8 +22938,8 @@ declare namespace PokeRogue.system {
   //import { Terrain } from "#app/data/terrain.js";
   export class ArenaData {
       biome: PokeRogue.enums.Biome;
-      weather: PokeRogue.data.Weather;
-      terrain: PokeRogue.data.Terrain;
+      weather: PokeRogue.data.Weather | null;
+      terrain: PokeRogue.data.Terrain | null;
       tags: PokeRogue.data.ArenaTag[];
       constructor(source: PokeRogue.field.Arena | any);
   }
@@ -21564,6 +23103,9 @@ declare namespace PokeRogue.system {
       variant?: integer;
       form?: integer;
       female?: boolean;
+      shiny?: boolean;
+      favorite?: boolean;
+      nickname?: string;
   }
   export interface StarterPreferences {
       [key: integer]: StarterAttributes;
@@ -21573,7 +23115,7 @@ declare namespace PokeRogue.system {
       static save(prefs: StarterPreferences): void;
   }
   export interface StarterDataEntry {
-      moveset: StarterMoveset | StarterFormMoveData;
+      moveset: StarterMoveset | StarterFormMoveData | null;
       eggMoves: integer;
       candyCount: integer;
       friendship: integer;
@@ -21668,7 +23210,7 @@ declare namespace PokeRogue.system {
       saveSeenDialogue(dialogue: string): boolean;
       getSeenDialogues(): SeenDialogues;
       public getSessionSaveData;
-      getSession(slotId: integer): Promise<SessionSaveData>;
+      getSession(slotId: integer): Promise<SessionSaveData | null>;
       loadSession(scene: PokeRogue.BattleScene, slotId: integer, sessionData?: SessionSaveData): Promise<boolean>;
       deleteSession(slotId: integer): Promise<boolean>;
       offlineNewClear(scene: PokeRogue.BattleScene): Promise<boolean>;
@@ -21694,7 +23236,7 @@ declare namespace PokeRogue.system {
       getSpeciesDefaultNature(species: PokeRogue.data.PokemonSpecies): Nature;
       getSpeciesDefaultNatureAttr(species: PokeRogue.data.PokemonSpecies): integer;
       getDexAttrLuck(dexAttr: bigint): integer;
-      getNaturesForAttr(natureAttr: integer): Nature[];
+      getNaturesForAttr(natureAttr?: integer): Nature[];
       getSpeciesStarterValue(speciesId: PokeRogue.enums.Species): number;
       getFormIndex(attr: bigint): integer;
       getFormAttr(formIndex: integer): bigint;
@@ -21767,7 +23309,7 @@ declare namespace PokeRogue.system {
       public stackCount;
       className: string;
       constructor(source: PokeRogue.modifier.PersistentModifier | any, player: boolean);
-      toModifier(scene: PokeRogue.BattleScene, constructor: any): PersistentModifier;
+      toModifier(scene: PokeRogue.BattleScene, constructor: any): PersistentModifier | null;
   }
   
 }
@@ -21803,11 +23345,12 @@ declare namespace PokeRogue.system {
       ivs: integer[];
       nature: PokeRogue.data.Nature;
       natureOverride: PokeRogue.data.Nature | -1;
-      moveset: PokeRogue.field.PokemonMove[];
-      status: PokeRogue.data.Status;
+      moveset: (PokemonMove | null)[];
+      status: PokeRogue.data.Status | null;
       friendship: integer;
       metLevel: integer;
       metBiome: PokeRogue.enums.Biome | -1;
+      metSpecies: PokeRogue.enums.Species;
       luck: integer;
       pauseEvolutions: boolean;
       pokerus: boolean;
@@ -22058,6 +23601,10 @@ declare namespace PokeRogue.system.settings {
       default: number;
       type: SettingType;
       requireReload?: boolean;
+      /** Whether the setting can be activated or not */
+      activatable?: boolean;
+      /** Determines whether the setting should be hidden from the UI */
+      isHidden?: () => boolean;
   }
   /**
    * Setting Keys for existing settings
@@ -22071,6 +23618,7 @@ declare namespace PokeRogue.system.settings {
       Skip_Seen_Dialogues: string;
       Battle_Style: string;
       Enable_Retries: string;
+      Hide_IVs: string;
       Tutorials: string;
       Touch_Controls: string;
       Vibration: string;
@@ -22097,6 +23645,7 @@ declare namespace PokeRogue.system.settings {
       SE_Volume: string;
       Music_Preference: string;
       Show_BGM_Bar: string;
+      Move_Touch_Controls: string;
       Shop_Overlay_Opacity: string;
   };
   /**
@@ -22146,7 +23695,8 @@ declare namespace PokeRogue.system {
   export declare enum Unlockables {
       ENDLESS_MODE = 0,
       MINI_BLACK_HOLE = 1,
-      SPLICED_ENDLESS_MODE = 2
+      SPLICED_ENDLESS_MODE = 2,
+      EVIOLITE = 3
   }
   export declare function getUnlockableName(unlockable: Unlockables): string;
   
@@ -22156,6 +23706,7 @@ declare namespace PokeRogue.system {
   //import BattleScene from "../battle-scene";
   //import { AchvTier } from "./achv";
   //import { PlayerGender } from "#enums/player-gender";
+  //import { ConditionFn } from "#app/@types/common.js";
   export declare enum VoucherType {
       REGULAR = 0,
       PLUS = 1,
@@ -22167,8 +23718,8 @@ declare namespace PokeRogue.system {
       voucherType: VoucherType;
       description: string;
       public conditionFunc;
-      constructor(voucherType: VoucherType, description: string, conditionFunc?: (scene: PokeRogue.BattleScene, args: any[]) => boolean);
-      validate(scene: PokeRogue.BattleScene, args: any[]): boolean;
+      constructor(voucherType: VoucherType, description: string, conditionFunc?: ConditionFn);
+      validate(scene: PokeRogue.BattleScene, args?: any[]): boolean;
       /**
        * Get the name of the voucher
        * @param playerGender - this is ignored here. It's only there to match the signature of the function in the Achv class
@@ -22216,7 +23767,7 @@ declare namespace PokeRogue {
       public banner;
       public bannerShadow;
       public eventTimer;
-      constructor(scene: PokeRogue.BattleScene, x: number, y: number, event: TimedEvent);
+      constructor(scene: PokeRogue.BattleScene, x: number, y: number, event?: TimedEvent);
       setup(): void;
       show(): void;
       clear(): void;
@@ -22234,7 +23785,19 @@ declare namespace PokeRogue {
       events: EventEmitter;
       public buttonLock;
       public inputInterval;
+      /** Whether touch controls are disabled */
+      public disabled;
+      /** Whether the last touch event has finished before disabling */
+      public finishedLastTouch;
       constructor(scene: BattleScene);
+      /**
+       * Disable touch controls
+       */
+      disable(): void;
+      /**
+       * Enable touch controls
+         */
+      enable(): void;
       /**
        * Initialize touch controls by binding keys to buttons.
        */
@@ -22256,23 +23819,23 @@ declare namespace PokeRogue {
       touchButtonDown(node: HTMLElement, key: string): void;
       touchButtonUp(node: HTMLElement, key: string, id: string): void;
       /**
-       * Simulates a keyboard event on the canvas.
+       * Simulates a keyboard event on the canvas if the button is not disabled.
        *
        * @param eventType - The type of the keyboard event ('keydown' or 'keyup').
        * @param key - The key to simulate.
-       *
+       * @returns Whether the simulation was successful.
        * @remarks
        * This function checks if the key exists in the Button enum. If it does, it retrieves the corresponding button
        * and emits the appropriate event ('input_down' or 'input_up') based on the event type.
        */
-      simulateKeyboardEvent(eventType: string, key: string): void;
+      simulateKeyboardEvent(eventType: string, key: string): boolean;
       /**
        * {@link https://stackoverflow.com/a/39778831/4622620|Source}
        *
        * Prevent zoom on specified element
        * @param {HTMLElement} element
        */
-      preventElementZoom(element: HTMLElement): void;
+      preventElementZoom(element: HTMLElement | null): void;
       /**
          * Deactivates all currently pressed keys.
          */
@@ -22355,11 +23918,12 @@ declare namespace PokeRogue.ui {
       protected optionSelectBg: Phaser.GameObjects.NineSlice;
       protected optionSelectText: Phaser.GameObjects.Text;
       protected optionSelectIcons: Phaser.GameObjects.Sprite[];
-      protected config: OptionSelectConfig;
+      protected config: OptionSelectConfig | null;
       protected blockInput: boolean;
       protected scrollCursor: integer;
+      protected scale: number;
       public cursorObj;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode: PokeRogue.ui.Mode | null);
       abstract getWindowWidth(): integer;
       getWindowHeight(): integer;
       setup(): void;
@@ -22406,6 +23970,8 @@ declare namespace PokeRogue.ui {
   //import MessageUiHandler from "./message-ui-handler";
   //import { Mode } from "./ui";
   export class AchvsUiHandler extends PokeRogue.ui.MessageUiHandler {
+      public readonly ACHV_ROWS;
+      public readonly ACHV_COLS;
       public achvsContainer;
       public achvIconsContainer;
       public achvIconsBg;
@@ -22413,13 +23979,27 @@ declare namespace PokeRogue.ui {
       public titleText;
       public scoreText;
       public unlockText;
+      public achvsTotal;
+      public scrollCursor;
       public cursorObj;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
       show(args: any[]): boolean;
       protected showAchv(achv: PokeRogue.system.Achv): void;
       processInput(button: PokeRogue.enums.Button): boolean;
       setCursor(cursor: integer): boolean;
+      /**
+       * setScrollCursor(scrollCursor: integer) : boolean
+       * scrollCursor refers to the page's position within the entire sum of the data, unlike cursor, which refers to a user's position within displayed data
+       * @param takes a scrollCursor that has been updated based on user behavior
+       * @returns returns a boolean that indicates whether the updated scrollCursor led to an update in the data displayed.
+       */
+      setScrollCursor(scrollCursor: integer): boolean;
+      /**
+       * updateAchvIcons(): void
+       * Determines what data is to be displayed on the UI and updates it accordingly based on the current value of this.scrollCursor
+       */
+      updateAchvIcons(): void;
       clear(): void;
       eraseCursor(): void;
   }
@@ -22502,9 +24082,9 @@ declare namespace PokeRogue.ui {
   //import { Button } from "#enums/buttons";
   export abstract class AwaitableUiHandler extends PokeRogue.ui.UiHandler {
       protected awaitingActionInput: boolean;
-      protected onActionInput: Function;
+      protected onActionInput: Function | null;
       tutorialActive: boolean;
-      constructor(scene: PokeRogue.BattleScene, mode: PokeRogue.ui.Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       processTutorialInput(button: PokeRogue.enums.Button): boolean;
   }
   
@@ -22519,6 +24099,7 @@ declare namespace PokeRogue.ui {
       public pokeballSelectBg;
       public countsText;
       public cursorObj;
+      public scale;
       constructor(scene: PokeRogue.BattleScene);
       setup(): void;
       show(args: any[]): boolean;
@@ -22633,7 +24214,11 @@ declare namespace PokeRogue.ui {
       public statValuesContainer;
       public statNumbers;
       flyoutMenu?: BattleFlyout;
+      public battleStatOrder;
+      public battleStatOrderPlayer;
+      public battleStatOrderEnemy;
       constructor(scene: Phaser.Scene, x: number, y: number, player: boolean);
+      getStatsValueContainer(): Phaser.GameObjects.Container;
       initInfo(pokemon: PokeRogue.field.Pokemon): void;
       getTextureName(): string;
       setMini(mini: boolean): void;
@@ -22672,6 +24257,7 @@ declare namespace PokeRogue.ui {
 declare namespace PokeRogue.ui {
   //import BattleScene from "../battle-scene";
   //import MessageUiHandler from "./message-ui-handler";
+  //import { Stat } from "../data/pokemon-stat";
   //import { Button } from "#enums/buttons";
   export class BattleMessageUiHandler extends PokeRogue.ui.MessageUiHandler {
       public levelUpStatsContainer;
@@ -22688,10 +24274,11 @@ declare namespace PokeRogue.ui {
       show(args: any[]): boolean;
       processInput(button: PokeRogue.enums.Button): boolean;
       clear(): void;
-      showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
-      showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
+      showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void;
+      showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
       promptLevelUpStats(partyMemberIndex: integer, prevStats: integer[], showTotals: boolean): Promise<void>;
       promptIvs(pokemonId: integer, ivs: integer[], shownIvsCount: integer): Promise<void>;
+      getTopIvs(ivs: integer[], shownIvsCount: integer): Stat[];
       getIvDescriptor(value: integer, typeIv: integer, pokemonId: integer): string;
       showNameText(name: string): void;
       hideNameText(): void;
@@ -22756,7 +24343,7 @@ declare namespace PokeRogue.ui {
       public monoTypeValue;
       public cursorObj;
       public startCursor;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
       /**
        * Adds the default text color to the description text
@@ -22923,48 +24510,175 @@ declare namespace PokeRogue.ui {
   //import { SceneBase } from "#app/scene-base.js";
   export declare enum DropDownState {
       ON = 0,
-      OFF = 1
+      OFF = 1,
+      EXCLUDE = 2,
+      UNLOCKABLE = 3
   }
   export declare enum DropDownType {
-      MULTI = 0,
-      SINGLE = 1
+      SINGLE = 0,
+      MULTI = 1,
+      HYBRID = 2,
+      RADIAL = 3
   }
   export declare enum SortDirection {
       ASC = -1,
       DESC = 1
   }
+  export declare class DropDownLabel {
+      state: DropDownState;
+      text: string;
+      sprite?: Phaser.GameObjects.Sprite;
+      constructor(label: string, sprite?: Phaser.GameObjects.Sprite, state?: DropDownState);
+  }
   export declare class DropDownOption extends Phaser.GameObjects.Container {
       state: DropDownState;
       toggle: Phaser.GameObjects.Sprite;
       text: Phaser.GameObjects.Text;
-      sprite?: Phaser.GameObjects.Sprite;
       val: any;
       dir: SortDirection;
-      constructor(scene: PokeRogue.SceneBase, val: any, text: string, sprite?: Phaser.GameObjects.Sprite, state?: DropDownState);
-      setupToggle(type: DropDownType): void;
-      setOptionState(state: DropDownState): DropDownState;
+      public currentLabelIndex;
+      public labels;
+      public onColor;
+      public offColor;
+      public excludeColor;
+      public unlockableColor;
+      constructor(scene: PokeRogue.SceneBase, val: any, labels: DropDownLabel | DropDownLabel[]);
+      /**
+       * Initialize the toggle icon based on the provided DropDownType
+       * For DropDownType.SINGLE: uses a cursor arrow icon
+       * For other types: uses a candy icon
+       * @param type the DropDownType to use
+       * @param visible whether the icon should be visible or not
+       */
+      setupToggleIcon(type: DropDownType, visible: boolean): void;
+      /**
+       * Set the toggle icon color based on the current state
+       */
+      public updateToggleIconColor;
+      /**
+       * Switch the option to its next state and update visuals
+       * If only ON/OFF are possible, toggle between the two
+       * For radials, move to the next state in the list
+       * @returns the updated DropDownState
+       */
       toggleOptionState(): DropDownState;
+      /**
+       * Set the option to the given state and update visuals
+       * @param newState the state to switch to
+       * @returns the new DropDownState
+       */
+      setOptionState(newState: DropDownState): DropDownState;
+      /**
+       * Change the option state to the one at the given index and update visuals
+       * @param index index of the state to switch to
+       * @returns the new DropDownState
+       */
+      public setCurrentLabel;
+      /**
+       * Set the current SortDirection to the provided value and update icon accordingly
+       * @param SortDirection the new SortDirection to use
+       */
       setDirection(dir: SortDirection): void;
+      /**
+       * Toggle the current SortDirection value
+       */
       toggleDirection(): void;
+      /**
+       * Place the label elements (text and sprite if there is one) to the provided x and y position
+       * @param x the horizontal position
+       * @param y the vertical position
+       */
+      setLabelPosition(x: number, y: number): void;
+      /**
+       * Place the toggle icon at the provided position
+       * @param x the horizontal position
+       * @param y the vertical position
+       */
+      setTogglePosition(x: number, y: number): void;
+      /**
+       * @returns the x position to use for the current label depending on if it has a sprite or not
+       */
+      getCurrentLabelX(): number | undefined;
+      /**
+       * @returns max width needed to display all of the labels
+       */
+      getWidth(): number;
   }
   export declare class DropDown extends Phaser.GameObjects.Container {
       options: DropDownOption[];
       public window;
       public cursorObj;
-      public dropDownType;
-      cursor: integer;
+      dropDownType: DropDownType;
+      cursor: number;
+      public lastCursor;
+      defaultCursor: number;
       public onChange;
       public lastDir;
+      public defaultSettings;
       constructor(scene: PokeRogue.BattleScene, x: number, y: number, options: DropDownOption[], onChange: () => void, type?: DropDownType, optionSpacing?: number);
-      toggle(): void;
-      setCursor(cursor: integer): boolean;
-      toggleOptionState(): void;
+      getWidth(): number;
+      toggleVisibility(): void;
       setVisible(value: boolean): this;
+      resetCursor(): boolean;
+      setCursor(cursor: integer): boolean;
+      /**
+       * Switch the option at the provided index to its next state and update visuals
+       * Update accordingly the other options if needed:
+       *  - if "all" is toggled, also update all other options
+       *  - for DropDownType.SINGLE, unselect the previously selected option if applicable
+       * @param index the index of the option for which to update the state
+       */
+      toggleOptionState(index?: number): void;
+      /**
+       * Check whether all options except the "ALL" one are ON
+       * @returns true if all options are set to DropDownState.ON, false otherwise
+       */
       checkForAllOn(): boolean;
+      /**
+       * Check whether all options except the "ALL" one are OFF
+       * @returns true if all options are set to DropDownState.OFF, false otherwise
+       */
       checkForAllOff(): boolean;
+      /**
+       * Get the current selected values for each option
+       * @returns an array of values, depending on the DropDownType
+       *  - if MULTI or HYBRID, an array of all the values of the options set to ON (except the ALL one)
+       *  - if RADIAL, an array where the value for each option is of the form { val: any, state: DropDownState }
+       *  - if SINGLE, a single object of the form { val: any, state: SortDirection }
+       */
       getVals(): any[];
+      /**
+       * Get the current selected settings dictionary for each option
+       * @returns an array of dictionaries with the current state of each option
+       * - the settings dictionary is like this { val: any, state: DropDownState, cursor: boolean, dir: SortDirection }
+       */
+      public getSettings;
+      /**
+       * Check whether the values of all options are the same as the default ones
+       * @returns true if they are the same, false otherwise
+       */
+      hasDefaultValues(): boolean;
+      /**
+       * Set all values to their default state
+       */
+      resetToDefault(): void;
+      /**
+       * Set all options to a specific state
+       * @param state the DropDownState to assign to each option
+       */
+      public setAllOptions;
+      /**
+       * Set all options to their ON state
+       */
+      selectAllOptions(): void;
+      /**
+       * Set all options to their OFF state
+       */
+      unselectAllOptions(): void;
+      /**
+       * Automatically set the width and position based on the size of options
+       */
       autoSize(): void;
-      isActive(): boolean;
   }
   
 }
@@ -23033,6 +24747,7 @@ declare namespace PokeRogue.ui {
       public transitioning;
       public transitionCancelled;
       public defaultText;
+      public scale;
       constructor(scene: PokeRogue.BattleScene);
       setup(): void;
       show(args: any[]): boolean;
@@ -23175,27 +24890,48 @@ declare namespace PokeRogue.ui {
   export declare enum DropDownColumn {
       GEN = 0,
       TYPES = 1,
-      UNLOCKS = 2,
-      WIN = 3,
-      SORT = 4
+      CAUGHT = 2,
+      UNLOCKS = 3,
+      MISC = 4,
+      SORT = 5
   }
   export declare class FilterBar extends Phaser.GameObjects.Container {
       public window;
-      labels: Phaser.GameObjects.Text[];
-      dropDowns: PokeRogue.ui.DropDown[];
+      public labels;
+      public dropDowns;
+      public columns;
       cursorObj: Phaser.GameObjects.Image;
       numFilters: number;
       openDropDown: boolean;
       public lastCursor;
-      defaultGenVals: any[];
-      defaultTypeVals: any[];
-      defaultUnlockVals: any[];
-      defaultWinVals: any[];
-      defaultSortVals: any[];
+      public uiTheme;
       constructor(scene: PokeRogue.BattleScene, x: number, y: number, width: number, height: number);
-      addFilter(text: string, dropDown: PokeRogue.ui.DropDown): void;
+      /**
+       * Add a new filter to the FilterBar, as long that a unique DropDownColumn is provided
+       * @param column  the DropDownColumn that will be used to access the filter values
+       * @param title   the string that will get displayed in the filter bar
+       * @param dropDown the DropDown with all options for this filter
+       * @returns true if successful, false if the provided column was already in use for another filter
+       */
+      addFilter(column: DropDownColumn, title: string, dropDown: PokeRogue.ui.DropDown): boolean;
+      /**
+       * Get the DropDown associated to a given filter
+       * @param col the DropDownColumn used to register the filter to retrieve
+       * @returns the associated DropDown if it exists, undefined otherwise
+       */
+      getFilter(col: DropDownColumn): DropDown;
+      /**
+       * Highlight the labels of the FilterBar if the filters are different from their default values
+       */
       updateFilterLabels(): void;
-      calcFilterPositions(): void;
+      /**
+       * Position the filter dropdowns evenly across the width of the container
+       */
+      public calcFilterPositions;
+      /**
+       * Move the leftmost dropdown to the left of the FilterBar instead of below it
+       */
+      offsetHybridFilters(): void;
       setCursor(cursor: number): void;
       toggleDropDown(index: number): void;
       hideDropDowns(): void;
@@ -23203,9 +24939,13 @@ declare namespace PokeRogue.ui {
       decDropDownCursor(): boolean;
       toggleOptionState(): void;
       getVals(col: DropDownColumn): any[];
+      setValsToDefault(): void;
+      /**
+       * Find the nearest filter to the provided container
+       * @param container the StarterContainer to compare position against
+       * @returns the index of the closest filter
+       */
       getNearestFilter(container: PokeRogue.ui.StarterContainer): number;
-      getLastFilterX(): number;
-      isFilterActive(index: number): boolean;
   }
   
 }
@@ -23224,9 +24964,9 @@ declare namespace PokeRogue.ui {
       protected inputContainers: Phaser.GameObjects.Container[];
       protected inputs: InputText[];
       protected errorMessage: Phaser.GameObjects.Text;
-      protected submitAction: Function;
+      protected submitAction: Function | null;
       protected tween: Phaser.Tweens.Tween;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       abstract getFields(): string[];
       getHeight(config?: ModalConfig): number;
       getReadableErrorMessage(error: string): string;
@@ -23250,7 +24990,7 @@ declare namespace PokeRogue.ui {
       public statsContainer;
       public statLabels;
       public statValues;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
       show(args: any[]): boolean;
       updateStats(): void;
@@ -23267,7 +25007,7 @@ declare namespace PokeRogue.ui {
   //import { ModalUiHandler } from "./modal-ui-handler";
   //import { Mode } from "./ui";
   export class LoadingModalUiHandler extends PokeRogue.ui.ModalUiHandler {
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       getModalTitle(): string;
       getWidth(): number;
       getHeight(): number;
@@ -23289,7 +25029,7 @@ declare namespace PokeRogue.ui {
       public externalPartyContainer;
       public externalPartyBg;
       public externalPartyTitle;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
       getModalTitle(config?: ModalConfig): string;
       getFields(config?: ModalConfig): string[];
@@ -23311,18 +25051,6 @@ declare namespace PokeRogue.ui {
   //import { OptionSelectConfig } from "./abstact-option-select-ui-handler";
   //import { Button } from "#enums/buttons";
   //import BgmBar from "#app/ui/bgm-bar";
-  declare enum MenuOptions {
-      GAME_SETTINGS = 0,
-      ACHIEVEMENTS = 1,
-      STATS = 2,
-      VOUCHERS = 3,
-      EGG_LIST = 4,
-      EGG_GACHA = 5,
-      MANAGE_DATA = 6,
-      COMMUNITY = 7,
-      SAVE_AND_QUIT = 8,
-      LOG_OUT = 9
-  }
   export class MenuUiHandler extends PokeRogue.ui.MessageUiHandler {
       public menuContainer;
       public menuMessageBoxContainer;
@@ -23330,13 +25058,15 @@ declare namespace PokeRogue.ui {
       public menuBg;
       protected optionSelectText: Phaser.GameObjects.Text;
       public cursorObj;
-      protected ignoredMenuOptions: MenuOptions[];
-      protected menuOptions: MenuOptions[];
+      public excludedMenus;
+      public menuOptions;
       protected manageDataConfig: PokeRogue.ui.OptionSelectConfig;
       protected communityConfig: PokeRogue.ui.OptionSelectConfig;
+      protected scale: number;
       bgmBar: PokeRogue.ui.BgmBar;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
+      render(): void;
       show(args: any[]): boolean;
       processInput(button: PokeRogue.enums.Button): boolean;
       showText(text: string, delay?: number, callback?: Function, callbackDelay?: number, prompt?: boolean, promptDelay?: number): void;
@@ -23344,7 +25074,6 @@ declare namespace PokeRogue.ui {
       clear(): void;
       eraseCursor(): void;
   }
-  export {};
   
 }
 
@@ -23353,16 +25082,16 @@ declare namespace PokeRogue.ui {
   //import AwaitableUiHandler from "./awaitable-ui-handler";
   //import { Mode } from "./ui";
   export abstract class MessageUiHandler extends PokeRogue.ui.AwaitableUiHandler {
-      protected textTimer: Phaser.Time.TimerEvent;
-      protected textCallbackTimer: Phaser.Time.TimerEvent;
+      protected textTimer: Phaser.Time.TimerEvent | null;
+      protected textCallbackTimer: Phaser.Time.TimerEvent | null;
       pendingPrompt: boolean;
       message: Phaser.GameObjects.Text;
       prompt: Phaser.GameObjects.Sprite;
-      constructor(scene: PokeRogue.BattleScene, mode: PokeRogue.ui.Mode);
-      showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
-      showDialogue(text: string, name: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
+      showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void;
+      showDialogue(text: string, name?: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void;
       public showTextInternal;
-      showPrompt(callback: Function, callbackDelay: integer): void;
+      showPrompt(callback?: Function | null, callbackDelay?: integer | null): void;
       clearText(): void;
       clear(): void;
   }
@@ -23383,7 +25112,7 @@ declare namespace PokeRogue.ui {
       protected titleText: Phaser.GameObjects.Text;
       protected buttonContainers: Phaser.GameObjects.Container[];
       protected buttonBgs: Phaser.GameObjects.NineSlice[];
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       abstract getModalTitle(config?: ModalConfig): string;
       abstract getWidth(config?: ModalConfig): number;
       abstract getHeight(config?: ModalConfig): number;
@@ -23497,7 +25226,7 @@ declare namespace PokeRogue.ui {
   //import { ModalUiHandler } from "./modal-ui-handler";
   //import { Mode } from "./ui";
   export class OutdatedModalUiHandler extends PokeRogue.ui.ModalUiHandler {
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       getModalTitle(): string;
       getWidth(): number;
       getHeight(): number;
@@ -23528,22 +25257,73 @@ declare namespace PokeRogue.ui {
 
 declare namespace PokeRogue.ui {
   //import BattleScene from "../battle-scene";
-  //import { PlayerPokemon, PokemonMove } from "../field/pokemon";
+  //import Pokemon, { PlayerPokemon, PokemonMove } from "../field/pokemon";
   //import MessageUiHandler from "./message-ui-handler";
-  //import { PokemonHeldItemModifier } from "../modifier/modifier";
+  //import { PokemonFormChangeItemModifier, PokemonHeldItemModifier } from "../modifier/modifier";
   //import { Button } from "#enums/buttons";
+  /**
+   * Indicates the reason why the party UI is being opened.
+   */
   export declare enum PartyUiMode {
+      /**
+       * Indicates that the party UI is open because of a user-opted switch.  This
+       * type of switch can be cancelled.
+       */
       SWITCH = 0,
+      /**
+       * Indicates that the party UI is open because of a faint or other forced
+       * switch (eg, move effect). This type of switch cannot be cancelled.
+       */
       FAINT_SWITCH = 1,
+      /**
+       * Indicates that the party UI is open because of a start-of-encounter optional
+       * switch. This type of switch can be cancelled.
+       */
       POST_BATTLE_SWITCH = 2,
+      /**
+       * Indicates that the party UI is open because of the move Revival Blessing.
+       * This selection cannot be cancelled.
+       */
       REVIVAL_BLESSING = 3,
+      /**
+       * Indicates that the party UI is open to select a mon to apply a modifier to.
+       * This type of selection can be cancelled.
+       */
       MODIFIER = 4,
+      /**
+       * Indicates that the party UI is open to select a mon to apply a move
+       * modifier to (such as an Ether or PP Up).  This type of selection can be cancelled.
+       */
       MOVE_MODIFIER = 5,
+      /**
+       * Indicates that the party UI is open to select a mon to teach a TM.  This
+       * type of selection can be cancelled.
+       */
       TM_MODIFIER = 6,
+      /**
+       * Indicates that the party UI is open to select a mon to remember a move.
+       * This type of selection can be cancelled.
+       */
       REMEMBER_MOVE_MODIFIER = 7,
+      /**
+       * Indicates that the party UI is open to transfer items between mons.  This
+       * type of selection can be cancelled.
+       */
       MODIFIER_TRANSFER = 8,
+      /**
+       * Indicates that the party UI is open because of a DNA Splicer.  This
+       * type of selection can be cancelled.
+       */
       SPLICE = 9,
+      /**
+       * Indicates that the party UI is open to release a party member.  This
+       * type of selection can be cancelled.
+       */
       RELEASE = 10,
+      /**
+       * Indicates that the party UI is open to check the team.  This
+       * type of selection can be cancelled.
+       */
       CHECK = 11
   }
   export declare enum PartyOption {
@@ -23572,9 +25352,9 @@ declare namespace PokeRogue.ui {
   export type PartySelectCallback = (cursor: integer, option: PartyOption) => void;
   export type PartyModifierTransferSelectCallback = (fromCursor: integer, index: integer, itemQuantity?: integer, toCursor?: integer) => void;
   export type PartyModifierSpliceSelectCallback = (fromCursor: integer, toCursor?: integer) => void;
-  export type PokemonSelectFilter = (pokemon: PokeRogue.field.PlayerPokemon) => string;
-  export type PokemonModifierTransferSelectFilter = (pokemon: PokeRogue.field.PlayerPokemon, modifier: PokeRogue.modifier.PokemonHeldItemModifier) => string;
-  export type PokemonMoveSelectFilter = (pokemonMove: PokeRogue.field.PokemonMove) => string;
+  export type PokemonSelectFilter = (pokemon: PokeRogue.field.PlayerPokemon) => string | null;
+  export type PokemonModifierTransferSelectFilter = (pokemon: PokeRogue.field.PlayerPokemon, modifier: PokeRogue.modifier.PokemonHeldItemModifier) => string | null;
+  export type PokemonMoveSelectFilter = (pokemonMove: PokeRogue.field.PokemonMove) => string | null;
   export class PartyUiHandler extends PokeRogue.ui.MessageUiHandler {
       public partyUiMode;
       public fieldIndex;
@@ -23630,13 +25410,14 @@ declare namespace PokeRogue.ui {
       processInput(button: PokeRogue.enums.Button): boolean;
       populatePartySlots(): void;
       setCursor(cursor: integer): boolean;
-      showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
+      showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void;
       showOptions(): void;
       updateOptions(): void;
       startTransfer(): void;
       clearTransfer(): void;
       doRelease(slotIndex: integer): void;
       getReleaseMessage(pokemonName: string): string;
+      getFormChangeItemsModifiers(pokemon: PokeRogue.field.Pokemon): PokemonFormChangeItemModifier[];
       getOptionsCursorWithScroll(): integer;
       clearOptions(): void;
       eraseOptionsCursor(): void;
@@ -23821,7 +25602,7 @@ declare namespace PokeRogue.ui {
   //import { ModalUiHandler } from "./modal-ui-handler";
   //import { Mode } from "./ui";
   export class SessionReloadModalUiHandler extends PokeRogue.ui.ModalUiHandler {
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       getModalTitle(): string;
       getWidth(): number;
       getHeight(): number;
@@ -23838,6 +25619,7 @@ declare namespace PokeRogue.ui.settings {
   //import BattleScene from "../../battle-scene";
   //import { Mode } from "../ui";
   //import { Button } from "#enums/buttons";
+  type CancelFn = (succes?: boolean) => boolean;
   /**
    * Abstract class for handling UI elements related to button bindings.
    */
@@ -23856,7 +25638,7 @@ declare namespace PokeRogue.ui.settings {
       protected buttonPressed: number | null;
       protected newButtonIcon: Phaser.GameObjects.Sprite;
       protected targetButtonIcon: Phaser.GameObjects.Sprite;
-      protected cancelFn: (boolean?: any) => boolean;
+      protected cancelFn: CancelFn | null;
       abstract swapAction(): boolean;
       protected timeLeftAutoClose: number;
       protected countdownTimer: any;
@@ -23867,7 +25649,7 @@ declare namespace PokeRogue.ui.settings {
          * @param scene - The BattleScene instance.
          * @param mode - The UI mode.
          */
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       /**
          * Setup UI elements.
          */
@@ -23917,8 +25699,9 @@ declare namespace PokeRogue.ui.settings {
          * @param assignedButtonIcon - The icon of the button that is assigned.
          * @param type - The type of button press.
          */
-      onInputDown(buttonIcon: string, assignedButtonIcon: string, type: string): void;
+      onInputDown(buttonIcon: string, assignedButtonIcon: string | null, type: string): void;
   }
+  export {};
   
 }
 
@@ -23951,7 +25734,7 @@ declare namespace PokeRogue.ui.settings {
       protected navigationContainer: PokeRogue.ui.settings.NavigationMenu;
       protected scrollCursor: integer;
       protected optionCursors: integer[];
-      protected cursorObj: Phaser.GameObjects.NineSlice;
+      protected cursorObj: Phaser.GameObjects.NineSlice | null;
       protected optionsBg: Phaser.GameObjects.NineSlice;
       protected actionsBg: Phaser.GameObjects.NineSlice;
       protected settingLabels: Phaser.GameObjects.Text[];
@@ -23980,7 +25763,7 @@ declare namespace PokeRogue.ui.settings {
        * @param scene - The BattleScene instance.
        * @param mode - The UI mode.
        */
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       getLocalStorageSetting(): object;
       public camelize;
       /**
@@ -24065,7 +25848,7 @@ declare namespace PokeRogue.ui.settings {
   //import UiHandler from "../ui-handler";
   //import { Button } from "#enums/buttons";
   //import { InputsIcons } from "#app/ui/settings/abstract-control-settings-ui-handler.js";
-  //import { Setting } from "#app/system/settings/settings";
+  //import { Setting, SettingType } from "#app/system/settings/settings";
   /**
    * Abstract class for handling UI elements related to settings.
    */
@@ -24086,7 +25869,7 @@ declare namespace PokeRogue.ui.settings {
       protected title: string;
       protected settings: Array<Setting>;
       protected localStorageKey: string;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, type: PokeRogue.system.settings.SettingType, mode?: Mode | null);
       /**
        * Setup UI elements
        */
@@ -24112,6 +25895,12 @@ declare namespace PokeRogue.ui.settings {
        * @returns `true` if the action associated with the button was successfully processed, `false` otherwise.
        */
       processInput(button: PokeRogue.enums.Button): boolean;
+      /**
+       * Activate the specified setting if it is activatable.
+       * @param setting The setting to activate.
+       * @returns Whether the setting was successfully activated.
+       */
+      activateSetting(setting: PokeRogue.system.settings.Setting): boolean;
       /**
        * Set the cursor to the specified position.
        *
@@ -24156,7 +25945,7 @@ declare namespace PokeRogue.ui.settings {
   //import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
   //import { Mode } from "../ui";
   export class GamepadBindingUiHandler extends PokeRogue.ui.settings.AbstractBindingUiHandler {
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
       getSelectedDevice(): any;
       gamepadButtonDown(pad: Phaser.Input.Gamepad.Gamepad, button: Phaser.Input.Gamepad.Button, value: number): void;
@@ -24174,11 +25963,154 @@ declare namespace PokeRogue.ui.settings {
   //import AbstractBindingUiHandler from "./abstract-binding-ui-handler";
   //import { Mode } from "../ui";
   export class KeyboardBindingUiHandler extends PokeRogue.ui.settings.AbstractBindingUiHandler {
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
       getSelectedDevice(): any;
       onKeyDown(event: any): void;
       swapAction(): boolean;
+  }
+  
+}
+
+declare namespace PokeRogue.ui.settings {
+  //import TouchControl from "#app/touch-controls.js";
+  //import UI from "#app/ui/ui.js";
+  import { Scene } from "phaser";
+  export declare const TOUCH_CONTROL_POSITIONS_LANDSCAPE = "touchControlPositionsLandscape";
+  export declare const TOUCH_CONTROL_POSITIONS_PORTRAIT = "touchControlPositionsPortrait";
+  /**
+   * Handles the dragging of touch controls around the screen.
+   */
+  export class MoveTouchControlsHandler {
+      /** The element that is currently being dragged */
+      public draggingElement;
+      /**
+       * Whether the user is currently configuring the touch controls.
+       * When this is true, the touch controls can be dragged around the screen and the controls of the game are disabled.
+       */
+      inConfigurationMode: boolean;
+      /**
+       * The event listeners for the configuration mode.
+       * These are used to remove the event listeners when the configuration mode is disabled.
+       */
+      public configurationEventListeners;
+      public overlay;
+      public isLandscapeMode;
+      public touchControls;
+      constructor(touchControls: PokeRogue.TouchControl);
+      /**
+       * Changes the state of the touch controls to the given orientation.
+       * @param isLandscapeMode Whether the screen is in landscape mode.
+       */
+      public changeOrientation;
+      public getScreenSize;
+      /**
+       * Creates the toolbar element for the configuration mode.
+       * @returns A new div element that contains the toolbar for the configuration mode.
+       */
+      public createToolbarElement;
+      /**
+       * Initializes the toolbar of the configuration mode.
+       * Places its elements at the top of the touch controls and adds event listeners to them.
+       */
+      public createToolbar;
+      /**
+       * Returns the references to the elements of the configuration toolbar.
+       * @returns The references to the elements of the configuration toolbar
+       *          or undefined if the elements can not be found (e.g. during tests)
+       */
+      public getConfigToolbarRefs;
+      /**
+       * Elements that are inside the left div are anchored to the left boundary of the screen.
+       * The x value of the positions are considered offsets to their respective boundaries.
+       * @param element Either an element in the left div or the right div.
+       * @returns Whether the given element is inside the left div.
+       */
+      public isLeft;
+      /**
+       * Start dragging the given button.
+       * @param controlGroup The button that is being dragged.
+       * @param touch The touch event that started the drag.
+       */
+      public startDrag;
+      /**
+       * Drags the currently dragged element to the given touch position.
+       * @param touch The touch event that is currently happening.
+       * @param isLeft Whether the dragged element is a left button.
+       */
+      public drag;
+      /**
+       * Stops dragging the currently dragged element.
+       */
+      public stopDrag;
+      /**
+       * Returns the current positions of all touch controls that have moved from their default positions of this orientation.
+       * @returns {ControlPosition[]} The current positions of all touch controls that have moved from their default positions of this orientation
+       */
+      public getModifiedCurrentPositions;
+      /**
+       * Returns the key of the local storage for the control positions data of this orientation
+       */
+      public getLocalStorageKey;
+      /**
+       * Returns the saved positions of the touch controls.
+       * Filters result by the given orientation.
+       * @returns The saved positions of the touch controls of this orientation
+       */
+      public getSavedPositionsOfCurrentOrientation;
+      /**
+       * Saves the current positions of the touch controls to the local storage.
+       */
+      public saveCurrentPositions;
+      /**
+       * Updates the positions of the touch controls.
+       * @param positions The new positions of the touch controls.
+       */
+      public setPositions;
+      /**
+       * Sets a control element to the given position.
+       * The x values are either offsets to the left or right boundary of the screen, depending on the side of the element.
+       * E.g. For left elements, (0, 0) is the bottom left corner of the screen and
+       * for right elements, (0, 0) is the bottom right corner of the screen.
+       * @param controlElement
+       * @param x Either an offset to the left or right boundary of the screen.
+       * @param y An offset to the bottom boundary of the screen.
+       */
+      public setPosition;
+      /**
+       * Resets the positions of the touch controls to their default positions and clears the saved positions.
+       * Does not save the changes.
+       */
+      public resetPositions;
+      /**
+       * Returns all control groups of the touch controls.
+       * These are groups of buttons that can be dragged around the screen.
+       * @returns All control groups of the touch controls.
+       */
+      public getControlGroupElements;
+      /**
+       * Creates the event listeners for the configuration mode.
+       * @param controlGroups The elements that can be dragged around the screen.
+       * @returns The event listeners for the configuration mode.
+       */
+      public createConfigurationEventListeners;
+      /**
+       * Creates an overlay that covers the screen and allows the user to drag the touch controls around.
+       * Also enables the toolbar for saving, resetting, and canceling the changes.
+       * @param ui The UI of the game.
+       * @param scene The scene of the game.
+       */
+      public createOverlay;
+      /**
+      * Allows the user to configure the touch controls by dragging buttons around the screen.
+      * @param ui The UI of the game.
+      * @param scene The scene of the game.
+      */
+      enableConfigurationMode(ui: PokeRogue.ui.UI, scene: Scene): void;
+      /**
+       * Disables the configuration mode.
+       */
+      disableConfigurationMode(): void;
   }
   
 }
@@ -24279,7 +26211,7 @@ declare namespace PokeRogue.ui.settings {
        * @param scene - The BattleScene instance.
        * @param mode - The UI mode, optional.
        */
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
   }
   
 }
@@ -24295,7 +26227,7 @@ declare namespace PokeRogue.ui.settings {
        * @param scene - The BattleScene instance.
        * @param mode - The UI mode, optional.
        */
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
   }
   
 }
@@ -24318,7 +26250,7 @@ declare namespace PokeRogue.ui.settings {
          * @param scene - The BattleScene instance.
          * @param mode - The UI mode, optional.
          */
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setSetting: typeof setSettingGamepad;
       /**
          * Setup UI elements.
@@ -24364,7 +26296,7 @@ declare namespace PokeRogue.ui.settings {
          * @param scene - The BattleScene instance.
          * @param mode - The UI mode, optional.
          */
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setSetting: typeof setSettingKeyboard;
       /**
          * Setup UI elements.
@@ -24417,7 +26349,7 @@ declare namespace PokeRogue.ui.settings {
        * @param scene - The BattleScene instance.
        * @param mode - The UI mode, optional.
        */
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
   }
   
 }
@@ -24433,6 +26365,7 @@ declare namespace PokeRogue.ui {
       label: Phaser.GameObjects.Text;
       starterPassiveBgs: Phaser.GameObjects.Image;
       hiddenAbilityIcon: Phaser.GameObjects.Image;
+      favoriteIcon: Phaser.GameObjects.Image;
       classicWinIcon: Phaser.GameObjects.Image;
       candyUpgradeIcon: Phaser.GameObjects.Image;
       candyUpgradeOverlayIcon: Phaser.GameObjects.Image;
@@ -24463,6 +26396,7 @@ declare namespace PokeRogue.ui {
       nature: PokeRogue.data.Nature;
       moveset?: StarterMoveset;
       pokerus: boolean;
+      nickname?: string;
   }
   export class StarterSelectUiHandler extends PokeRogue.ui.MessageUiHandler {
       public starterSelectContainer;
@@ -24470,8 +26404,9 @@ declare namespace PokeRogue.ui {
       public filterBarContainer;
       public filterBar;
       public shinyOverlay;
-      public starterContainer;
+      public starterContainers;
       public filteredStarterContainers;
+      public validStarterContainers;
       public pokemonNumberText;
       public pokemonSprite;
       public pokemonNameText;
@@ -24508,18 +26443,21 @@ declare namespace PokeRogue.ui {
       public pokemonHatchedCountText;
       public pokemonShinyIcon;
       public instructionsContainer;
+      public filterInstructionsContainer;
       public shinyIconElement;
       public formIconElement;
       public abilityIconElement;
       public genderIconElement;
       public natureIconElement;
       public variantIconElement;
+      public goFilterIconElement;
       public shinyLabel;
       public formLabel;
       public genderLabel;
       public abilityLabel;
       public natureLabel;
       public variantLabel;
+      public goFilterLabel;
       public starterSelectMessageBox;
       public starterSelectMessageBoxContainer;
       public statsContainer;
@@ -24567,12 +26505,18 @@ declare namespace PokeRogue.ui {
       public instructionRowX;
       public instructionRowY;
       public instructionRowTextOffset;
+      public filterInstructionRowX;
+      public filterInstructionRowY;
       public starterSelectCallback;
       public starterPreferences;
       protected blockInput: boolean;
       constructor(scene: PokeRogue.BattleScene);
       setup(): void;
       show(args: any[]): boolean;
+      /**
+       * Set the selections for all filters to their default starting value
+       */
+      resetFilters(): void;
       showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
       /**
        * Determines if 'Icon' based upgrade notifications should be shown
@@ -24620,32 +26564,34 @@ declare namespace PokeRogue.ui {
       onCandyUpgradeDisplayChanged(event: Event): void;
       processInput(button: PokeRogue.enums.Button): boolean;
       isInParty(species: PokeRogue.data.PokemonSpecies): [boolean, number];
-      addToParty(species: PokeRogue.data.PokemonSpecies): void;
+      addToParty(species: PokeRogue.data.PokemonSpecies, dexAttr: bigint, abilityIndex: integer, nature: PokeRogue.data.Nature, moveset: PokeRogue.system.StarterMoveset): void;
+      updatePartyIcon(species: PokeRogue.data.PokemonSpecies, index: number): void;
       switchMoveHandler(i: number, newMove: PokeRogue.enums.Moves, move: PokeRogue.enums.Moves): void;
       updateButtonIcon(iconSetting: any, gamepadType: any, iconElement: any, controlLabel: any): void;
+      updateFilterButtonIcon(iconSetting: any, gamepadType: any, iconElement: any, controlLabel: any): void;
       updateInstructions(): void;
       getValueLimit(): integer;
       updateStarters: () => void;
       updateScroll: () => void;
       setCursor(cursor: integer): boolean;
-      getGenCursorWithScroll(): integer;
-      updateGenOptions(): void;
       setFilterMode(filterMode: boolean): boolean;
       moveStarterIconsCursor(index: number): void;
-      setSpecies(species: PokeRogue.data.PokemonSpecies): void;
-      setSpeciesDetails(species: PokeRogue.data.PokemonSpecies, shiny: boolean, formIndex: integer, female: boolean, variant: PokeRogue.data.Variant, abilityIndex: integer, natureIndex: integer, forSeen?: boolean): void;
+      setSpecies(species: PokeRogue.data.PokemonSpecies | null): void;
+      setSpeciesDetails(species: PokeRogue.data.PokemonSpecies, shiny?: boolean, formIndex?: integer, female?: boolean, variant?: Variant, abilityIndex?: integer, natureIndex?: integer, forSeen?: boolean): void;
       setTypeIcons(type1: PokeRogue.data.Type, type2: PokeRogue.data.Type): void;
       popStarter(index: number): void;
       updateStarterValueLabel(starter: PokeRogue.ui.StarterContainer): void;
       tryUpdateValue(add?: integer, addingToParty?: boolean): boolean;
+      tryExit(): boolean;
       tryStart(manualTrigger?: boolean): boolean;
       isPartyValid(): boolean;
+      getCurrentDexProps(speciesId: number): bigint;
       toggleStatsMode(on?: boolean): void;
       showStats(): void;
       clearText(): void;
       hideInstructions(): void;
       clear(): void;
-      checkIconId(icon: Phaser.GameObjects.Sprite, species: PokeRogue.data.PokemonSpecies, female: any, formIndex: any, shiny: any, variant: any): void;
+      checkIconId(icon: Phaser.GameObjects.Sprite, species: PokeRogue.data.PokemonSpecies, female: boolean, formIndex: number, shiny: boolean, variant: number): void;
   }
   
 }
@@ -24740,7 +26686,7 @@ declare namespace PokeRogue.ui {
       populatePageContainer(pageContainer: Phaser.GameObjects.Container, page?: Page): void;
       showStatus(instant?: boolean): void;
       hideStatus(instant?: boolean): void;
-      getSelectedMove(): Move;
+      getSelectedMove(): Move | null;
       showMoveSelect(): void;
       hideMoveSelect(): void;
       destroyBlinkCursor(): void;
@@ -24766,6 +26712,7 @@ declare namespace PokeRogue.ui {
       public targets;
       public targetsHighlighted;
       public targetFlashTween;
+      public enemyModifiers;
       public targetBattleInfoMoveTween;
       constructor(scene: PokeRogue.BattleScene);
       setup(): void;
@@ -24773,6 +26720,7 @@ declare namespace PokeRogue.ui {
       processInput(button: PokeRogue.enums.Button): boolean;
       setCursor(cursor: integer): boolean;
       eraseCursor(): void;
+      public highlightItems;
       clear(): void;
   }
   
@@ -24803,24 +26751,33 @@ declare namespace PokeRogue.ui {
       MONEY = 14,
       STATS_LABEL = 15,
       STATS_VALUE = 16,
-      SETTINGS_LABEL = 17,
-      SETTINGS_SELECTED = 18,
-      SETTINGS_LOCKED = 19,
-      TOOLTIP_TITLE = 20,
-      TOOLTIP_CONTENT = 21,
-      MOVE_INFO_CONTENT = 22,
-      MOVE_PP_FULL = 23,
-      MOVE_PP_HALF_FULL = 24,
-      MOVE_PP_NEAR_EMPTY = 25,
-      MOVE_PP_EMPTY = 26,
-      SMALLER_WINDOW_ALT = 27,
-      BGM_BAR = 28
+      SETTINGS_VALUE = 17,
+      SETTINGS_LABEL = 18,
+      SETTINGS_SELECTED = 19,
+      SETTINGS_LOCKED = 20,
+      TOOLTIP_TITLE = 21,
+      TOOLTIP_CONTENT = 22,
+      MOVE_INFO_CONTENT = 23,
+      MOVE_PP_FULL = 24,
+      MOVE_PP_HALF_FULL = 25,
+      MOVE_PP_NEAR_EMPTY = 26,
+      MOVE_PP_EMPTY = 27,
+      SMALLER_WINDOW_ALT = 28,
+      BGM_BAR = 29,
+      PERFECT_IV = 30
+  }
+  export interface TextStyleOptions {
+      scale: number;
+      styleOptions: Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig;
+      shadowColor: string;
+      shadowXpos: number;
+      shadowYpos: number;
   }
   export declare function addTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): Phaser.GameObjects.Text;
   export declare function setTextStyle(obj: Phaser.GameObjects.Text, scene: Phaser.Scene, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): void;
   export declare function addBBCodeTextObject(scene: Phaser.Scene, x: number, y: number, content: string, style: TextStyle, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): BBCodeText;
   export declare function addTextInputObject(scene: Phaser.Scene, x: number, y: number, width: number, height: number, style: TextStyle, extraStyleOptions?: InputText.IConfig): InputText;
-  export declare function getTextStyleOptions(style: TextStyle, uiTheme: PokeRogue.enums.UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): [number, Phaser.Types.GameObjects.Text.TextStyle | InputText.IConfig, string, number, number];
+  export declare function getTextStyleOptions(style: TextStyle, uiTheme: PokeRogue.enums.UiTheme, extraStyleOptions?: Phaser.Types.GameObjects.Text.TextStyle): TextStyleOptions;
   export declare function getBBCodeFrag(content: string, textStyle: TextStyle, uiTheme?: UiTheme): string;
   export declare function getTextColor(textStyle: TextStyle, shadow?: boolean, uiTheme?: UiTheme): string;
   export declare function getModifierTierTextTint(tier: PokeRogue.modifier.ModifierTier): integer;
@@ -24907,14 +26864,14 @@ declare namespace PokeRogue.ui {
    */
   export abstract class UiHandler {
       protected scene: PokeRogue.BattleScene;
-      protected mode: integer;
+      protected mode: integer | null;
       protected cursor: integer;
       active: boolean;
       /**
        * @param {BattleScene} scene The same scene as everything else.
        * @param {Mode} mode The mode of the UI element. These should be unique.
        */
-      constructor(scene: PokeRogue.BattleScene, mode: PokeRogue.ui.Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       abstract setup(): void;
       show(_args: any[]): boolean;
       abstract processInput(button: PokeRogue.enums.Button): boolean;
@@ -25004,12 +26961,12 @@ declare namespace PokeRogue.ui {
       constructor(scene: PokeRogue.BattleScene);
       setup(): void;
       public setupTooltip;
-      getHandler(): UiHandler;
+      getHandler<H extends PokeRogue.ui.UiHandler = UiHandler>(): H;
       getMessageHandler(): BattleMessageUiHandler;
       processInfoButton(pressed: boolean): boolean;
       processInput(button: PokeRogue.enums.Button): boolean;
-      showText(text: string, delay?: integer, callback?: Function, callbackDelay?: integer, prompt?: boolean, promptDelay?: integer): void;
-      showDialogue(text: string, name: string, delay: integer, callback: Function, callbackDelay?: integer, promptDelay?: integer): void;
+      showText(text: string, delay?: integer | null, callback?: Function | null, callbackDelay?: integer | null, prompt?: boolean | null, promptDelay?: integer | null): void;
+      showDialogue(text: string, name: string | undefined, delay: integer | null, callback: Function, callbackDelay?: integer, promptDelay?: integer): void;
       shouldSkipDialogue(text: any): boolean;
       showTooltip(title: string, content: string, overlap?: boolean): void;
       hideTooltip(): void;
@@ -25026,8 +26983,10 @@ declare namespace PokeRogue.ui {
       setModeForceTransition(mode: Mode, ...args: any[]): Promise<void>;
       setModeWithoutClear(mode: Mode, ...args: any[]): Promise<void>;
       setOverlayMode(mode: Mode, ...args: any[]): Promise<void>;
+      resetModeChain(): void;
       revertMode(): Promise<boolean>;
       revertModes(): Promise<void>;
+      getModeChain(): Mode[];
   }
   
 }
@@ -25043,7 +27002,7 @@ declare namespace PokeRogue.ui {
       public readonly minTime;
       public readonly maxTime;
       public readonly randVarianceTime;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       getModalTitle(): string;
       getWidth(): number;
       getHeight(): number;
@@ -25072,7 +27031,7 @@ declare namespace PokeRogue.ui {
       public itemsTotal;
       public scrollCursor;
       public cursorObj;
-      constructor(scene: PokeRogue.BattleScene, mode?: Mode);
+      constructor(scene: PokeRogue.BattleScene, mode?: Mode | null);
       setup(): void;
       show(args: any[]): boolean;
       protected showVoucher(voucher: PokeRogue.system.Voucher): void;
@@ -25106,6 +27065,7 @@ declare namespace PokeRogue {
       buttonAb(button: PokeRogue.enums.Button): void;
       buttonTouch(): void;
       buttonStats(pressed?: boolean): void;
+      buttonGoToFilter(button: PokeRogue.enums.Button): void;
       buttonInfo(pressed?: boolean): void;
       buttonMenu(): void;
       buttonCycleOption(button: PokeRogue.enums.Button): void;
@@ -25141,7 +27101,7 @@ declare namespace PokeRogue {
   export declare function randItem<T>(items: T[]): T;
   export declare function randSeedItem<T>(items: T[]): T;
   export declare function randSeedWeightedItem<T>(items: T[]): T;
-  export declare function randSeedEasedWeightedItem<T>(items: T[], easingFunction?: string): T;
+  export declare function randSeedEasedWeightedItem<T>(items: T[], easingFunction?: string): T | null;
   /**
    * Shuffle a list using the seeded rng. Utilises the Fisher-Yates algorithm.
    * @param {Array} items An array of items.
@@ -25151,16 +27111,20 @@ declare namespace PokeRogue {
   export declare function getFrameMs(frameCount: integer): integer;
   export declare function getCurrentTime(): number;
   export declare function getPlayTimeString(totalSeconds: integer): string;
-  export declare function binToDec(input: string): integer;
-  export declare function decToBin(input: integer): string;
-  export declare function getIvsFromId(id: integer): integer[];
+  /**
+   * Generates IVs from a given {@linkcode id} by extracting 5 bits at a time
+   * starting from the least significant bit up to the 30th most significant bit.
+   * @param id 32-bit number
+   * @returns An array of six numbers corresponding to 5-bit chunks from {@linkcode id}
+   */
+  export declare function getIvsFromId(id: number): number[];
   export declare function formatLargeNumber(count: integer, threshold: integer): string;
   export declare function formatFancyLargeNumber(number: number, rounded?: number): string;
   export declare function formatMoney(format: PokeRogue.enums.MoneyFormat, amount: number): string;
   export declare function formatStat(stat: integer, forHp?: boolean): string;
   export declare function getEnumKeys(enumType: any): string[];
   export declare function getEnumValues(enumType: any): integer[];
-  export declare function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T>;
+  export declare function executeIf<T>(condition: boolean, promiseFunc: () => Promise<T>): Promise<T | null>;
   export declare const sessionIdKey = "pokerogue_sessionId";
   export declare const isLocal: boolean;
   export declare const localServerUrl: string;
