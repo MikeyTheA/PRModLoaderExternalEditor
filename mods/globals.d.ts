@@ -15492,9 +15492,9 @@ declare namespace PokeRogue.field {
        *
        * @param source - The Pokémon using the move.
        * @param move - The move being used.
-       * @returns The type damage multiplier or undefined if it's a status move
+       * @returns The type damage multiplier or 1 if it's a status move
        */
-      getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier | undefined;
+      getMoveEffectiveness(source: Pokemon, move: PokemonMove): TypeDamageMultiplier;
       /**
        * Calculates the effectiveness of an attack move against the Pokémon.
        *
@@ -24848,6 +24848,7 @@ declare namespace PokeRogue.ui {
   //import UiHandler from "./ui-handler";
   //import { Button } from "#enums/buttons";
   export class FightUiHandler extends PokeRogue.ui.UiHandler {
+      static readonly MOVES_CONTAINER_NAME = "moves";
       public movesContainer;
       public moveInfoContainer;
       public typeIcon;
