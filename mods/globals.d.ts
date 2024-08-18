@@ -21790,13 +21790,14 @@ declare namespace PokeRogue.modifier {
    * @see {@linkcode modifierTypes[MINI_BLACK_HOLE]}
    */
   export declare class TurnHeldItemTransferModifier extends HeldItemTransferModifier {
-      readonly isTransferrable: boolean;
+      isTransferrable: boolean;
       constructor(type: PokeRogue.modifier.ModifierType, pokemonId: integer, stackCount?: integer);
       matchType(modifier: Modifier): boolean;
       clone(): TurnHeldItemTransferModifier;
       getTransferredItemCount(): integer;
       getTransferMessage(pokemon: PokeRogue.field.Pokemon, targetPokemon: PokeRogue.field.Pokemon, item: ModifierTypes.ModifierType): string;
       getMaxHeldItemCount(pokemon: PokeRogue.field.Pokemon): integer;
+      setTransferrableFalse(): void;
   }
   /**
    * Modifier for held items that add a chance to steal items from the target of a
