@@ -2156,7 +2156,7 @@ declare namespace PokeRogue.data {
       applyPreStatChange(pokemon: PokeRogue.field.Pokemon | null, passive: boolean, stat: PokeRogue.data.BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean | Promise<boolean>;
   }
   export declare class ProtectStatAbAttr extends PreStatChangeAbAttr {
-      public protectedStat;
+      public protectedStat?;
       constructor(protectedStat?: BattleStat);
       applyPreStatChange(pokemon: PokeRogue.field.Pokemon, passive: boolean, stat: PokeRogue.data.BattleStat, cancelled: Utils.BooleanHolder, args: any[]): boolean;
       getTriggerMessage(pokemon: PokeRogue.field.Pokemon, abilityName: string, ...args: any[]): string;
@@ -27222,6 +27222,11 @@ declare namespace PokeRogue {
    * @returns The capitalized string.
    */
   export declare function capitalizeString(str: string, sep: string, lowerFirstChar?: boolean, returnWithSpaces?: boolean): string;
+  /**
+   * Returns if an object is null or undefined
+   * @param object
+   */
+  export declare function isNullOrUndefined(object: any): boolean;
   export declare function setApi(url: string): void;
   
 }
