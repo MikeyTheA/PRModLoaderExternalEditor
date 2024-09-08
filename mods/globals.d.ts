@@ -9729,7 +9729,7 @@ declare namespace PokeRogue.data {
       isDamaging(): boolean;
       isTypeDamageImmune(type: PokeRogue.data.Type): boolean;
       getAttackTypeMultiplier(attackType: PokeRogue.data.Type): number;
-      isMoveWeatherCancelled(move: PokeRogue.data.Move): boolean;
+      isMoveWeatherCancelled(user: PokeRogue.field.Pokemon, move: PokeRogue.data.Move): boolean;
       isEffectSuppressed(scene: PokeRogue.BattleScene): boolean;
   }
   export declare function getWeatherStartMessage(weatherType: PokeRogue.enums.WeatherType): string | null;
@@ -15516,7 +15516,7 @@ declare namespace PokeRogue.field {
        */
       triggerWeatherBasedFormChangesToNormal(): void;
       trySetTerrain(terrain: PokeRogue.data.TerrainType, hasPokemonSource: boolean, ignoreAnim?: boolean): boolean;
-      isMoveWeatherCancelled(move: PokeRogue.data.Move): boolean;
+      isMoveWeatherCancelled(user: PokeRogue.field.Pokemon, move: PokeRogue.data.Move): boolean;
       isMoveTerrainCancelled(user: PokeRogue.field.Pokemon, targets: PokeRogue.BattlerIndex[], move: PokeRogue.data.Move): boolean;
       getTerrainType(): TerrainType;
       getAttackTypeMultiplier(attackType: PokeRogue.data.Type, grounded: boolean): number;
