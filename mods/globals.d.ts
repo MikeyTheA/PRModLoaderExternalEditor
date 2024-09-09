@@ -16193,7 +16193,6 @@ declare namespace PokeRogue.field {
   }
   export declare class PlayerPokemon extends Pokemon {
       compatibleTms: PokeRogue.enums.Moves[];
-      usedTms: PokeRogue.enums.Moves[];
       constructor(scene: PokeRogue.BattleScene, species: PokeRogue.data.PokemonSpecies, level: integer, abilityIndex?: integer, formIndex?: integer, gender?: Gender, shiny?: boolean, variant?: Variant, ivs?: integer[], nature?: Nature, dataSource?: Pokemon | PokemonData);
       initBattleInfo(): void;
       isPlayer(): boolean;
