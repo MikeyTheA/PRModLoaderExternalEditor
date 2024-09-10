@@ -124795,6 +124795,7 @@ declare namespace PokeRogue.modifier {
       add(modifiers: PersistentModifier[], _virtual: boolean, scene: PokeRogue.BattleScene): boolean;
       lapse(_args: any[]): boolean;
       getIcon(scene: PokeRogue.BattleScene): Phaser.GameObjects.Container;
+      getIconStackText(_scene: PokeRogue.BattleScene, _virtual?: boolean): Phaser.GameObjects.BitmapText | null;
       getBattleCount(): number;
       resetBattleCount(): void;
       getMaxBattles(): number;
@@ -124936,7 +124937,7 @@ declare namespace PokeRogue.modifier {
   /**
    * Modifier used for held items, specifically vitamins like Carbos, Hp Up, etc., that
    * increase the value of a given {@linkcode PermanentStat}.
-   * @extends LapsingPersistentModifier
+   * @extends PokemonHeldItemModifier
    * @see {@linkcode apply}
    */
   export declare class BaseStatModifier extends PokemonHeldItemModifier {
