@@ -3,8 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var ws_1 = require("ws");
 var ts = require("typescript");
-var compile = function (source) {
+var compile = function (source, mod, file) {
     var result = ts.transpileModule(source, { compilerOptions: { module: ts.ModuleKind.CommonJS } });
+    fs.mkdirSync("mods/".concat(mod, "/build"), { recursive: true });
+    fs.writeFileSync("mods/".concat(mod, "/build/").concat(file, ".js"), result.outputText);
     return result;
 };
 if (!fs.existsSync('mods/')) {
@@ -70,7 +72,7 @@ wss.on('connection', function (ws) {
             else if (modFile.endsWith('.ts')) {
                 try {
                     var fileContents = fs.readFileSync("mods/".concat(modName, "/").concat(modFile));
-                    var compiled = compile(fileContents.toString()).outputText;
+                    var compiled = compile(fileContents.toString(), modName, modFile.slice(0, -3)).outputText;
                     var scriptdata = {
                         name: modFile.slice(0, -3),
                         code: compiled,
@@ -120,15 +122,17 @@ fs.watch('mods/', { recursive: true }, function (eventType, filename) {
                     else {
                         try {
                             var fileContents = fs.readFileSync("mods\\".concat(filename));
-                            var compiled = compile(fileContents.toString()).outputText;
+                            var compiled = compile(fileContents.toString(), modName, file.slice(0, -3)).outputText;
                             var scriptdata = {
                                 name: file.slice(0, -3),
                                 code: compiled,
                             };
-                            broadcastChanges(JSON.stringify({
-                                type: 'addscript',
-                                data: { mod: modName, script: scriptdata },
-                            }));
+                            /*broadcastChanges(
+                                JSON.stringify({
+                                    type: 'addscript',
+                                    data: { mod: modName, script: scriptdata },
+                                })
+                            );*/
                         }
                         catch (e) {
                             console.log("Failed compiling ".concat(file, "!\n").concat(e));
@@ -142,6 +146,9 @@ fs.watch('mods/', { recursive: true }, function (eventType, filename) {
             var modName = parts.shift();
             var file = parts.join('\\');
             if (fs.existsSync("mods/".concat(filename)) && fs.lstatSync("mods/".concat(filename)).isDirectory()) {
+                return;
+            }
+            if (!fs.existsSync("mods/".concat(filename))) {
                 return;
             }
             var fileContents = fs.readFileSync("mods/".concat(filename));
@@ -160,7 +167,7 @@ fs.watch('mods/', { recursive: true }, function (eventType, filename) {
             else if (file.endsWith('.ts')) {
                 try {
                     var fileContents_1 = fs.readFileSync("mods/".concat(filename));
-                    var compiled = compile(fileContents_1.toString()).outputText;
+                    var compiled = compile(fileContents_1.toString(), modName, file.slice(0, -3)).outputText;
                     var scriptdata = {
                         name: file.slice(0, -3),
                         code: compiled,
